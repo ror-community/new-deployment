@@ -14,4 +14,4 @@ ROR uses a standard architecture with the following major components:
 1. All static pages (i.e. homepage, search frontend) are stored in the Amazon file service (S3) and accessed via a content delivery network (CDN, Cloudfront) with multiple edge locations worldwide.
 1. All data are stored in file storage, in addition to the version control in GitHub.
 
-![Infrastructure Diagram](https://github.com/ror-community/new-deployment/blob/master/ror/architecture-diragram.png)
+![Infrastructure Diagram](https://github.com/ror-community/new-deployment/blob/master/ror/architecture-diagram.png)
