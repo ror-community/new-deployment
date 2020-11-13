@@ -1,9 +1,9 @@
-resource "aws_iam_service_linked_role" "es" {
-  aws_service_name = "es.amazonaws.com"
-}
+// resource "aws_iam_service_linked_role" "es" {
+//   aws_service_name = "es.amazonaws.com"
+// }
 
 resource "aws_elasticsearch_domain" "ror" {
-  domain_name           = "elasticsearch-ror"
+  domain_name           = "ror"
   elasticsearch_version = "6.3"
 
   cluster_config {
