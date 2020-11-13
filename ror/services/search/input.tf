@@ -17,7 +17,7 @@ data "template_file" "search" {
   template = file("s3_cloudfront.json")
 
   vars = {
-    bucket_name = "search.ror.org"
+    bucket_name = "search.ror.community"
   }
 }
 
@@ -25,7 +25,7 @@ data "template_file" "search-dev" {
   template = file("s3_cloudfront.json")
 
   vars = {
-    bucket_name = "search.dev.ror.org"
+    bucket_name = "search.dev.ror.community"
   }
 }
 

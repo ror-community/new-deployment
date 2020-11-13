@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "search" {
-    bucket = "search.ror.org"
+    bucket = "search.ror.community"
     acl = "public-read"
     policy = data.template_file.search.rendered
 

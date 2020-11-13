@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "ecs_tasks_execution_role" {
   //template = file("s3_write_access.json")
 
   //vars = {
-    //bucket_name = "logs.ror.org"
+    //bucket_name = "logs.ror.community"
   //}
 //}
 
@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "ecs_tasks_execution_role" {
 //}
 
 //data "aws_acm_certificate" "ror" {
-  //domain = "ror.org"
+  //domain = "ror.community"
   //statuses = ["ISSUED"]
   //most_recent = true
 //}
@@ -59,32 +59,32 @@ data "aws_iam_policy_document" "ecs_tasks_execution_role" {
 
 //data "aws_acm_certificate" "cloudfront" {
   //provider = aws.use1
-  //domain = "ror.org"
+  //domain = "ror.community"
   //statuses = ["ISSUED"]
 //}
 
 //data "aws_s3_bucket" "logs" {
-  //bucket = "logs.ror.org"
+  //bucket = "logs.ror.community"
 //}
 
 //data "aws_s3_bucket" "site" {
-  //bucket = "ror.org"
+  //bucket = "ror.community"
 //}
 
 //data "aws_s3_bucket" "site-dev" {
-  //bucket = "dev.ror.org"
+  //bucket = "dev.ror.community"
 //}
 
 //data "aws_s3_bucket" "site-staging" {
-  //bucket = "staging.ror.org"
+  //bucket = "staging.ror.community"
 //}
 
 //data "aws_s3_bucket" "search" {
-  //bucket = "search.ror.org"
+  //bucket = "search.ror.community"
 //}
 
 //data "aws_s3_bucket" "search-dev" {
-  //bucket = "search.dev.ror.org"
+  //bucket = "search.dev.ror.community"
 //}
 
 //data "aws_iam_role" "iam_for_lambda" {

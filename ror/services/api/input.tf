@@ -69,9 +69,9 @@ data "template_file" "api-dev_task" {
 }
 
 data "aws_s3_bucket" "search" {
-  bucket = "search.ror.org"
+  bucket = "search.ror.community"
 }
 
-data "aws_s3_bucket" "ror-org-s3" {
-  bucket = "ror.org"
+data "aws_s3_bucket" "ror-community-s3" {
+  bucket = "ror.community"
 }

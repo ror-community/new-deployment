@@ -32,7 +32,7 @@ resource "aws_route53_zone" "internal" {
 // }
 
 // resource "aws_service_discovery_private_dns_namespace" "internal" {
-//   name = "ror.org"
+//   name = "ror.community"
 //   vpc = module.vpc.vpc_id
 // }
 

@@ -17,7 +17,7 @@ data "template_file" "site" {
   template = file("s3_cloudfront.json")
 
   vars = {
-    bucket_name = "ror.org"
+    bucket_name = "ror.community"
   }
 }
 
@@ -25,7 +25,7 @@ data "template_file" "site-dev" {
   template = file("s3_cloudfront.json")
 
   vars = {
-    bucket_name = "dev.ror.org"
+    bucket_name = "dev.ror.community"
   }
 }
 
@@ -33,7 +33,7 @@ data "template_file" "site-staging" {
   template = file("s3_cloudfront.json")
 
   vars = {
-    bucket_name = "staging.ror.org"
+    bucket_name = "staging.ror.community"
   }
 }
 
