@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "reconcile" {
 
 resource "aws_route53_record" "reconcile" {
   zone_id = data.aws_route53_zone.public.zone_id
-  name    = "reconcile.ror.org"
+  name    = "reconcile.ror.community"
   type    = "CNAME"
   ttl     = var.ttl
   records = [data.aws_lb.alb.dns_name]
@@ -76,7 +76,7 @@ resource "aws_route53_record" "reconcile" {
 
 resource "aws_route53_record" "split-reconcile" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name    = "reconcile.ror.org"
+  name    = "reconcile.ror.community"
   type    = "CNAME"
   ttl     = var.ttl
   records = [data.aws_lb.alb.dns_name]

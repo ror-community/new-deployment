@@ -31,20 +31,20 @@ resource "aws_elasticsearch_domain" "elasticsearch" {
   }
 
   tags = {
-    Domain = "elasticsearch-ror"
+    Domain = "elasticsearch"
   }
 }
 
 resource "aws_elasticsearch_domain_policy" "ror" {
-  domain_name = aws_elasticsearch_domain.ror.domain_name
+  domain_name = aws_elasticsearch_domain.elasticsearch.domain_name
 
   access_policies = file("elasticsearch_policy.json")
 }
 
 resource "aws_route53_record" "elasticsearch-ror" {
    zone_id = data.aws_route53_zone.internal.zone_id
-   name = "elasticsearch.ror.org"
+   name = "elasticsearch.ror.community"
    type = "CNAME"
    ttl = var.ttl
-   records = [aws_elasticsearch_domain.ror.endpoint]
+   records = [aws_elasticsearch_domain.elasticsearch.endpoint]
 }

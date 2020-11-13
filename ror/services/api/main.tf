@@ -58,7 +58,7 @@ resource "aws_ecs_task_definition" "api" {
 
 resource "aws_route53_record" "api" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name = "api.ror.org"
+    name = "api.ror.community"
     type = "CNAME"
     ttl = var.ttl
     records = [var.cloudfront_dns_name]
@@ -66,7 +66,7 @@ resource "aws_route53_record" "api" {
 
 resource "aws_route53_record" "split-api" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name = "api.ror.org"
+  name = "api.ror.community"
   type = "CNAME"
   ttl = var.ttl
   records = [data.aws_lb.alb.dns_name]
