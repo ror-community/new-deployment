@@ -1,5 +1,5 @@
 resource "aws_elasticsearch_domain" "ror-dev" {
-  domain_name           = "elasticsearch-ror-dev"
+  domain_name           = "elasticsearch-new-ror-dev"
   elasticsearch_version = "6.3"
 
   cluster_config {
