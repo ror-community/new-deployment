@@ -38,10 +38,10 @@ data "template_file" "site-staging" {
 }
 
 data "aws_route53_zone" "public" {
-  name         = "ror.org"
+  name         = "ror.community"
 }
 
 data "aws_route53_zone" "internal" {
-  name         = "ror.org"
+  name         = "ror.community"
   private_zone = true
 }

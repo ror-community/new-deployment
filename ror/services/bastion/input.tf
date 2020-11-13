@@ -6,10 +6,10 @@ provider "aws" {
 }
 
 data "aws_route53_zone" "public" {
-  name         = "ror.org"
+  name         = "ror.community"
 }
 data "aws_route53_zone" "internal" {
-  name         = "ror.org"
+  name         = "ror.community"
   private_zone = true
 }
 data "aws_subnet" "public_subnet" {
@@ -26,6 +26,6 @@ data "template_file" "bastion-user-data-cfg" {
 
   vars = {
     hostname     = var.hostname
-    fqdn         = "${var.hostname}.ror.org"
+    fqdn         = "${var.hostname}.ror.community"
   }
 }

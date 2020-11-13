@@ -14,6 +14,6 @@ data "aws_subnet" "private_subnet" {
 }
 
 data "aws_route53_zone" "internal" {
-  name         = "ror.org"
+  name         = "ror.community"
   private_zone = true
 }
