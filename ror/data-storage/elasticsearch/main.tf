@@ -2,8 +2,8 @@
 //   aws_service_name = "es.amazonaws.com"
 // }
 
-resource "aws_elasticsearch_domain" "ror" {
-  domain_name           = "ror"
+resource "aws_elasticsearch_domain" "elasticsearch" {
+  domain_name           = "elasticsearch"
   elasticsearch_version = "6.3"
 
   cluster_config {
