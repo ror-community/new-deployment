@@ -12,9 +12,7 @@ module "vpc" {
   single_nat_gateway = true
   enable_nat_gateway   = true
   enable_vpn_gateway   = false
-  enable_dns_hostnames = false
-  enable_dns_support = false
-  config_endpoint_private_dns_enabled = false
+  enable_dns_hostnames = true
 
   tags = {
     Terraform = "true"

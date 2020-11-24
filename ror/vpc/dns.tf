@@ -31,10 +31,10 @@ resource "aws_route53_record" "internal-ns" {
     ]
 }
 
-resource "aws_service_discovery_private_dns_namespace" "internal" {
-  name = "ror.community"
-  vpc = module.vpc.vpc_id
-}
+// resource "aws_service_discovery_private_dns_namespace" "internal" {
+//   name = "ror.community"
+//   vpc = module.vpc.vpc_id
+// }
 
 resource "aws_route53_record" "mx-ror" {
     zone_id = aws_route53_zone.public.zone_id
