@@ -72,6 +72,6 @@ data "aws_s3_bucket" "search-ror-community" {
   bucket = "search.ror.community"
 }
 
-data "aws_s3_bucket" "ror-community" {
-  bucket = "ror.community"
+data "aws_s3_bucket" "www-ror-community" {
+  bucket = "www.ror.community"
 }
