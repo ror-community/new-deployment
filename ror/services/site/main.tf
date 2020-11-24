@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "ror-community-s3" {
+resource "aws_s3_bucket" "ror-community" {
   bucket = "ror.community"
   acl = "public-read"
   policy = data.template_file.site.rendered

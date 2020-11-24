@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "staging-ror-community-s3" {
+resource "aws_s3_bucket" "staging-ror-community" {
   bucket = "staging.ror.community"
   acl = "public-read"
   policy = data.template_file.site-staging.rendered
