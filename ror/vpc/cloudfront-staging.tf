@@ -122,7 +122,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect.qualified_arn
+      lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
       include_body = false
     }
   }
