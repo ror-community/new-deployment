@@ -5,6 +5,9 @@ resource "aws_ecs_service" "api-community" {
   task_definition = aws_ecs_task_definition.api-community.arn
   desired_count = 2
 
+  # give container time to start up
+  health_check_grace_period_seconds = 600
+
   network_configuration {
     security_groups = [var.private_security_group_id]
     subnets         = var.private_subnet_ids
