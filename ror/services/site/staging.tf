@@ -1,7 +1,9 @@
 resource "aws_s3_bucket" "www-staging-ror-community" {
   bucket = "www.staging.ror.community"
   acl = "public-read"
-  policy = data.template_file.site-staging.rendered
+  policy = templatefile("s3_cloudfront.json", {
+    bucket_name = "www.staging.ror.community"
+  })
 
   website {
     index_document = "index.html"

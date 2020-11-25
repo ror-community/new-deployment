@@ -13,30 +13,6 @@ provider "aws" {
   alias = "use1"
 }
 
-data "template_file" "site" {
-  template = file("s3_cloudfront.json")
-
-  vars = {
-    bucket_name = "ror.community"
-  }
-}
-
-data "template_file" "site-dev" {
-  template = file("s3_cloudfront.json")
-
-  vars = {
-    bucket_name = "dev.ror.community"
-  }
-}
-
-data "template_file" "site-staging" {
-  template = file("s3_cloudfront.json")
-
-  vars = {
-    bucket_name = "staging.ror.community"
-  }
-}
-
 data "aws_route53_zone" "public" {
   name         = "ror.community"
 }

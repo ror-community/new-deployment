@@ -1,7 +1,9 @@
 resource "aws_s3_bucket" "www-ror-community" {
   bucket = "www.ror.community"
   acl = "public-read"
-  policy = data.template_file.site.rendered
+  policy = templatefile("s3_cloudfront.json", {
+    bucket_name = "www.ror.community"
+  })
 
   website {
     index_document = "index.html"
