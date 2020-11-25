@@ -15,8 +15,8 @@ resource "aws_ecs_service" "reconcile-dev" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.reconcile-dev.id
-    container_name   = "reconcile-dev"
+    target_group_arn = aws_lb_target_group.reconcile-dev-community.id
+    container_name   = "reconcile-dev-community"
     container_port   = "80"
   }
 
@@ -25,8 +25,8 @@ resource "aws_ecs_service" "reconcile-dev" {
   ]
 }
 
-resource "aws_lb_target_group" "reconcile-dev" {
-  name        = "reconcile-dev"
+resource "aws_lb_target_group" "reconcile-dev-community" {
+  name        = "reconcile-dev-community"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -42,7 +42,7 @@ resource "aws_lb_listener_rule" "reconcile-dev" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.reconcile-dev.arn
+    target_group_arn = aws_lb_target_group.reconcile-dev-community.arn
   }
 
   condition {

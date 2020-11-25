@@ -15,8 +15,8 @@ resource "aws_ecs_service" "reconcile" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.reconcile.id
-    container_name   = "reconcile"
+    target_group_arn = aws_lb_target_group.reconcile-community.id
+    container_name   = "reconcile-community"
     container_port   = "80"
   }
 
@@ -25,7 +25,7 @@ resource "aws_ecs_service" "reconcile" {
   ]
 }
 
-resource "aws_lb_target_group" "reconcile" {
+resource "aws_lb_target_group" "reconcile-community" {
   name        = "reconcile"
   port        = 80
   protocol    = "HTTP"
@@ -42,7 +42,7 @@ resource "aws_lb_listener_rule" "reconcile" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.reconcile.arn
+    target_group_arn = aws_lb_target_group.reconcile-community.arn
   }
 
   condition {

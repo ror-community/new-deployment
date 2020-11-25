@@ -16,7 +16,7 @@ resource "aws_ecs_service" "api" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.api-community.id
-    container_name   = "api"
+    container_name   = "api-community"
     container_port   = "80"
   }
 
