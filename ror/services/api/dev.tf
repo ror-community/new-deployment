@@ -51,7 +51,7 @@ resource "aws_lb_listener_rule" "redirect-api-dev" {
     type = "redirect"
 
     redirect {
-      host        = "api.dev.ror.community"
+      host        = "api.dev.ror.org"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_302"
@@ -60,7 +60,7 @@ resource "aws_lb_listener_rule" "redirect-api-dev" {
 
   condition {
     field  = "host-header"
-    values = ["api.dev.ror.community"]
+    values = ["api.dev.ror.org"]
   }
 }
 

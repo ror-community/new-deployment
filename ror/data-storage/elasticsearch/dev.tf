@@ -33,7 +33,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
 
 resource "aws_route53_record" "elasticsearch-dev" {
    zone_id = data.aws_route53_zone.internal.zone_id
-   name = "elasticsearch.dev.ror.community"
+   name = "elasticsearch.dev.ror.org"
    type = "CNAME"
    ttl = var.ttl
    records = [aws_elasticsearch_domain.elasticsearch-dev.endpoint]
