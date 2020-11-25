@@ -15,7 +15,9 @@ module "alb" {
 resource "aws_s3_bucket" "logs" {
   bucket = "logs.ror.community"
   acl    = "private"
-  policy = data.template_file.logs.rendered
+  policy = templatefile("s3_write_access.json", {
+    bucket_name = "logs.ror.community"
+  })
   tags = {
       Name = "ror-community"
   }

@@ -25,21 +25,13 @@ data "aws_iam_policy_document" "ecs_tasks_execution_role" {
   }
 }
 
-//data "template_file" "logs" {
-  //template = file("s3_write_access.json")
+data "aws_lb" "alb" {
+  name = "alb"
+}
 
-  //vars = {
-    //bucket_name = "logs.ror.community"
-  //}
-//}
-
-//data "aws_lb" "alb" {
-  //name = "alb"
-//}
-
-//data "aws_lb" "alb-community" {
-  //name = "alb-community"
-//}
+data "aws_lb" "alb-community" {
+  name = "alb-community"
+}
 
 //data "aws_lb_target_group" "api" {
   //name = "api"
