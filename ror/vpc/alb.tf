@@ -1,7 +1,7 @@
 module "alb" {
   source                        = "terraform-aws-modules/alb/aws"
   version                       = "~> v5.0"
-  name                          = "alb-community"
+  name                          = "lb"
   load_balancer_type            = "application"
   security_groups               = [aws_security_group.lb_sg.id]
   access_logs = {
