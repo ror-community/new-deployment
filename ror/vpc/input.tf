@@ -49,11 +49,11 @@ data "aws_acm_certificate" "ror-community" {
   most_recent = true
 }
 
-data "aws_acm_certificate" "cloudfront" {
-  provider = aws.use1
-  domain = "ror.community"
-  statuses = ["ISSUED"]
-}
+// data "aws_acm_certificate" "cloudfront" {
+//   provider = aws.use1
+//   domain = "ror.community"
+//   statuses = ["ISSUED"]
+// }
 
 data "aws_s3_bucket" "logs" {
   bucket = "logs.ror.community"
