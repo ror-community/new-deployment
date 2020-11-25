@@ -26,12 +26,12 @@ data "aws_iam_policy_document" "ecs_tasks_execution_role" {
 }
 
 data "aws_lb" "alb" {
-  name = "alb"
+  name = "lb"
 }
 
-data "aws_lb" "alb-community" {
-  name = "alb-community"
-}
+// data "aws_lb" "alb-community" {
+//   name = "alb-community"
+// }
 
 data "aws_lb_target_group" "api-community" {
   name = "api-community"

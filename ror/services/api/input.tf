@@ -23,7 +23,7 @@ data "aws_iam_role" "ecs_tasks_execution_role" {
 }
 
 data "aws_lb" "alb" {
-  name = "alb"
+  name = "lb"
 }
 
 data "aws_lb_listener" "alb" {
