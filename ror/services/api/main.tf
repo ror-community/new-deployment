@@ -15,7 +15,7 @@ resource "aws_ecs_service" "api" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.api.id
+    target_group_arn = aws_lb_target_group.api-community.id
     container_name   = "api"
     container_port   = "80"
   }
@@ -25,8 +25,8 @@ resource "aws_ecs_service" "api" {
   ]
 }
 
-resource "aws_lb_target_group" "api" {
-  name     = "api"
+resource "aws_lb_target_group" "api-community" {
+  name     = "api-community"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -42,7 +42,7 @@ resource "aws_lb_target_group" "api" {
 }
 
 resource "aws_cloudwatch_log_group" "api" {
-  name = "/ecs/api"
+  name = "/ecs/api-community"
 }
 
 resource "aws_ecs_task_definition" "api" {
