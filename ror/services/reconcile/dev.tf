@@ -82,8 +82,8 @@ resource "aws_route53_record" "split-reconcile-dev" {
   records = [data.aws_lb.alb.dns_name]
 }
 
-resource "aws_service_discovery_service" "reconcile-dev" {
-  name = "reconcile-dev"
+resource "aws_service_discovery_service" "reconcile-dev-community" {
+  name = "reconcile-dev-community"
 
   health_check_custom_config {
     failure_threshold = 3
