@@ -90,7 +90,7 @@ resource "aws_service_discovery_service" "reconcile-dev-community" {
   }
 
   dns_config {
-    namespace_id = var.aws_service_discovery_private_dns_namespace_id
+    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
 
     dns_records {
       ttl  = 300
