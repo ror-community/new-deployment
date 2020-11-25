@@ -60,7 +60,7 @@ data "aws_s3_bucket" "logs" {
 }
 
 data "aws_s3_bucket" "site" {
-  bucket = "ror.community"
+  bucket = "main.ror.community"
 }
 
 data "aws_s3_bucket" "site-dev" {
