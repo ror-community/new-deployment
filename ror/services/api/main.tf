@@ -45,8 +45,8 @@ resource "aws_cloudwatch_log_group" "api" {
   name = "/ecs/api-community"
 }
 
-resource "aws_ecs_task_definition" "api" {
-  family = "api"
+resource "aws_ecs_task_definition" "api-community" {
+  family = "api-community"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -79,7 +79,7 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
 }
 
 resource "aws_service_discovery_service" "api" {
-  name = "api"
+  name = "api-community"
 
   health_check_custom_config {
     failure_threshold = 3
