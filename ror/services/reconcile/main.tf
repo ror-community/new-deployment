@@ -1,5 +1,5 @@
-resource "aws_ecs_service" "reconcile" {
-  name            = "reconcile"
+resource "aws_ecs_service" "reconcile-community" {
+  name            = "reconcile-community"
   cluster         = data.aws_ecs_cluster.default.id
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.reconcile.arn
@@ -52,7 +52,7 @@ resource "aws_lb_listener_rule" "reconcile" {
 }
 
 resource "aws_cloudwatch_log_group" "reconcile" {
-  name = "/ecs/reconcile"
+  name = "/ecs/reconcile-community"
 }
 
 resource "aws_ecs_task_definition" "reconcile" {

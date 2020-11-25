@@ -24,7 +24,7 @@ data "aws_iam_role" "ecs_tasks_execution_role" {
 
 data "aws_lb" "alb" {
   arn  = var.lb_arn
-  name = "alb"
+  name = "lb"
 }
 
 data "aws_lb_listener" "alb" {

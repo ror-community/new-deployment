@@ -1,5 +1,5 @@
-resource "aws_ecs_service" "api-dev" {
-  name = "api-dev"
+resource "aws_ecs_service" "api-dev-community" {
+  name = "api-dev-community"
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api-dev.arn
@@ -16,7 +16,7 @@ resource "aws_ecs_service" "api-dev" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.api-dev-community.id
-    container_name   = "api-dev"
+    container_name   = "api-dev-community"
     container_port   = "80"
   }
 

@@ -1,5 +1,5 @@
-resource "aws_ecs_service" "api" {
-  name = "api"
+resource "aws_ecs_service" "api-community" {
+  name = "api-community"
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api.arn

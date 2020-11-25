@@ -1,5 +1,5 @@
 resource "aws_ecs_service" "reconcile-dev" {
-  name            = "reconcile-dev"
+  name            = "reconcile-dev-community"
   cluster         = data.aws_ecs_cluster.default.id
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.reconcile-dev.arn
@@ -11,7 +11,7 @@ resource "aws_ecs_service" "reconcile-dev" {
   }
 
   service_registries {
-    registry_arn = aws_service_discovery_service.reconcile-dev.arn
+    registry_arn = aws_service_discovery_service.reconcile-dev-community.arn
   }
 
   load_balancer {
@@ -37,7 +37,7 @@ resource "aws_lb_target_group" "reconcile-dev-community" {
   }
 }
 
-resource "aws_lb_listener_rule" "reconcile-dev" {
+resource "aws_lb_listener_rule" "reconcile-dev-community" {
   listener_arn = data.aws_lb_listener.alb.arn
 
   action {
