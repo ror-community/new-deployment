@@ -175,7 +175,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 //resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
 
 resource "aws_route53_record" "site-dev" {
-  zone_id = aws_route53_zone.public.zone_id
+  zone_id = data.aws_route53_zone.public.zone_id
   name = "dev.ror.org"
   type = "A"
 
