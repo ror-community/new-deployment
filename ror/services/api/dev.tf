@@ -92,7 +92,7 @@ resource "aws_ecs_task_definition" "api-dev" {
 
 resource "aws_route53_record" "api-dev" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name = "api.dev.ror.community"
+    name = "api.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
     records = [data.aws_lb.alb.dns_name]
@@ -100,7 +100,7 @@ resource "aws_route53_record" "api-dev" {
 
 resource "aws_route53_record" "split-api-dev" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name = "api.dev.ror.community"
+  name = "api.dev.ror.org"
   type = "CNAME"
   ttl = var.ttl
   records = [data.aws_lb.alb.dns_name]
