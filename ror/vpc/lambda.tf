@@ -13,11 +13,11 @@
 //   }
 // }
 
-resource "aws_lambda_function" "index-page" {
+resource "aws_lambda_function" "index-page-community" {
   provider = aws.use1
   
   filename = "index-page-runner.js.zip"
-  function_name = "index-page"
+  function_name = "index-page-community"
   role = data.aws_iam_role.iam_for_lambda.arn
   handler = "index-page-runner.handler"
   runtime = "nodejs10.x"
@@ -25,11 +25,11 @@ resource "aws_lambda_function" "index-page" {
   publish = true
 }
 
-resource "aws_lambda_function" "redirect" {
+resource "aws_lambda_function" "redirect-community" {
   provider = aws.use1
   
   filename = "redirect-runner.js.zip"
-  function_name = "redirect"
+  function_name = "redirect-community"
   role = data.aws_iam_role.iam_for_lambda.arn
   handler = "redirect-runner.handler"
   runtime = "nodejs10.x"
