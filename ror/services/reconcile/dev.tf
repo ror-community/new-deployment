@@ -55,8 +55,8 @@ resource "aws_cloudwatch_log_group" "reconcile-dev" {
   name = "/ecs/reconcile-dev"
 }
 
-resource "aws_ecs_task_definition" "reconcile-dev" {
-  family                   = "reconcile-dev"
+resource "aws_ecs_task_definition" "reconcile-dev-community" {
+  family                   = "reconcile-dev-community"
   execution_role_arn       = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
