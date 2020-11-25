@@ -10,9 +10,9 @@ resource "aws_ecs_service" "reconcile-community" {
     subnets         = var.private_subnet_ids
   }
 
-  service_registries {
-    registry_arn = aws_service_discovery_service.reconcile.arn
-  }
+  // service_registries {
+  //   registry_arn = aws_service_discovery_service.reconcile.arn
+  // }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.reconcile-community.id
