@@ -82,19 +82,19 @@ resource "aws_route53_record" "split-reconcile-dev" {
   records = [data.aws_lb.alb.dns_name]
 }
 
-resource "aws_service_discovery_service" "reconcile-dev-community" {
-  name = "reconcile-dev-community"
+// resource "aws_service_discovery_service" "reconcile-dev-community" {
+//   name = "reconcile-dev-community"
 
-  health_check_custom_config {
-    failure_threshold = 3
-  }
+//   health_check_custom_config {
+//     failure_threshold = 3
+//   }
 
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
+//   dns_config {
+//     namespace_id = var.aws_service_discovery_private_dns_namespace_id
 
-    dns_records {
-      ttl  = 300
-      type = "A"
-    }
-  }
-}
+//     dns_records {
+//       ttl  = 300
+//       type = "A"
+//     }
+//   }
+// }
