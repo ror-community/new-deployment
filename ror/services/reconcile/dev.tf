@@ -1,8 +1,8 @@
-resource "aws_ecs_service" "reconcile-dev" {
+resource "aws_ecs_service" "reconcile-dev-community" {
   name            = "reconcile-dev-community"
   cluster         = data.aws_ecs_cluster.default.id
   launch_type     = "FARGATE"
-  task_definition = aws_ecs_task_definition.reconcile-dev.arn
+  task_definition = aws_ecs_task_definition.reconcile-dev-community.arn
   desired_count   = 1
 
   network_configuration {
