@@ -15,13 +15,13 @@ variable "private_subnet_ids" {
 variable "private_security_group_id" {}
 
 variable "elastic_host" {
-  default = "elasticsearch.ror.community"
+  default = "elasticsearch.ror.org"
 }
 variable "elastic_port" {
   default = "80"
 }
 variable "elastic_host_dev" {
-  default = "elasticsearch.dev.ror.community"
+  default = "elasticsearch.dev.ror.org"
 }
 variable "elastic_port_dev" {
   default = "80"
