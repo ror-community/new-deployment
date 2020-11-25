@@ -29,7 +29,7 @@ resource "aws_lb_listener" "alb-http-community" {
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = data.aws_lb_target_group.api.id
+    target_group_arn = data.aws_lb_target_group.api-community.id
     type             = "forward"
   }
 }
@@ -42,7 +42,7 @@ resource "aws_lb_listener" "alb" {
   certificate_arn   = data.aws_acm_certificate.ror.arn
 
   default_action {
-    target_group_arn = data.aws_lb_target_group.api.id
+    target_group_arn = data.aws_lb_-community.id
     type             = "forward"
   }
 }
