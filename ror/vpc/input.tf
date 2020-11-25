@@ -64,11 +64,11 @@ data "aws_s3_bucket" "site" {
 }
 
 data "aws_s3_bucket" "site-dev" {
-  bucket = "dev.ror.community"
+  bucket = "www.dev.ror.community"
 }
 
 data "aws_s3_bucket" "site-staging" {
-  bucket = "staging.ror.community"
+  bucket = "www.staging.ror.community"
 }
 
 data "aws_s3_bucket" "search" {
