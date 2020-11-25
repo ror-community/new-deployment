@@ -15,7 +15,7 @@ resource "aws_ecs_service" "api-dev" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.api-dev.id
+    target_group_arn = aws_lb_target_group.api-dev-community.id
     container_name   = "api-dev"
     container_port   = "80"
   }
@@ -66,7 +66,7 @@ resource "aws_lb_listener_rule" "api-dev" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api-dev.arn
+    target_group_arn = aws_lb_target_group.api-dev-community.arn
   }
 
   condition {
