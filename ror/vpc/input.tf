@@ -55,9 +55,9 @@ data "aws_acm_certificate" "ror-community" {
 //   statuses = ["ISSUED"]
 // }
 
-data "aws_s3_bucket" "logs" {
-  bucket = "logs.ror.community"
-}
+// data "aws_s3_bucket" "logs" {
+//   bucket = "logs.ror.community"
+// }
 
 data "aws_s3_bucket" "site" {
   bucket = "main.ror.community"
