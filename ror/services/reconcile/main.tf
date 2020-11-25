@@ -26,7 +26,7 @@ resource "aws_ecs_service" "reconcile-community" {
 }
 
 resource "aws_lb_target_group" "reconcile-community" {
-  name        = "reconcile"
+  name        = "reconcile-community"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -37,7 +37,7 @@ resource "aws_lb_target_group" "reconcile-community" {
   }
 }
 
-resource "aws_lb_listener_rule" "reconcile" {
+resource "aws_lb_listener_rule" "reconcile-community" {
   listener_arn = data.aws_lb_listener.alb.arn
 
   action {

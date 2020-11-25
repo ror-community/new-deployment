@@ -52,7 +52,7 @@ resource "aws_lb_listener_rule" "reconcile-dev-community" {
 }
 
 resource "aws_cloudwatch_log_group" "reconcile-dev" {
-  name = "/ecs/reconcile-dev"
+  name = "/ecs/reconcile-dev-community"
 }
 
 resource "aws_ecs_task_definition" "reconcile-dev-community" {
