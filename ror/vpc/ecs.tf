@@ -8,6 +8,6 @@
 //   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 // }
 
-resource "aws_ecs_cluster" "main" {
+resource "aws_ecs_cluster" "default" {
   name = "main"
 }

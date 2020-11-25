@@ -1,6 +1,6 @@
 resource "aws_ecs_service" "reconcile-dev" {
   name            = "reconcile-dev"
-  cluster         = data.aws_ecs_cluster.main.id
+  cluster         = data.aws_ecs_cluster.default.id
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.reconcile-dev.arn
   desired_count   = 1

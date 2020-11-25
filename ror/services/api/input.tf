@@ -14,7 +14,7 @@ data "aws_route53_zone" "internal" {
   private_zone = true
 }
 
-data "aws_ecs_cluster" "main" {
+data "aws_ecs_cluster" "default" {
   cluster_name = "main"
 }
 
