@@ -14,8 +14,8 @@ data "aws_route53_zone" "internal" {
   private_zone = true
 }
 
-data "aws_ecs_cluster" "default" {
-  cluster_name = "default"
+data "aws_ecs_cluster" "main" {
+  cluster_name = "main"
 }
 
 data "aws_iam_role" "ecs_tasks_execution_role" {

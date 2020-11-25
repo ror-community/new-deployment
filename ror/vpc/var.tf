@@ -21,7 +21,7 @@ variable "public_subnets"{
 }
 
 variable "cluster_name" {
-  default = "ror"
+  default = "main"
 }
 
 variable "status_dns_name" {}
