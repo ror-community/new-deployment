@@ -12,7 +12,7 @@
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {
-      "awslogs-group": "/ecs/api",
+      "awslogs-group": "/ecs/api-community",
       "awslogs-region": "eu-west-1",
       "awslogs-stream-prefix": "ecs"
     }
