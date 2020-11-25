@@ -5,11 +5,18 @@ provider "aws" {
   version    = "~> 2.7"
 }
 
-data "aws_route53_zone" "public" {
+data "aws_route53_zone" "public-community" {
   name         = "ror.community"
 }
-data "aws_route53_zone" "internal" {
+data "aws_route53_zone" "internal-community" {
   name         = "ror.community"
+  private_zone = true
+}
+data "aws_route53_zone" "public" {
+  name         = "ror.org"
+}
+data "aws_route53_zone" "internal" {
+  name         = "ror.org"
   private_zone = true
 }
 data "aws_subnet" "public_subnet" {

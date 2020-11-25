@@ -31,9 +31,25 @@ resource "aws_eip_association" "bastion" {
   allocation_id = aws_eip.bastion.id
 }
 
+resource "aws_route53_record" "bastion-community" {
+    zone_id = data.aws_route53_zone.public-community.zone_id
+    name = "${var.hostname}.ror.community"
+    type = "A"
+    ttl = var.ttl
+    records = [aws_eip.bastion.public_ip]
+}
+
+resource "aws_route53_record" "split-bastion-community" {
+    zone_id = data.aws_route53_zone.internal-community.zone_id
+    name = "${var.hostname}.ror.community"
+    type = "A"
+    ttl = var.ttl
+    records = [aws_instance.bastion.private_ip]
+}
+
 resource "aws_route53_record" "bastion" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name = "${var.hostname}.ror.community"
+    name = "${var.hostname}.ror.org"
     type = "A"
     ttl = var.ttl
     records = [aws_eip.bastion.public_ip]
@@ -41,7 +57,7 @@ resource "aws_route53_record" "bastion" {
 
 resource "aws_route53_record" "split-bastion" {
     zone_id = data.aws_route53_zone.internal.zone_id
-    name = "${var.hostname}.ror.community"
+    name = "${var.hostname}.ror.org"
     type = "A"
     ttl = var.ttl
     records = [aws_instance.bastion.private_ip]
