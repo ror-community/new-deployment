@@ -67,9 +67,17 @@ resource "aws_lb_listener_rule" "redirect_www" {
   }
 }
 
+// resource "aws_route53_record" "www" {
+//     zone_id = aws_route53_zone.public.zone_id
+//     name = "www.ror.community"
+//     type = "CNAME"
+//     ttl = var.ttl
+//     records = [data.aws_lb.alb.dns_name]
+// }
+
 resource "aws_route53_record" "www" {
-    zone_id = aws_route53_zone.public.zone_id
-    name = "www.ror.community"
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "www.ror.org"
     type = "CNAME"
     ttl = var.ttl
     records = [data.aws_lb.alb.dns_name]
