@@ -175,7 +175,7 @@ resource "aws_cloudfront_distribution" "site" {
 resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
 
 resource "aws_route53_record" "apex" {
-  zone_id = aws_route53_zone.public.zone_id
+  zone_id = data.aws_route53_zone.public.zone_id
   name = "ror.org"
   type = "A"
 
