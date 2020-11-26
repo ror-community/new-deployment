@@ -6,11 +6,11 @@ provider "aws" {
 }
 
 data "aws_route53_zone" "public" {
-  name = "ror.community"
+  name = "ror.org"
 }
 
 data "aws_route53_zone" "internal" {
-  name         = "ror.community"
+  name         = "ror.org"
   private_zone = true
 }
 
