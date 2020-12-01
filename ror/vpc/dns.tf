@@ -7,7 +7,7 @@ resource "aws_route53_zone" "public" {
 }
 
 resource "aws_route53_zone" "internal" {
-    name = "ror.community"
+    name = "ror.org"
     
     vpc {
         vpc_id = module.vpc.vpc_id
@@ -20,7 +20,7 @@ resource "aws_route53_zone" "internal" {
 
 // resource "aws_route53_record" "internal-ns" {
 //     zone_id = aws_route53_zone.internal.zone_id
-//     name = "ror.community"
+//     name = "ror.org"
 //     type = "NS"
 //     ttl = "30"
 //     records = [
