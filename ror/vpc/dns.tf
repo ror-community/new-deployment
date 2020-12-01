@@ -43,7 +43,7 @@ resource "aws_route53_record" "internal-ns" {
 
 resource "aws_route53_record" "mx-ror" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name = aws_route53_zone.public.name
+    name = data.aws_route53_zone.public.name
     type = "MX"
     ttl = "300"
     records = [
