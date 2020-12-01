@@ -1,6 +1,7 @@
-resource "aws_iam_service_linked_role" "elasticsearch" {
-  aws_service_name = "es.amazonaws.com"
-}
+// already created
+// resource "aws_iam_service_linked_role" "es" {
+//   aws_service_name = "es.amazonaws.com"
+// }
 
 resource "aws_elasticsearch_domain" "elasticsearch" {
   domain_name           = "elasticsearch"
