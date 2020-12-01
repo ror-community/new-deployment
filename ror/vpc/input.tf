@@ -79,9 +79,9 @@ data "aws_s3_bucket" "search-dev" {
   bucket = "search.dev.ror.community"
 }
 
-data "aws_iam_role" "iam_for_lambda" {
-  name = "iam_for_lambda"
-}
+// data "aws_iam_role" "iam_for_lambda" {
+//   name = "iam_for_lambda"
+// }
 
 data "aws_lambda_function" "index-page" {
   provider = aws.use1
