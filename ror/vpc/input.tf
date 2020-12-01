@@ -85,7 +85,7 @@ data "aws_s3_bucket" "search-dev" {
 
 data "aws_lambda_function" "index-page" {
   provider = aws.use1
-  function_name = "index-page"
+  function_name = "index-page-community"
 }
 
 data "aws_route53_zone" "public" {
