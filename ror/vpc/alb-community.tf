@@ -52,6 +52,19 @@ resource "aws_route53_record" "ror-community" {
   zone_id = aws_route53_zone.public-community.zone_id
   name    = "ror.community"
   type    = "CNAME"
-  ttl     = var.ttl
-  records = [data.aws_lb.alb-community.dns_name]
+  type    = "A"
+
+  alias {
+    name                   = data.aws_lb.alb-community.dns_name
+    zone_id                = data.aws_lb.alb-community.zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "www-ror-community" {
+   zone_id = aws_route53_zone.public-community.zone_id
+   name = "www.ror.community"
+   type = "CNAME"
+   ttl = var.ttl
+   records = [data.aws_lb.alb-community.dns_name]
 }
