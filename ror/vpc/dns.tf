@@ -64,3 +64,15 @@ resource "aws_route53_record" "status" {
     ttl = "3600"
     records = [var.status_dns_name]
 }
+
+resource "aws_route53_zone" "public-community" {
+    name = "ror.community"
+
+    lifecycle {
+        prevent_destroy = true
+    }
+
+    tags = {
+        Environment = "public"
+    }
+}
