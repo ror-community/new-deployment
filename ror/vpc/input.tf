@@ -30,7 +30,7 @@ data "aws_lb" "alb" {
 }
 
 data "aws_lb" "alb-community" {
-  name = "alb-community"
+  name = "lb-community"
 }
 
 data "aws_lb_target_group" "api-community" {
