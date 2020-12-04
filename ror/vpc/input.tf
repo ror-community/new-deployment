@@ -96,7 +96,3 @@ data "aws_route53_zone" "internal" {
   name = "ror.org"
   private_zone = true
 }
-
-// data "aws_route53_zone" "public-community" {
-//   name = "ror.community"
-// }
