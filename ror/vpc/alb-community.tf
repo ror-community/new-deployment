@@ -51,7 +51,6 @@ resource "aws_lb_listener" "alb-community" {
 resource "aws_route53_record" "ror-community" {
   zone_id = aws_route53_zone.public-community.zone_id
   name    = "ror.community"
-  type    = "CNAME"
   type    = "A"
 
   alias {
