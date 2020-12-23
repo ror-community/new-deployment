@@ -81,19 +81,19 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
   vpc = var.vpc_id
 }
 
-// resource "aws_service_discovery_service" "api" {
-//   name = "api"
+resource "aws_service_discovery_service" "api" {
+  name = "api"
 
-//   health_check_custom_config {
-//     failure_threshold = 3
-//   }
+  health_check_custom_config {
+    failure_threshold = 3
+  }
 
-//   dns_config {
-//     namespace_id = aws_service_discovery_private_dns_namespace.internal.id
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
     
-//     dns_records {
-//       ttl = 300
-//       type = "A"
-//     }
-//   }
-// }
+    dns_records {
+      ttl = 300
+      type = "A"
+    }
+  }
+}
