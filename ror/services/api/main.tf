@@ -13,9 +13,9 @@ resource "aws_ecs_service" "api-community" {
     subnets         = var.private_subnet_ids
   }
 
-  // service_registries {
-  //   registry_arn = aws_service_discovery_service.api.arn
-  // }
+  service_registries {
+    registry_arn = aws_service_discovery_service.api.arn
+  }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.api-community.id
