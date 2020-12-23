@@ -82,7 +82,7 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
 }
 
 resource "aws_service_discovery_service" "api" {
-  name = "api-community"
+  name = "api"
 
   health_check_custom_config {
     failure_threshold = 3
