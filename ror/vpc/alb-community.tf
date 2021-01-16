@@ -67,7 +67,7 @@ resource "aws_route53_record" "www-ror-community" {
 
   alias {
     name = data.aws_lb.alb-community.dns_name
-    zone_id = aws_route53_zone.public-community.zone_id
+    zone_id = data.aws_lb.alb-community.zone_id
     evaluate_target_health = true
   }
 }
