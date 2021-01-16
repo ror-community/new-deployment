@@ -48,7 +48,7 @@ resource "aws_lb_listener" "alb-community" {
   }
 }
 
-resource "aws_route53_record" "ror-community" {
+resource "aws_route53_record" "apex-ror-community" {
   zone_id = aws_route53_zone.public-community.zone_id
   name    = "ror.community"
   type    = "A"
@@ -60,14 +60,14 @@ resource "aws_route53_record" "ror-community" {
   }
 }
 
-// resource "aws_route53_record" "apex-ror-community" {
-//   zone_id = aws_route53_zone.public-community.zone_id
-//   name = "ror.community"
-//   type = "A"
+resource "aws_route53_record" "www-ror-community" {
+  zone_id = aws_route53_zone.public-community.zone_id
+  name = "www.ror.community"
+  type = "A"
 
-//   alias {
-//     name = data.aws_lb.alb-community.dns_name
-//     zone_id = aws_route53_zone.public-community.zone_id
-//     evaluate_target_health = true
-//   }
-// }
+  alias {
+    name = data.aws_lb.alb-community.dns_name
+    zone_id = aws_route53_zone.public-community.zone_id
+    evaluate_target_health = true
+  }
+}
