@@ -68,6 +68,22 @@ data "template_file" "api-dev_task" {
   }
 }
 
+data "template_file" "api-staging_task" {
+  template = file("api-staging.json")
+
+  vars = {
+    elastic_host_staging = var.elastic_host_staging
+    elastic_port_staging = var.elastic_port_staging
+    access_key         = var.access_key
+    secret_key         = var.secret_key
+    region             = var.region
+    public_key         = var.public_key
+    sentry_dsn         = var.sentry_dsn
+    django_secret_key  = var.django_secret_key
+    version            = var.ror-api-staging_tags["sha"]
+  }
+}
+
 data "aws_s3_bucket" "search-ror-community" {
   bucket = "search.ror.community"
 }

@@ -26,6 +26,12 @@ variable "elastic_host_dev" {
 variable "elastic_port_dev" {
   default = "80"
 }
+variable "elastic_host_staging" {
+  default = "elasticsearch.dev.ror.org"
+}
+variable "elastic_port_staging" {
+  default = "80"
+}
 variable "es_name" {
   default = "es"
 }
@@ -34,6 +40,10 @@ variable "ror-api_tags" {
 }
 
 variable "ror-api-dev_tags" {
+  type = "map"
+}
+
+variable "ror-api-staging_tags" {
   type = "map"
 }
 
