@@ -18,8 +18,14 @@ resource "aws_lb_listener" "alb-http-staging" {
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = data.aws_lb_target_group.api-community.id
-    type             = "forward"
+    type = "redirect"  
+
+    redirect {
+      host        = "www.staging.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
+    }
   }
 }
 
@@ -31,8 +37,14 @@ resource "aws_lb_listener" "alb-staging" {
   certificate_arn   = data.aws_acm_certificate.ror-staging.arn
 
   default_action {
-    target_group_arn = data.aws_lb_target_group.api-community.id
-    type             = "forward"
+    type = "redirect"  
+
+    redirect {
+      host        = "www.staging.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
+    }
   }
 }
 
