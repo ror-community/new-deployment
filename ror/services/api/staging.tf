@@ -28,8 +28,8 @@ resource "aws_ecs_service" "api-staging-community" {
   ]
 }
 
-resource "aws_lb_target_group" "api-staging-community" {
-  name     = "api-staging-community"
+resource "aws_lb_target_group" "api-staging" {
+  name     = "api-staging"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -40,7 +40,7 @@ resource "aws_lb_target_group" "api-staging-community" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb
+    data.aws_lb_listener.alb-staging
   ]
 }
 
@@ -70,6 +70,20 @@ resource "aws_lb_listener_rule" "api-staging" {
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.api-staging-community.arn
+  }
+
+  condition {
+    field  = "host-header"
+    values = [aws_route53_record.api-staging.name]
+  }
+}
+
+resource "aws_lb_listener_rule" "api-staging" {
+  listener_arn = data.aws_lb_listener.alb-staging.arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api-staging.arn
   }
 
   condition {
