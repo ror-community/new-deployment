@@ -35,7 +35,7 @@ resource "aws_lb_listener" "alb-community" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = data.aws_acm_certificate.ror-community.arn
+  certificate_arn   = data.aws_acm_certificate.ror.arn
 
   default_action {
     type = "fixed-response"
