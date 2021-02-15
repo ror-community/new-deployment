@@ -56,10 +56,10 @@ module "alb-staging" {
 //   }
 // }
 
-resource "aws_route53_record" "www-staging" {
-    zone_id = data.aws_route53_zone.public.zone_id
-    name = "www.staging.ror.org"
-    type = "CNAME"
-    ttl = var.ttl
-    records = [data.aws_lb.alb-staging.dns_name]
-}
+// resource "aws_route53_record" "www-staging" {
+//     zone_id = data.aws_route53_zone.public.zone_id
+//     name = "www.staging.ror.org"
+//     type = "CNAME"
+//     ttl = var.ttl
+//     records = [data.aws_lb.alb-staging.dns_name]
+// }
