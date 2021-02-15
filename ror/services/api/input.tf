@@ -74,6 +74,7 @@ data "template_file" "api-staging_task" {
   vars = {
     elastic_host_staging = var.elastic_host_staging
     elastic_port_staging = var.elastic_port_staging
+    index                = var.index_staging
     access_key         = var.access_key
     secret_key         = var.secret_key
     region             = var.region
