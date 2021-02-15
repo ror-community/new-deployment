@@ -53,12 +53,6 @@ data "aws_acm_certificate" "ror-staging" {
   most_recent = true
 }
 
-data "aws_acm_certificate" "ror-community" {
-  domain = "ror.community"
-  statuses = ["ISSUED"]
-  most_recent = true
-}
-
 data "aws_acm_certificate" "cloudfront" {
   provider = aws.use1
   domain = "ror.org"
