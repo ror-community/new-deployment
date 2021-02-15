@@ -166,7 +166,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = data.aws_acm_certificate.cloudfront.arn
+    acm_certificate_arn      = data.aws_acm_certificate.cloudfront-staging.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
