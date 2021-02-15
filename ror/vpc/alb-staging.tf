@@ -56,7 +56,7 @@ resource "aws_lb_listener_rule" "redirect_www-staging" {
   }
 }
 
-resource "aws_route53_record" "www" {
+resource "aws_route53_record" "www-staging" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "www.staging.ror.org"
     type = "CNAME"
