@@ -24,7 +24,7 @@ resource "aws_ecs_service" "api-staging-community" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb-staging
+    data.aws_lb_listener.alb
   ]
 }
 
