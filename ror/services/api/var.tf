@@ -33,7 +33,7 @@ variable "elastic_port_staging" {
   default = "80"
 }
 variable "index_staging" {
-  default = "staging-organizations"
+  default = "organizations"
 }
 variable "es_name" {
   default = "es"
