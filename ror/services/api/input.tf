@@ -26,6 +26,10 @@ data "aws_lb" "alb" {
   name = "lb"
 }
 
+data "aws_lb" "alb-staging" {
+  name = "lb-staging"
+}
+
 data "aws_lb_listener" "alb" {
   load_balancer_arn = data.aws_lb.alb.arn
   port = 443

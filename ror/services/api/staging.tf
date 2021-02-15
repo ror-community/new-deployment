@@ -24,7 +24,7 @@ resource "aws_ecs_service" "api-staging-community" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb
+    data.aws_lb_listener.alb-staging
   ]
 }
 
@@ -98,7 +98,7 @@ resource "aws_route53_record" "api-staging" {
     name = "api.staging.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb.dns_name]
+    records = [data.aws_lb.alb-staging.dns_name]
 }
 
 resource "aws_route53_record" "split-api-staging" {
@@ -106,7 +106,7 @@ resource "aws_route53_record" "split-api-staging" {
   name = "api.staging.ror.org"
   type = "CNAME"
   ttl = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-staging.dns_name]
 }
 
 resource "aws_service_discovery_service" "api-staging" {
