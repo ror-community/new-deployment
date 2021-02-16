@@ -1,5 +1,5 @@
-resource "aws_ecs_service" "api-staging-community" {
-  name = "api-staging-community"
+resource "aws_ecs_service" "api-staging" {
+  name = "api-staging"
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api-staging.arn
@@ -79,7 +79,7 @@ resource "aws_lb_listener_rule" "api-staging" {
 }
 
 resource "aws_cloudwatch_log_group" "api-staging" {
-  name = "/ecs/api-staging-community"
+  name = "/ecs/api-staging"
 }
 
 resource "aws_ecs_task_definition" "api-staging" {
