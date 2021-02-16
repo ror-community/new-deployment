@@ -37,7 +37,7 @@ resource "aws_lb_listener" "alb-staging" {
   certificate_arn   = data.aws_acm_certificate.ror-staging.arn
 
   default_action {
-    target_group_arn = data.aws_lb_target_group.api-community.id
+    target_group_arn = data.aws_lb_target_group.api-staging.id
     type             = "forward"
   }
 }
