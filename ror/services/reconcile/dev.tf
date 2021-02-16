@@ -1,5 +1,5 @@
-resource "aws_ecs_service" "reconcile-dev-community" {
-  name            = "reconcile-dev-community"
+resource "aws_ecs_service" "reconcile-dev" {
+  name            = "reconcile-dev"
   cluster         = data.aws_ecs_cluster.default.id
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.reconcile-dev-community.arn
@@ -15,8 +15,8 @@ resource "aws_ecs_service" "reconcile-dev-community" {
   // }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.reconcile-dev-community.id
-    container_name   = "reconcile-dev-community"
+    target_group_arn = aws_lb_target_group.reconcile-dev.id
+    container_name   = "reconcile-dev"
     container_port   = "80"
   }
 
@@ -25,8 +25,8 @@ resource "aws_ecs_service" "reconcile-dev-community" {
   ]
 }
 
-resource "aws_lb_target_group" "reconcile-dev-community" {
-  name        = "reconcile-dev-community"
+resource "aws_lb_target_group" "reconcile-dev" {
+  name        = "reconcile-dev"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -37,12 +37,12 @@ resource "aws_lb_target_group" "reconcile-dev-community" {
   }
 }
 
-resource "aws_lb_listener_rule" "reconcile-dev-community" {
+resource "aws_lb_listener_rule" "reconcile" {
   listener_arn = data.aws_lb_listener.alb.arn
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.reconcile-dev-community.arn
+    target_group_arn = aws_lb_target_group.reconcile-dev.arn
   }
 
   condition {
@@ -52,11 +52,11 @@ resource "aws_lb_listener_rule" "reconcile-dev-community" {
 }
 
 resource "aws_cloudwatch_log_group" "reconcile-dev" {
-  name = "/ecs/reconcile-dev-community"
+  name = "/ecs/reconcile-dev"
 }
 
-resource "aws_ecs_task_definition" "reconcile-dev-community" {
-  family                   = "reconcile-dev-community"
+resource "aws_ecs_task_definition" "reconcile-dev" {
+  family                   = "reconcile-dev"
   execution_role_arn       = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -74,7 +74,7 @@ resource "aws_route53_record" "reconcile-dev" {
   records = [data.aws_lb.alb.dns_name]
 }
 
-resource "aws_route53_record" "split-reconcile-dev" {
+resource "aws_route53_record" "split-reconcile" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name    = "reconcile.dev.ror.org"
   type    = "CNAME"
