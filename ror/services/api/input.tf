@@ -26,6 +26,10 @@ data "aws_lb" "alb" {
   name = "lb"
 }
 
+data "aws_lb" "alb-dev" {
+  name = "lb-dev"
+}
+
 data "aws_lb" "alb-staging" {
   name = "lb-staging"
 }

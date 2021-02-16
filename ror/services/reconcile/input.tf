@@ -23,17 +23,14 @@ data "aws_iam_role" "ecs_tasks_execution_role" {
 }
 
 data "aws_lb" "alb" {
-  arn  = var.lb_arn
   name = "lb"
 }
 
 data "aws_lb" "alb-dev" {
-  arn  = var.lb_arn
   name = "lb-dev"
 }
 
 data "aws_lb" "alb-staging" {
-  arn  = var.lb_arn
   name = "lb-staging"
 }
 
