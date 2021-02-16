@@ -1,5 +1,5 @@
 [{
-  "name": "api-staging-community",
+  "name": "api-staging",
   "image": "rorcommunity/ror-api:staging",
   "cpu": 512,
   "memory": 1024,
@@ -12,7 +12,7 @@
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {
-      "awslogs-group": "/ecs/api-staging-community",
+      "awslogs-group": "/ecs/api-staging",
       "awslogs-region": "eu-west-1",
       "awslogs-stream-prefix": "ecs"
     }
