@@ -25,6 +25,10 @@ variable "ror-reconcile-dev_tags" {
   type = "map"
 }
 
+variable "ror-reconcile-staging_tags" {
+  type = "map"
+}
+
 variable "public_key" {}
 
 variable "aws_service_discovery_private_dns_namespace_id" {}
