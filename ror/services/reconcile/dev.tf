@@ -37,8 +37,8 @@ resource "aws_lb_target_group" "reconcile-dev" {
   }
 }
 
-resource "aws_lb_listener_rule" "reconcile" {
-  listener_arn = data.aws_lb_listener.alb.arn
+resource "aws_lb_listener_rule" "reconcile-dev" {
+  listener_arn = data.aws_lb_listener.alb-dev.arn
 
   action {
     type             = "forward"
@@ -74,7 +74,7 @@ resource "aws_route53_record" "reconcile-dev" {
   records = [data.aws_lb.alb.dns_name]
 }
 
-resource "aws_route53_record" "split-reconcile" {
+resource "aws_route53_record" "split-reconcile-dev" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name    = "reconcile.dev.ror.org"
   type    = "CNAME"
