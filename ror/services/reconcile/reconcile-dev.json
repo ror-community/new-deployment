@@ -1,6 +1,6 @@
 [{
   "name": "reconcile-dev",
-  "image": "rorcommunity/ror-reconcile:dev",
+  "image": "rorcommunity/ror-reconciler:dev",
   "cpu": 512,
   "memory": 1024,
   "networkMode": "awsvpc",

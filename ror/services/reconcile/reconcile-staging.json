@@ -1,6 +1,6 @@
 [{
   "name": "reconcile-staging",
-  "image": "rorcommunity/ror-reconcile:staging",
+  "image": "rorcommunity/ror-reconciler:staging",
   "cpu": 512,
   "memory": 1024,
   "networkMode": "awsvpc",
