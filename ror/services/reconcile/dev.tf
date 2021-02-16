@@ -71,7 +71,7 @@ resource "aws_route53_record" "reconcile-dev" {
   name    = "reconcile.dev.ror.org"
   type    = "CNAME"
   ttl     = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_route53_record" "split-reconcile-dev" {
@@ -79,7 +79,7 @@ resource "aws_route53_record" "split-reconcile-dev" {
   name    = "reconcile.dev.ror.org"
   type    = "CNAME"
   ttl     = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 // resource "aws_service_discovery_service" "reconcile-dev-community" {

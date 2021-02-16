@@ -71,7 +71,7 @@ resource "aws_route53_record" "reconcile-staging" {
   name    = "reconcile.staging.ror.org"
   type    = "CNAME"
   ttl     = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-staging.dns_name]
 }
 
 resource "aws_route53_record" "split-reconcile-staging" {
@@ -79,7 +79,7 @@ resource "aws_route53_record" "split-reconcile-staging" {
   name    = "reconcile.staging.ror.org"
   type    = "CNAME"
   ttl     = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-staging.dns_name]
 }
 
 // resource "aws_service_discovery_service" "reconcile-dev-community" {
