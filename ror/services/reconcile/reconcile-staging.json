@@ -12,7 +12,7 @@
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {
-      "awslogs-group": "/ecs/reconcile-dev",
+      "awslogs-group": "/ecs/reconcile-staging",
       "awslogs-region": "eu-west-1",
       "awslogs-stream-prefix": "ecs"
     }
