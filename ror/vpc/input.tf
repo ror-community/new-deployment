@@ -33,6 +33,10 @@ data "aws_lb" "alb-staging" {
   name = "lb-staging"
 }
 
+data "aws_lb" "alb-dev" {
+  name = "lb-dev"
+}
+
 data "aws_lb" "alb-community" {
   name = "lb-community"
 }
@@ -43,6 +47,10 @@ data "aws_lb_target_group" "api-community" {
 
 data "aws_lb_target_group" "api-staging" {
   name = "api-staging"
+}
+
+data "aws_lb_target_group" "api-dev" {
+  name = "api-dev"
 }
 
 data "aws_acm_certificate" "ror" {
