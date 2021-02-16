@@ -65,20 +65,6 @@ resource "aws_lb_listener_rule" "redirect-api-staging" {
 }
 
 resource "aws_lb_listener_rule" "api-staging" {
-  listener_arn = data.aws_lb_listener.alb.arn
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.api-staging.arn
-  }
-
-  condition {
-    field  = "host-header"
-    values = [aws_route53_record.api-staging.name]
-  }
-}
-
-resource "aws_lb_listener_rule" "api-staging" {
   listener_arn = data.aws_lb_listener.alb-staging.arn
 
   action {
