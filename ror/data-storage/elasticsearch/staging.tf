@@ -1,5 +1,5 @@
-resource "aws_elasticsearch_domain" "elasticsearch-dev" {
-  domain_name           = "elasticsearch-dev"
+resource "aws_elasticsearch_domain" "elasticsearch-staging" {
+  domain_name           = "elasticsearch-staging"
   elasticsearch_version = "6.3"
 
   cluster_config {
@@ -27,14 +27,14 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   }
 
   tags = {
-    Domain = "elasticsearch-dev"
+    Domain = "elasticsearch-staging"
   }
 }
 
-resource "aws_route53_record" "elasticsearch-dev" {
+resource "aws_route53_record" "elasticsearch-staging" {
    zone_id = data.aws_route53_zone.internal.zone_id
-   name = "elasticsearch.dev.ror.org"
+   name = "elasticsearch.staging.ror.org"
    type = "CNAME"
    ttl = var.ttl
-   records = [aws_elasticsearch_domain.elasticsearch-dev.endpoint]
+   records = [aws_elasticsearch_domain.elasticsearch-staging.endpoint]
 }
