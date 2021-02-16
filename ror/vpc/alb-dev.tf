@@ -67,5 +67,5 @@ resource "aws_route53_record" "www-dev" {
     name = "www.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb-dev.dns_name]
+    records = [data.aws_lb.alb.dns_name]
 }
