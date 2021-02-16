@@ -1,8 +1,8 @@
-resource "aws_ecs_service" "reconcile-dev" {
-  name            = "reconcile-dev"
+resource "aws_ecs_service" "reconcile-staging" {
+  name            = "reconcile-staging"
   cluster         = data.aws_ecs_cluster.default.id
   launch_type     = "FARGATE"
-  task_definition = aws_ecs_task_definition.reconcile-dev.arn
+  task_definition = aws_ecs_task_definition.reconcile-staging.arn
   desired_count   = 1
 
   network_configuration {
@@ -15,18 +15,18 @@ resource "aws_ecs_service" "reconcile-dev" {
   // }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.reconcile-dev.id
-    container_name   = "reconcile-dev"
+    target_group_arn = aws_lb_target_group.reconcile-staging.id
+    container_name   = "reconcile-staging"
     container_port   = "80"
   }
 
   depends_on = [
-    data.aws_lb_listener.alb
+    data.aws_lb_listener.alb-staging
   ]
 }
 
-resource "aws_lb_target_group" "reconcile-dev" {
-  name        = "reconcile-dev"
+resource "aws_lb_target_group" "reconcile-staging" {
+  name        = "reconcile-staging"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -37,46 +37,46 @@ resource "aws_lb_target_group" "reconcile-dev" {
   }
 }
 
-resource "aws_lb_listener_rule" "reconcile" {
-  listener_arn = data.aws_lb_listener.alb.arn
+resource "aws_lb_listener_rule" "reconcile-staging" {
+  listener_arn = data.aws_lb_listener.alb-staging.arn
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.reconcile-dev.arn
+    target_group_arn = aws_lb_target_group.reconcile-staging.arn
   }
 
   condition {
     field  = "host-header"
-    values = [aws_route53_record.reconcile-dev.name]
+    values = [aws_route53_record.reconcile-staging.name]
   }
 }
 
-resource "aws_cloudwatch_log_group" "reconcile-dev" {
-  name = "/ecs/reconcile-dev"
+resource "aws_cloudwatch_log_group" "reconcile-staging" {
+  name = "/ecs/reconcile-staging"
 }
 
-resource "aws_ecs_task_definition" "reconcile-dev" {
-  family                   = "reconcile-dev"
+resource "aws_ecs_task_definition" "reconcile-staging" {
+  family                   = "reconcile-staging"
   execution_role_arn       = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "1024"
 
-  container_definitions = data.template_file.reconcile-dev_task.rendered
+  container_definitions = data.template_file.reconcile-staging_task.rendered
 }
 
-resource "aws_route53_record" "reconcile-dev" {
+resource "aws_route53_record" "reconcile-staging" {
   zone_id = data.aws_route53_zone.public.zone_id
-  name    = "reconcile.dev.ror.org"
+  name    = "reconcile.staging.ror.org"
   type    = "CNAME"
   ttl     = var.ttl
   records = [data.aws_lb.alb.dns_name]
 }
 
-resource "aws_route53_record" "split-reconcile" {
+resource "aws_route53_record" "split-reconcile-staging" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name    = "reconcile.dev.ror.org"
+  name    = "reconcile.staging.ror.org"
   type    = "CNAME"
   ttl     = var.ttl
   records = [data.aws_lb.alb.dns_name]
