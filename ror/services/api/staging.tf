@@ -69,7 +69,7 @@ resource "aws_lb_listener_rule" "api-staging" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api-staging-community.arn
+    target_group_arn = aws_lb_target_group.api-staging.arn
   }
 
   condition {
