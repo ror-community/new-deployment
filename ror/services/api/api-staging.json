@@ -58,10 +58,6 @@
       "value": "${sentry_dsn}"
     },
     {
-      "name": "INDEX",
-      "value": "${index}"
-    },
-    {
       "name": "GITHUB_VERSION",
       "value": "${version}"
     }
