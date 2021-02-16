@@ -40,6 +40,11 @@ data "aws_lb_listener" "alb-http" {
   port = 80
 }
 
+data "aws_lb_listener" "alb-staging" {
+  load_balancer_arn = data.aws_lb.alb-staging.arn
+  port = 443
+}
+
 data "template_file" "api_task" {
   template = file("api.json")
 
@@ -78,7 +83,6 @@ data "template_file" "api-staging_task" {
   vars = {
     elastic_host_staging = var.elastic_host_staging
     elastic_port_staging = var.elastic_port_staging
-    index                = var.index_staging
     access_key         = var.access_key
     secret_key         = var.secret_key
     region             = var.region
