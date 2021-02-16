@@ -1,5 +1,5 @@
 [{
-  "name": "api-dev-community",
+  "name": "api-dev",
   "image": "rorcommunity/ror-api:dev",
   "cpu": 512,
   "memory": 1024,
@@ -12,7 +12,7 @@
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {
-      "awslogs-group": "/ecs/api-dev-community",
+      "awslogs-group": "/ecs/api-dev",
       "awslogs-region": "eu-west-1",
       "awslogs-stream-prefix": "ecs"
     }

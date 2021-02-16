@@ -1,5 +1,5 @@
-resource "aws_ecs_service" "api-dev-community" {
-  name = "api-dev-community"
+resource "aws_ecs_service" "api-dev" {
+  name = "api-dev"
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api-dev.arn
@@ -18,8 +18,8 @@ resource "aws_ecs_service" "api-dev-community" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.api-dev-community.id
-    container_name   = "api-dev-community"
+    target_group_arn = aws_lb_target_group.api-dev.id
+    container_name   = "api-dev"
     container_port   = "80"
   }
 
@@ -28,8 +28,8 @@ resource "aws_ecs_service" "api-dev-community" {
   ]
 }
 
-resource "aws_lb_target_group" "api-dev-community" {
-  name     = "api-dev-community"
+resource "aws_lb_target_group" "api-dev" {
+  name     = "api-dev"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -69,7 +69,7 @@ resource "aws_lb_listener_rule" "api-dev" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api-dev-community.arn
+    target_group_arn = aws_lb_target_group.api-dev.arn
   }
 
   condition {
@@ -79,7 +79,7 @@ resource "aws_lb_listener_rule" "api-dev" {
 }
 
 resource "aws_cloudwatch_log_group" "api-dev" {
-  name = "/ecs/api-dev-community"
+  name = "/ecs/api-dev"
 }
 
 resource "aws_ecs_task_definition" "api-dev" {
