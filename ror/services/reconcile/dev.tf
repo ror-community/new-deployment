@@ -21,7 +21,7 @@ resource "aws_ecs_service" "reconcile-dev" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb
+    data.aws_lb_listener.alb-dev
   ]
 }
 
