@@ -64,19 +64,19 @@ resource "aws_lb_listener_rule" "redirect-api-dev" {
   }
 }
 
-resource "aws_lb_listener_rule" "api-dev" {
-  listener_arn = data.aws_lb_listener.alb.arn
+// resource "aws_lb_listener_rule" "api-dev" {
+//   listener_arn = data.aws_lb_listener.alb.arn
 
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.api-dev.arn
-  }
+//   action {
+//     type             = "forward"
+//     target_group_arn = aws_lb_target_group.api-dev.arn
+//   }
 
-  condition {
-    field  = "host-header"
-    values = [aws_route53_record.api-dev.name]
-  }
-}
+//   condition {
+//     field  = "host-header"
+//     values = [aws_route53_record.api-dev.name]
+//   }
+// }
 
 resource "aws_cloudwatch_log_group" "api-dev" {
   name = "/ecs/api-dev"
