@@ -41,6 +41,10 @@ data "aws_lb_target_group" "api-community" {
   name = "api-community"
 }
 
+data "aws_lb_target_group" "api-staging" {
+  name = "api-staging"
+}
+
 data "aws_acm_certificate" "ror" {
   domain = "ror.org"
   statuses = ["ISSUED"]
