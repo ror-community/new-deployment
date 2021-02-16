@@ -1,5 +1,5 @@
 [{
-  "name": "reconcile-dev-community",
+  "name": "reconcile-dev",
   "image": "rorcommunity/ror-reconcile:dev",
   "cpu": 512,
   "memory": 1024,
