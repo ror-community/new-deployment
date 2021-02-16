@@ -18,8 +18,8 @@ resource "aws_ecs_service" "api-staging-community" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.api-staging-community.id
-    container_name   = "api-staging-community"
+    target_group_arn = aws_lb_target_group.api-staging.id
+    container_name   = "api-staging"
     container_port   = "80"
   }
 
