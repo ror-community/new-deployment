@@ -69,6 +69,8 @@ data "template_file" "reconcile-dev_task" {
     secret_key  = var.secret_key
     region      = var.region
     public_key  = var.public_key
+    ror_api     = var.ror_api_dev
+    ror_recon   = var.ror_recon_dev
     version     = var.ror-reconcile-dev_tags["sha"]
   }
 }
@@ -81,6 +83,8 @@ data "template_file" "reconcile-staging_task" {
     secret_key  = var.secret_key
     region      = var.region
     public_key  = var.public_key
+    ror_api     = var.ror_api_staging
+    ror_recon   = var.ror_recon_staging
     version     = var.ror-reconcile-staging_tags["sha"]
   }
 }

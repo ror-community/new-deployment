@@ -42,6 +42,14 @@
       "value": "${public_key}"
     },
     {
+      "name": "ROR_API",
+      "value": "${ror_api}"
+    },
+    {
+      "name": "ROR_RECON",
+      "value": "${ror_recon}"
+    },
+    {
       "name": "GITHUB_VERSION",
       "value": "${version}"
     }

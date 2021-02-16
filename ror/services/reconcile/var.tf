@@ -34,3 +34,16 @@ variable "public_key" {}
 variable "aws_service_discovery_private_dns_namespace_id" {}
 
 variable "lb_arn" {}
+
+variable "ror_api_dev" { 
+  default = "https://api.dev.ror.org"
+}
+variable "ror_api_staging" { 
+  default = "https://api.staging.ror.org"
+}
+variable "ror_recon_dev" { 
+  default = "https://reconcile.dev.ror.org"
+}
+variable "ror_recon_staging" { 
+  default = "https://reconcile.staging.ror.org"
+}
