@@ -39,11 +39,11 @@ variable "ror_api_dev" {
   default = "https://api.dev.ror.org"
 }
 variable "ror_api_staging" { 
-  default = "https://api.staging.ror.org"
+  default = "https://api.ror.org"
 }
 variable "ror_recon_dev" { 
   default = "https://reconcile.dev.ror.org"
 }
 variable "ror_recon_staging" { 
-  default = "https://reconcile.staging.ror.org"
+  default = "https://reconcile.ror.org"
 }
