@@ -3,7 +3,7 @@ resource "aws_ecs_service" "api-staging" {
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api-staging.arn
-  desired_count = 1
+  desired_count = 0
 
   # give container time to start up
   health_check_grace_period_seconds = 600
@@ -118,7 +118,7 @@ resource "aws_service_discovery_service" "api-staging" {
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.internal.id
-    
+
     dns_records {
       ttl = 300
       type = "A"
