@@ -3,7 +3,7 @@ resource "aws_ecs_service" "api-dev" {
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api-dev.arn
-  desired_count = 0
+  desired_count = 1
 
   # give container time to start up
   health_check_grace_period_seconds = 600
@@ -84,7 +84,7 @@ resource "aws_route53_record" "api-dev" {
     name = "api.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb.dns_name]
+    records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
@@ -92,7 +92,7 @@ resource "aws_route53_record" "split-api-dev" {
   name = "api.dev.ror.org"
   type = "CNAME"
   ttl = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_service_discovery_service" "api-dev" {
