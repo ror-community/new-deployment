@@ -49,6 +49,11 @@ data "aws_lb_listener" "alb-staging" {
   port = 443
 }
 
+data "aws_lb_listener" "alb-dev" {
+  load_balancer_arn = data.aws_lb.alb-dev.arn
+  port = 443
+}
+
 data "template_file" "api_task" {
   template = file("api.json")
 
