@@ -3,7 +3,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   elasticsearch_version = "6.3"
 
   cluster_config {
-    instance_type = "t3.medium.elasticsearch"
+    instance_type = "t5.large.elasticsearch"
     instance_count = 1
   }
 
