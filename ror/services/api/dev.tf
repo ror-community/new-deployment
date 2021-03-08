@@ -24,7 +24,7 @@ resource "aws_ecs_service" "api-dev" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb
+    data.aws_lb_listener.alb-dev
   ]
 }
 
@@ -40,7 +40,7 @@ resource "aws_lb_target_group" "api-dev" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb
+    data.aws_lb_listener.alb-dev
   ]
 }
 
@@ -84,7 +84,7 @@ resource "aws_route53_record" "api-dev" {
     name = "api.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb.dns_name]
+    records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
@@ -92,7 +92,7 @@ resource "aws_route53_record" "split-api-dev" {
   name = "api.dev.ror.org"
   type = "CNAME"
   ttl = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_service_discovery_service" "api-dev" {
@@ -104,7 +104,7 @@ resource "aws_service_discovery_service" "api-dev" {
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.internal.id
-    
+
     dns_records {
       ttl = 300
       type = "A"

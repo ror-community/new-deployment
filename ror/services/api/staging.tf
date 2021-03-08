@@ -118,7 +118,7 @@ resource "aws_service_discovery_service" "api-staging" {
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.internal.id
-    
+
     dns_records {
       ttl = 300
       type = "A"
