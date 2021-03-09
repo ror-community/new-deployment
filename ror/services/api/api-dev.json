@@ -2,7 +2,7 @@
   "name": "api-dev",
   "image": "rorcommunity/ror-api:dev",
   "cpu": 512,
-  "memory": 1024,
+  "memory": 4096,
   "networkMode": "awsvpc",
   "essential": true,
   "portMappings": [{

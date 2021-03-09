@@ -74,7 +74,7 @@ resource "aws_ecs_task_definition" "api-dev" {
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = "512"
-  memory = "1024"
+  memory = "4096"
 
   container_definitions =  data.template_file.api-dev_task.rendered
 }
