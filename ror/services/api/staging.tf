@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "api-staging" {
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = "512"
-  memory = "1024"
+  memory = "2048"
 
   container_definitions =  data.template_file.api-staging_task.rendered
 }
