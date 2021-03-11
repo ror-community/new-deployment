@@ -1,6 +1,6 @@
 [{
   "name": "api-staging",
-  "image": "rorcommunity/ror-api:dev",
+  "image": "rorcommunity/ror-api:staging",
   "cpu": 512,
   "memory": 2048,
   "networkMode": "awsvpc",
