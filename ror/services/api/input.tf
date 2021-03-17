@@ -66,7 +66,7 @@ data "template_file" "api_task" {
     public_key         = var.public_key
     sentry_dsn         = var.sentry_dsn
     django_secret_key  = var.django_secret_key
-    version            = var.ror-api_tags["version"]
+    version            = "1.3.1"
   }
 }
 
