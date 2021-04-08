@@ -37,6 +37,8 @@ resource "aws_lb_target_group" "api-community" {
 
   health_check {
     path = "/heartbeat"
+    interval = 300
+    timeout = 120
   }
 
   depends_on = [
