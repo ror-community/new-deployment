@@ -58,6 +58,6 @@ resource "aws_wafregional_web_acl" "default" {
 }
 
 resource "aws_wafregional_web_acl_association" "default" {
-  resource_arn = data.aws_lb.default.arn
+  resource_arn = data.aws_lb.alb.arn
   web_acl_id   = aws_wafregional_web_acl.default.id
 }
