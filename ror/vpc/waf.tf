@@ -7,6 +7,24 @@ resource "aws_wafregional_ipset" "nat" {
   }
 }
 
+resource "aws_wafregional_ipset" "whitelist" {
+  name = "whitelistIPSet"
+
+  ip_set_descriptor {
+    type  = "IPV4"
+    value = var.waf_whitelisted_ip
+  }
+}
+
+resource "aws_wafregional_ipset" "blacklist" {
+  name = "blacklistIPSet"
+
+  ip_set_descriptor {
+    type  = "IPV4"
+    value = var.waf_blacklisted_ip
+  }
+}
+
 resource "aws_wafregional_rate_based_rule" "rate" {
   depends_on  = [aws_wafregional_ipset.nat, aws_wafregional_ipset.whitelist]
   name        = "natWAFRule"
@@ -25,6 +43,17 @@ resource "aws_wafregional_rate_based_rule" "rate" {
     data_id = aws_wafregional_ipset.whitelist.id
     negated = true
     type    = "IPMatch"
+  }
+}
+
+resource "aws_wafregional_rule" "block" {
+  name        = "blockWAFRule"
+  metric_name = "blockWAFRule"
+
+  predicate {
+    type    = "IPMatch"
+    data_id = aws_wafregional_ipset.blacklist.id
+    negated = false
   }
 }
 
@@ -57,7 +86,14 @@ resource "aws_wafregional_web_acl" "default" {
   }
 }
 
-resource "aws_wafregional_web_acl_association" "default" {
-  resource_arn = data.aws_lb.alb.arn
+resource "aws_wafregional_web_acl_association" "dev" {
+  resource_arn = data.aws_lb.alb-dev.arn
   web_acl_id   = aws_wafregional_web_acl.default.id
 }
+
+resource "aws_wafregional_web_acl_association" "staging" {
+  resource_arn = data.aws_lb.alb-staging.arn
+  web_acl_id   = aws_wafregional_web_acl.default.id
+}
+
+// TO DO: APPLY WAF ACL TO PROD
