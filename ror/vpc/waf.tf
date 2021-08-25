@@ -1,3 +1,5 @@
+// TODO: Create WAF module with inputs for different envs
+
 resource "aws_wafregional_ipset" "nat" {
   name = "natIPSet"
 
