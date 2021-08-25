@@ -3,7 +3,7 @@ resource "aws_wafregional_ipset" "nat" {
 
   ip_set_descriptor {
     type  = "IPV4"
-    value = var.vpc_cidr
+    value = var.waf_nat_ip
   }
 }
 
