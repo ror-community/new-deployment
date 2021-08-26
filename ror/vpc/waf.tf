@@ -88,13 +88,8 @@ resource "aws_wafregional_web_acl" "default" {
   }
 }
 
-resource "aws_wafregional_web_acl_association" "dev" {
-  resource_arn = data.aws_lb.lb-dev.arn
-  web_acl_id   = aws_wafregional_web_acl.default.id
-}
-
 resource "aws_wafregional_web_acl_association" "staging" {
-  resource_arn = data.aws_lb.lb-staging.arn
+  resource_arn = data.aws_lb.alb-staging.arn
   web_acl_id   = aws_wafregional_web_acl.default.id
 }
 
