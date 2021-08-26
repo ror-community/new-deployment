@@ -93,4 +93,7 @@ resource "aws_wafregional_web_acl_association" "staging" {
   web_acl_id   = aws_wafregional_web_acl.default.id
 }
 
-// TO DO: APPLY WAF ACL TO PROD
+resource "aws_wafregional_web_acl_association" "prod" {
+  resource_arn = data.aws_lb.alb.arn
+  web_acl_id   = aws_wafregional_web_acl.default.id
+}
