@@ -1,7 +1,7 @@
 // manage requests to ror.community
 module "alb-community" {
   source                        = "terraform-aws-modules/alb/aws"
-  version                       = "~> v5.0"
+  version                       = "5.13.0"
   name                          = "lb-community"
   load_balancer_type            = "application"
   security_groups               = [aws_security_group.lb_sg.id]
@@ -19,7 +19,7 @@ resource "aws_lb_listener" "alb-http-community" {
   protocol          = "HTTP"
 
   default_action {
-    type = "redirect"  
+    type = "redirect"
 
     redirect {
       host        = "ror.community"

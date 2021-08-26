@@ -1,6 +1,6 @@
 module "alb-dev" {
   source                        = "terraform-aws-modules/alb/aws"
-  version                       = "~> v5.0"
+  version                       = "5.13.0"
   name                          = "lb-dev"
   load_balancer_type            = "application"
   security_groups               = [aws_security_group.lb_sg.id]
@@ -18,7 +18,7 @@ resource "aws_lb_listener" "alb-http-dev" {
   protocol          = "HTTP"
 
   default_action {
-    type = "redirect"  
+    type = "redirect"
 
     redirect {
       host        = "dev.ror.org"
