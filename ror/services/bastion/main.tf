@@ -11,17 +11,6 @@ resource "aws_instance" "bastion" {
     }
 }
 
-resource "aws_instance" "test" {
-    ami = var.ami["eu-west-1"]
-    instance_type = "t2.micro"
-    vpc_security_group_ids = [data.aws_security_group.private_security_group.id]
-    subnet_id = data.aws_subnet.private_subnet.id
-    key_name = var.key_name
-    tags = {
-        Name = "Test"
-    }
-}
-
 resource "aws_eip" "bastion" {
   vpc = "true"
 }
