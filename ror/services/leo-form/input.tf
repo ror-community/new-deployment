@@ -13,9 +13,3 @@ data "aws_route53_zone" "internal" {
   name         = "ror.org"
   private_zone = true
 }
-
-data "aws_acm_certificate" "cloudfront" {
-  provider = aws.use1
-  domain = "ror.org"
-  statuses = ["ISSUED"]
-}
