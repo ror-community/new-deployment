@@ -19,10 +19,6 @@ resource "aws_cloudfront_distribution" "leo-dev" {
   origin {
     domain_name = aws_s3_bucket.leo-dev.bucket_domain_name
     origin_id   = "leo.dev.ror.org"
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.stage_pidservices_org.cloudfront_access_identity_path
-    }
   }
 
   enabled             = true
@@ -61,7 +57,7 @@ resource "aws_cloudfront_distribution" "leo-dev" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = data.aws_acm_certificate.cloudfront.arn
+    acm_certificate_arn      = data.aws_acm_certificate.ror.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
