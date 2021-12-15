@@ -14,9 +14,8 @@ data "aws_route53_zone" "internal" {
   private_zone = true
 }
 
-data "aws_acm_certificate" "cloudfront-stage" {
-  provider = "aws.use1"
-  domain = "*.stage.datacite.org"
+data "aws_acm_certificate" "ror" {
+  domain = "ror.org"
   statuses = ["ISSUED"]
   most_recent = true
 }
