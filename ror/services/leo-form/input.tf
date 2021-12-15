@@ -22,3 +22,9 @@ data "aws_acm_certificate" "cloudfront" {
   domain = "ror.org"
   statuses = ["ISSUED"]
 }
+
+data "aws_acm_certificate" "cloudfront-staging" {
+  provider = aws.use1
+  domain = "staging.ror.org"
+  statuses = ["ISSUED"]
+}
