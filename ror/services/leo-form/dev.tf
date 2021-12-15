@@ -57,7 +57,7 @@ resource "aws_cloudfront_distribution" "leo-dev" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = data.aws_acm_certificate.ror.arn
+    acm_certificate_arn      = data.aws_acm_certificate.cloudfront.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
