@@ -64,9 +64,9 @@ resource "aws_cloudfront_distribution" "leo-dev" {
 }
 
 resource "aws_route53_record" "leo-dev" {
-   zone_id = "${data.aws_route53_zone.ror.zone_id}"
+   zone_id = data.aws_route53_zone.ror.zone_id
    name = "leo.dev.ror.org"
    type = "CNAME"
-   ttl = "${var.ttl}"
+   ttl = var.ttl
    records = ["${aws_cloudfront_distribution.leo-dev.domain_name}"]
 }
