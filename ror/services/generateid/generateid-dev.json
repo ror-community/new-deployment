@@ -23,7 +23,7 @@
         "environment": [
             {
                 "name": "TOKEN",
-                "value": "${token_dev}"
+                "value": "${token}"
             },
             {
                 "name": "ROUTE_USER",
@@ -31,11 +31,11 @@
             },
             {
                 "name": "ROR_API_URL",
-                "value": "${ror_api_url_dev}"
+                "value": "${ror_api_url}"
             },
             {
                 "name": "ALLOWED_ORIGINS",
-                "value": "${allowed_origins_dev}"
+                "value": "${allowed_origins}"
             },
             {
                 "name": "GITHUB_VERSION",
