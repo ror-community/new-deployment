@@ -57,7 +57,7 @@ resource "aws_ecs_task_definition" "generateid-dev" {
 
   container_definitions = templatefile("generateid-dev.json", {
         token = var.token
-        router_user = var.router_user
+        route_user = var.route_user
         ror_api_url = var.ror_api_url
         allowed_origins = var.allowed_origins
         version = var.generateid-dev_tags["sha"]
