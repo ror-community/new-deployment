@@ -77,6 +77,12 @@ resource "aws_route53_record" "split-api" {
   records = [data.aws_lb.alb.dns_name]
 }
 
+# Service Discovery Namepace
+resource "aws_service_discovery_private_dns_namespace" "internal" {
+  name = "local"
+  vpc = var.vpc_id
+}
+
 resource "aws_service_discovery_service" "api" {
   name = "api"
 

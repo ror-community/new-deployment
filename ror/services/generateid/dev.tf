@@ -80,11 +80,6 @@ resource "aws_route53_record" "split-generateid-dev" {
   records = [data.aws_lb.alb-dev.dns_name]
 }
 
-resource "aws_service_discovery_private_dns_namespace" "internal" {
-  name = "local"
-  vpc = var.vpc_id
-}
-
 resource "aws_service_discovery_service" "generateid-dev" {
   name = "generateid.dev"
 
