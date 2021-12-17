@@ -44,6 +44,27 @@ resource "aws_lb_target_group" "generateid-dev" {
   ]
 }
 
+
+resource "aws_lb_listener_rule" "redirect-generateid-dev" {
+  listener_arn = data.aws_lb_listener.alb-http.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "generateid.dev.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
+    }
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["generateid.dev.ror.org"]
+  }
+}
+
 resource "aws_cloudwatch_log_group" "generateid-dev" {
   name = "/ecs/generateid-dev"
 }
