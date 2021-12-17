@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "generateid-dev" {
 
 resource "aws_route53_record" "generateid-dev" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name = "generatedid.dev.ror.org"
+    name = "generateid.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
     records = [data.aws_lb.alb-dev.dns_name]
@@ -74,7 +74,7 @@ resource "aws_route53_record" "generateid-dev" {
 
 resource "aws_route53_record" "split-generateid-dev" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name = "generatedid.dev.ror.org"
+  name = "generateid.dev.ror.org"
   type = "CNAME"
   ttl = var.ttl
   records = [data.aws_lb.alb-dev.dns_name]
@@ -86,7 +86,7 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
 }
 
 resource "aws_service_discovery_service" "generateid-dev" {
-  name = "generatedid.dev"
+  name = "generateid.dev"
 
   health_check_custom_config {
     failure_threshold = 3
