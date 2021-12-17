@@ -15,6 +15,8 @@ variable "private_subnet_ids" {
 }
 variable "private_security_group_id" {}
 
+variable "namespace_id" {}
+
 variable "generateid_tags" {
   type = "map"
 }

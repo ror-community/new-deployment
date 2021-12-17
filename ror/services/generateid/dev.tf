@@ -93,7 +93,7 @@ resource "aws_service_discovery_service" "generateid-dev" {
   }
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
+    namespace_id = var.namespace_id
 
     dns_records {
       ttl = 300
