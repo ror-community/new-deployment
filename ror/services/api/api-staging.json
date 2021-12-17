@@ -63,7 +63,7 @@
     },
     {
       "name": "TOKEN",
-      "value": "${token_staging}"
+      "value": "${token}"
     },
     {
       "name": "route_user",
