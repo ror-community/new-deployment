@@ -56,6 +56,14 @@
     {
       "name": "SENTRY_DSN",
       "value": "${sentry_dsn}"
+    },
+    {
+      "name": "TOKEN",
+      "value": "${token}"
+    },
+    {
+      "name": "route_user",
+      "value": "${route_user}"
     }
   ]
 }]

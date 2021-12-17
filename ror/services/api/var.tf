@@ -53,3 +53,9 @@ variable "sentry_dsn" {}
 variable "cloudfront_dns_name" {}
 
 variable "django_secret_key" {}
+
+variable "token" {}
+variable "token_dev" {}
+variable "token_staging" {}
+
+variable "route_user" {}

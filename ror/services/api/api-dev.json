@@ -60,6 +60,14 @@
     {
       "name": "GITHUB_VERSION",
       "value": "${version}"
+    },
+    {
+      "name": "TOKEN",
+      "value": "${token_dev}"
+    },
+    {
+      "name": "route_user",
+      "value": "${route_user}"
     }
   ]
 }]
