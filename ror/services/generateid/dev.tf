@@ -23,8 +23,7 @@ resource "aws_ecs_service" "generateid-dev" {
   }
 
   depends_on = [
-    data.aws_lb_listener.alb-dev,
-    aws_lb_target_group.generateid-dev
+    data.aws_lb_listener.alb-dev
   ]
 }
 
@@ -38,30 +37,19 @@ resource "aws_lb_target_group" "generateid-dev" {
   health_check {
     path = "/heartbeat"
   }
-
-  depends_on = [
-    data.aws_lb_listener.alb-dev
-  ]
 }
 
-
-resource "aws_lb_listener_rule" "redirect-generateid-dev" {
-  listener_arn = data.aws_lb_listener.alb-http.arn
+resource "aws_lb_listener_rule" "generateid-dev" {
+  listener_arn = data.aws_lb_listener.alb-dev.arn
 
   action {
-    type = "redirect"
-
-    redirect {
-      host        = "generateid.dev.ror.org"
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_302"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.generateid-dev.arn
   }
 
   condition {
     field  = "host-header"
-    values = ["generateid.dev.ror.org"]
+    values = [aws_route53_record.generateid-dev.name]
   }
 }
 
