@@ -69,7 +69,7 @@ resource "aws_ecs_task_definition" "generateid-dev" {
         token = var.token_dev
         route_user = var.route_user
         ror_api_url = var.ror_api_url_dev
-        allowed_origins = var.allowed_origins
+        allowed_origins = var.allowed_origins_dev
         version = var.generateid-dev_tags["sha"]
   })
 }
