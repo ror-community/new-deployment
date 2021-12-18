@@ -9,6 +9,14 @@ resource "aws_s3_bucket" "leo-dev" {
     index_document = "index.html"
   }
 
+  cors_rule {
+      allowed_headers = ["*"]
+      allowed_methods = ["GET", "HEAD"]
+      allowed_origins = ["*"]
+      expose_headers  = ["ETag"]
+      max_age_seconds = 3000
+  }
+
   tags = {
     Name = "leoform-dev"
   }
@@ -38,6 +46,8 @@ resource "aws_cloudfront_distribution" "leo-dev" {
       cookies {
         forward = "none"
       }
+
+      headers = ["Host", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method", "Access-Control-Allow-Origin"]
     }
 
     viewer_protocol_policy = "redirect-to-https"
