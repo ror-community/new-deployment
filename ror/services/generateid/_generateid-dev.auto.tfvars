@@ -1,4 +1,4 @@
 generateid-dev_tags = {
-  sha = "38aa3a5"
+  sha = "8c4b358"
   version = ""
 }
