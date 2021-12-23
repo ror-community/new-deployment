@@ -1,7 +1,7 @@
 [
     {
         "name": "generateid-dev",
-        "image": "rorcommunity/generate-id",
+        "image": "rorcommunity/generate-id:${version}",
         "cpu": 256,
         "memory": 512,
         "networkMode": "awsvpc",
