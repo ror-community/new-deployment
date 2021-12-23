@@ -18,7 +18,7 @@ resource "aws_ecs_service" "generateid-dev" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.generateid-dev.id
-    container_name   = "generateid-dev"
+    container_name   = "generateid"
     container_port   = "80"
   }
 

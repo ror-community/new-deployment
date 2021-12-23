@@ -18,7 +18,7 @@ resource "aws_ecs_service" "generateid-staging" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.generateid-staging.id
-    container_name   = "generateid-staging"
+    container_name   = "generateid"
     container_port   = "80"
   }
 
