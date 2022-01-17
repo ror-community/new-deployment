@@ -111,3 +111,11 @@ resource "aws_service_discovery_service" "api-dev" {
     }
   }
 }
+
+resource "aws_s3_bucket" "data-dev" {
+  bucket = "data.dev.ror.org"
+  acl    = "private"
+  tags = {
+      Name = "data-dev"
+  }
+}
