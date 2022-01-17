@@ -125,3 +125,11 @@ resource "aws_service_discovery_service" "api-staging" {
     }
   }
 }
+
+resource "aws_s3_bucket" "data-staging" {
+  bucket = "data.staging.ror.org"
+  acl    = "private"
+  tags = {
+      Name = "data-staging"
+  }
+}
