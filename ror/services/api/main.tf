@@ -99,3 +99,11 @@ resource "aws_service_discovery_service" "api" {
     }
   }
 }
+
+ resource "aws_s3_bucket" "data-prod" {
+  bucket = "data.ror.org"
+  acl    = "private"
+  tags = {
+      Name = "data-prod"
+  }
+}
