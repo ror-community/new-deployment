@@ -68,6 +68,7 @@ data "template_file" "api_task" {
     django_secret_key  = var.django_secret_key
     token              = var.token
     route_user         = var.route_user
+    data_store         = var.data_store
     version            = var.ror-api_tags["version"]
   }
 }
@@ -86,6 +87,7 @@ data "template_file" "api-dev_task" {
     django_secret_key  = var.django_secret_key
     token              = var.token_dev
     route_user         = var.route_user
+    data_store         = var.data_store_dev
     version            = var.ror-api-dev_tags["sha"]
   }
 }
@@ -104,6 +106,7 @@ data "template_file" "api-staging_task" {
     django_secret_key  = var.django_secret_key
     token              = var.token_staging
     route_user         = var.route_user
+    data_store         = var.data_store_staging
     version            = var.ror-api-staging_tags["sha"]
   }
 }

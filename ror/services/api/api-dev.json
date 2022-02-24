@@ -66,6 +66,10 @@
       "value": "${token}"
     },
     {
+      "name": "DATA_STORE",
+      "value": "${data_store}"
+    },
+    {
       "name": "ROUTE_USER",
       "value": "${route_user}"
     }
