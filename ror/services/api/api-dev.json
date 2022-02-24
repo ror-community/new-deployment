@@ -67,7 +67,7 @@
     },
     {
       "name": "DATA_STORE",
-      "value": "${data_store_dev}"
+      "value": "${data_store}"
     },
     {
       "name": "ROUTE_USER",
