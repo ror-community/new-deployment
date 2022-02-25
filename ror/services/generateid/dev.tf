@@ -70,6 +70,7 @@ resource "aws_ecs_task_definition" "generateid-dev" {
         route_user = var.route_user
         ror_api_url = var.ror_api_url_dev
         allowed_origins = var.allowed_origins_dev
+        microservice_use_token = var.microservice_use_token_dev
         version = "dev"
   })
 }

@@ -38,6 +38,10 @@
                 "value": "${allowed_origins}"
             },
             {
+                "name": "MICROSERVICE_USE_TOKEN",
+                "value": "${microservice_use_token}"
+            },
+            {
                 "name": "GITHUB_VERSION",
                 "value": "${version}"
             }
