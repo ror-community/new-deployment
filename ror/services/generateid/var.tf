@@ -42,3 +42,7 @@ variable "ror_api_url" {}
 variable "allowed_origins_dev" {}
 variable "allowed_origins_stage" {}
 variable "allowed_origins" {}
+
+variable "microservice_use_token_dev" {}
+variable "microservice_use_token_stage" {}
+variable "microservice_use_token" {}
