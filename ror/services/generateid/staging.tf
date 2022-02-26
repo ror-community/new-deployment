@@ -70,6 +70,7 @@ resource "aws_ecs_task_definition" "generateid-staging" {
         route_user = var.route_user
         ror_api_url = var.ror_api_url_stage
         allowed_origins = var.allowed_origins_stage
+        microservice_use_token = var.microservice_use_token_staging
         version = "dev"
   })
 }
