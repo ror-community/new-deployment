@@ -44,3 +44,5 @@ variable "allowed_origins_stage" {}
 variable "allowed_origins" {}
 
 variable "microservice_use_token_dev" {}
+variable "microservice_use_token_staging" {}
+variable "microservice_use_token" {}
