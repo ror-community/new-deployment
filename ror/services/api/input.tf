@@ -88,6 +88,7 @@ data "template_file" "api-dev_task" {
     token              = var.token_dev
     route_user         = var.route_user
     data_store         = var.data_store_dev
+    github_token       = var.github_token
     version            = var.ror-api-dev_tags["sha"]
   }
 }
