@@ -63,3 +63,5 @@ variable "data_store_dev" {}
 variable "data_store_staging" {}
 
 variable "route_user" {}
+
+variable "github_token" {}
