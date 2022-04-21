@@ -108,6 +108,7 @@ data "template_file" "api-staging_task" {
     token              = var.token_staging
     route_user         = var.route_user
     data_store         = var.data_store_staging
+    github_token       = var.github_token
     version            = var.ror-api-staging_tags["sha"]
   }
 }
