@@ -68,6 +68,10 @@
     {
       "name": "ROUTE_USER",
       "value": "${route_user}"
+    },
+    {
+      "name": "GITHUB_TOKEN",
+      "value": "${github_token}"
     }
   ]
 }]
