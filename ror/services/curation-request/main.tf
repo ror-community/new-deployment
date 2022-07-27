@@ -11,7 +11,7 @@ resource "aws_lambda_function" "redirect-curation-request" {
 }
 
 resource "aws_lambda_function_url" "redirect-curation-request-url" {
-  function_name      = aws_lambda_function.redirect-curation-request.function_name
+  function_name      = aws_lambda_function.redirect-curation-request.arn
   authorization_type = "NONE"
 }
 
