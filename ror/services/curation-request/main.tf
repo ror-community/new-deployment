@@ -13,7 +13,6 @@ resource "aws_lambda_function" "redirect-curation-request" {
 resource "aws_lambda_function_url" "redirect-curation-request-url" {
   function_name      = aws_lambda_function.redirect-curation-request.function_name
   authorization_type = "NONE"
-  role = data.aws_iam_role.iam_for_lambda.arn
 }
 
 resource "aws_cloudfront_distribution" "curation-request" {
