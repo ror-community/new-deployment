@@ -2,6 +2,6 @@ terraform {
   required_version = ">= 0.12"
 
   backend "atlas" {
-    name = "ror/ror-services-reconcile"
+    name = "datacite-ng/ror-services-reconcile"
   }
 }

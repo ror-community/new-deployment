@@ -2,6 +2,6 @@ terraform {
   required_version = ">= 0.12"
 
   backend "atlas" {
-    name         = "datacite-ng/curation-form"
+    name         = "ror/ror-services-curation-request"
   }
 }
