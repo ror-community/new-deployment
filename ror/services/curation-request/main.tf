@@ -20,6 +20,12 @@ resource "aws_cloudfront_distribution" "curation-request" {
   origin {
     domain_name = aws_lambda_function_url.redirect-curation-request-url.function_url
     origin_id   = "curation-request.ror.org"
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "match-viewer"
+      origin_ssl_protocols = ["TLSv1"]
+    }
   }
 
   enabled             = true
