@@ -18,7 +18,7 @@ resource "aws_lambda_function_url" "redirect-curation-request-url" {
 
 resource "aws_cloudfront_distribution" "curation-request" {
   origin {
-    domain_name = aws_lambda_function_url.redirect-curation-request-url.function_url
+    domain_name = trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://")
     origin_id   = "curation-request.ror.org"
     custom_origin_config {
       http_port = 80
