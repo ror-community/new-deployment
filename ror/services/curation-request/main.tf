@@ -16,17 +16,9 @@ resource "aws_lambda_function_url" "redirect-curation-request-url" {
   authorization_type = "NONE"
 }
 
-output "lambda_url" {
-  value = aws_lambda_function_url.redirect-curation-request-url.function_url
-}
-
-output "lambda_url_trimmed" {
-  value = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://"), "/")}"
-}
-
 resource "aws_cloudfront_distribution" "curation-request" {
   origin {
-    domain_name = "${trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://")}"
+    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://"), "/")}"
     origin_id   = "curation-request.ror.org"
     custom_origin_config {
       http_port = 80
