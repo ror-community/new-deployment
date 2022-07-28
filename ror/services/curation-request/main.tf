@@ -36,7 +36,7 @@ resource "aws_wafv2_web_acl" "default" {
 
     statement {
       managed_rule_group_statement {
-        name        = "AAWSManagedRulesBotControlRuleSet"
+        name        = "AWSManagedRulesBotControlRuleSet"
         vendor_name = "AWS"
       }
     }
