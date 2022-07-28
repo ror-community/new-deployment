@@ -77,7 +77,7 @@ resource "aws_route53_record" "curation-request" {
    records = ["${aws_cloudfront_distribution.curation-request.domain_name}"]
 }
 
-resource "aws_wafregional_web_acl" "default" {
+resource "aws_wafv2_web_acl" "default" {
   name        = "default"
   metric_name = "default"
 
