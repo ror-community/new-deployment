@@ -21,7 +21,7 @@ output "lambda_url" {
 }
 
 output "lambda_url_trimmed" {
-  value = "${trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://")}"
+  value = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://"), "/")}"
 }
 
 resource "aws_cloudfront_distribution" "curation-request" {
