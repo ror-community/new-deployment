@@ -16,6 +16,14 @@ resource "aws_lambda_function_url" "redirect-curation-request-url" {
   authorization_type = "NONE"
 }
 
+output "lambda_url" {
+  value = aws_lambda_function_url.redirect-curation-request-url.function_url
+}
+
+output "lambda_url_trimmed" {
+  value = "${trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://")}"
+}
+
 resource "aws_cloudfront_distribution" "curation-request" {
   origin {
     domain_name = "${trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://")}"
