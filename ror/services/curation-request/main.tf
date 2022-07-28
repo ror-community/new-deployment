@@ -34,8 +34,8 @@ resource "aws_cloudfront_distribution" "curation-request" {
   aliases = ["curation-request.ror.org"]
 
   default_cache_behavior {
-    allowed_methods  = ["GET, HEAD"]
-    cached_methods   = ["GET, HEAD"]
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
     target_origin_id = "curation-request.ror.org"
 
     forwarded_values {
