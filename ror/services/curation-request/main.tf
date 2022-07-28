@@ -17,6 +17,7 @@ resource "aws_lambda_function_url" "redirect-curation-request-url" {
 }
 
 resource "aws_wafv2_web_acl" "default" {
+  provider = aws.use1
   name        = "default"
   description = "Default web acl for Cloudfront"
   scope       = "CLOUDFRONT"
