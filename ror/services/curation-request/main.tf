@@ -76,3 +76,45 @@ resource "aws_route53_record" "curation-request" {
    ttl = var.ttl
    records = ["${aws_cloudfront_distribution.curation-request.domain_name}"]
 }
+
+resource "aws_wafregional_web_acl" "default" {
+  name        = "default"
+  metric_name = "default"
+
+  default_action {
+    type = "ALLOW"
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesBotControlRuleSet"
+    priority = 1
+
+    override_action {
+      count {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWS-AWSManagedRulesBotControlRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "blocked-bot"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "blocked-requests"
+    sampled_requests_enabled   = true
+  }
+}
+
+resource "aws_wafregional_web_acl_association" "curation-request-acl" {
+  resource_arn = aws_cloudfront_distribution.curation-request.arn
+  web_acl_id   = aws_wafregional_web_acl.default.id
+}
