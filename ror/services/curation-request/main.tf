@@ -16,6 +16,44 @@ resource "aws_lambda_function_url" "redirect-curation-request-url" {
   authorization_type = "NONE"
 }
 
+resource "aws_wafv2_web_acl" "default" {
+  name        = "default"
+  description = "Default web acl for Cloudfront"
+  scope       = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "aws-bot-control"
+    priority = 1
+
+    override_action {
+      count {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AAWSManagedRulesBotControlRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "blocked-bot"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = false
+    metric_name                = "not-blocked"
+    sampled_requests_enabled   = false
+  }
+}
+
 resource "aws_cloudfront_distribution" "curation-request" {
   origin {
     domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect-curation-request-url.function_url, "https://"), "/")}"
@@ -67,6 +105,8 @@ resource "aws_cloudfront_distribution" "curation-request" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
+
+  web_acl_id = aws_wafv2_web_acl.default.arn
 }
 
 resource "aws_route53_record" "curation-request" {
@@ -75,46 +115,4 @@ resource "aws_route53_record" "curation-request" {
    type = "CNAME"
    ttl = var.ttl
    records = ["${aws_cloudfront_distribution.curation-request.domain_name}"]
-}
-
-resource "aws_wafv2_web_acl" "default" {
-  name        = "default"
-  metric_name = "default"
-
-  default_action {
-    type = "ALLOW"
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesBotControlRuleSet"
-    priority = 1
-
-    override_action {
-      count {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWS-AWSManagedRulesBotControlRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "blocked-bot"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "blocked-requests"
-    sampled_requests_enabled   = true
-  }
-}
-
-resource "aws_wafregional_web_acl_association" "curation-request-acl" {
-  resource_arn = aws_cloudfront_distribution.curation-request.arn
-  web_acl_id   = aws_wafregional_web_acl.default.id
 }
