@@ -64,12 +64,11 @@ resource "aws_wafregional_byte_match_set" "empty_affiliation_param" {
 
   byte_match_tuples {
     text_transformation   = "NONE"
-    target_string         = ""
+    target_string         = "affiliation="
     positional_constraint = "EXACTLY"
 
     field_to_match {
-      type = "SINGLE_QUERY_ARG"
-      data = "affiliation"
+      type = "QUERY_STRING"
     }
   }
 }
