@@ -152,7 +152,7 @@ resource "aws_wafregional_web_acl" "prod" {
       type = "BLOCK"
     }
 
-    priority = 3
+    priority = 4
     rule_id  = aws_wafregional_rule.block_zero_affiliation_param.id
     type     = "REGULAR"
   }
@@ -201,7 +201,7 @@ resource "aws_wafregional_web_acl" "staging" {
       type = "BLOCK"
     }
 
-    priority = 3
+    priority = 4
     rule_id  = aws_wafregional_rule.block_zero_affiliation_param.id
     type     = "REGULAR"
   }
