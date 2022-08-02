@@ -29,8 +29,8 @@ resource "aws_wafregional_ipset" "blacklist" {
 
 resource "aws_wafregional_rate_based_rule" "rate" {
   depends_on  = [aws_wafregional_ipset.nat, aws_wafregional_ipset.whitelist]
-  name        = "natWAFRule"
-  metric_name = "natWAFRule"
+  name        = "rate_rule"
+  metric_name = "rate_rule"
 
   rate_key   = "IP"
   rate_limit = 2000
@@ -48,9 +48,9 @@ resource "aws_wafregional_rate_based_rule" "rate" {
   }
 }
 
-resource "aws_wafregional_rule" "block" {
-  name        = "blockWAFRule"
-  metric_name = "blockWAFRule"
+resource "aws_wafregional_rule" "block_ip" {
+  name        = "block_ip_rule"
+  metric_name = "block_ip_rule"
 
   predicate {
     type    = "IPMatch"
@@ -59,9 +59,35 @@ resource "aws_wafregional_rule" "block" {
   }
 }
 
-resource "aws_wafregional_web_acl" "default" {
-  name        = "default"
-  metric_name = "default"
+resource "aws_wafregional_byte_match_set" "empty_affiliation_param" {
+  name = "empty_affiliation_param_byte_match_set"
+
+  byte_match_tuples {
+    text_transformation   = "NONE"
+    target_string         = ""
+    positional_constraint = "EXACTLY"
+
+    field_to_match {
+      type = "SINGLE_QUERY_ARG"
+      data = "affiliation"
+    }
+  }
+}
+
+resource "aws_wafregional_rule" "block_empty_affiliation_param" {
+  name        = "block_empty_affiliation_param_rule"
+  metric_name = "block_empty_affiliation_param_rule"
+
+  predicate {
+    type    = "ByteMatch"
+    data_id = aws_wafregional_byte_match_set.empty_affiliation_param.id
+    negated = false
+  }
+}
+
+resource "aws_wafregional_web_acl" "prod" {
+  name        = "waf-prod"
+  metric_name = "waf-prod"
 
   default_action {
     type = "ALLOW"
@@ -83,17 +109,56 @@ resource "aws_wafregional_web_acl" "default" {
     }
 
     priority = 2
-    rule_id  = aws_wafregional_rule.block.id
+    rule_id  = aws_wafregional_rule.block_ip.id
+    type     = "REGULAR"
+  }
+}
+
+resource "aws_wafregional_web_acl" "staging" {
+  name        = "waf-staging"
+  metric_name = "waf-staging"
+
+  default_action {
+    type = "ALLOW"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 1
+    rule_id  = aws_wafregional_rate_based_rule.rate.id
+    type     = "RATE_BASED"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 2
+    rule_id  = aws_wafregional_rule.block_ip.id
+    type     = "REGULAR"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 3
+    rule_id  = aws_wafregional_rule.block_empty_affiliation_param.id
     type     = "REGULAR"
   }
 }
 
 resource "aws_wafregional_web_acl_association" "staging" {
   resource_arn = data.aws_lb.alb-staging.arn
-  web_acl_id   = aws_wafregional_web_acl.default.id
+  web_acl_id   = aws_wafregional_web_acl.staging.id
 }
 
 resource "aws_wafregional_web_acl_association" "prod" {
   resource_arn = data.aws_lb.alb.arn
-  web_acl_id   = aws_wafregional_web_acl.default.id
+  web_acl_id   = aws_wafregional_web_acl.prod.id
 }
