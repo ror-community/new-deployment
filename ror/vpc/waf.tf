@@ -30,7 +30,7 @@ resource "aws_wafregional_ipset" "blacklist" {
 resource "aws_wafregional_rate_based_rule" "rate" {
   depends_on  = [aws_wafregional_ipset.nat, aws_wafregional_ipset.whitelist]
   name        = "rate_rule"
-  metric_name = "rate_rule"
+  metric_name = "rateRule"
 
   rate_key   = "IP"
   rate_limit = 2000
@@ -50,7 +50,7 @@ resource "aws_wafregional_rate_based_rule" "rate" {
 
 resource "aws_wafregional_rule" "block_ip" {
   name        = "block_ip_rule"
-  metric_name = "block_ip_rule"
+  metric_name = "blockIpRule"
 
   predicate {
     type    = "IPMatch"
@@ -76,7 +76,7 @@ resource "aws_wafregional_byte_match_set" "empty_affiliation_param" {
 
 resource "aws_wafregional_rule" "block_empty_affiliation_param" {
   name        = "block_empty_affiliation_param_rule"
-  metric_name = "block_empty_affiliation_param_rule"
+  metric_name = "blockEmptyAffiliationParamRule"
 
   predicate {
     type    = "ByteMatch"
@@ -87,7 +87,7 @@ resource "aws_wafregional_rule" "block_empty_affiliation_param" {
 
 resource "aws_wafregional_web_acl" "prod" {
   name        = "waf-prod"
-  metric_name = "waf-prod"
+  metric_name = "wafProd"
 
   default_action {
     type = "ALLOW"
@@ -116,7 +116,7 @@ resource "aws_wafregional_web_acl" "prod" {
 
 resource "aws_wafregional_web_acl" "staging" {
   name        = "waf-staging"
-  metric_name = "waf-staging"
+  metric_name = "wafStaging"
 
   default_action {
     type = "ALLOW"
