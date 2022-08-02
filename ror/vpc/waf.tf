@@ -73,6 +73,20 @@ resource "aws_wafregional_byte_match_set" "empty_affiliation_param" {
   }
 }
 
+resource "aws_wafregional_byte_match_set" "zero_affiliation_param" {
+  name = "zero_affiliation_param_byte_match_set"
+
+  byte_match_tuples {
+    text_transformation   = "NONE"
+    target_string         = "affiliation=0"
+    positional_constraint = "EXACTLY"
+
+    field_to_match {
+      type = "QUERY_STRING"
+    }
+  }
+}
+
 resource "aws_wafregional_rule" "block_empty_affiliation_param" {
   name        = "block_empty_affiliation_param_rule"
   metric_name = "blockEmptyAffiliationParamRule"
@@ -80,6 +94,17 @@ resource "aws_wafregional_rule" "block_empty_affiliation_param" {
   predicate {
     type    = "ByteMatch"
     data_id = aws_wafregional_byte_match_set.empty_affiliation_param.id
+    negated = false
+  }
+}
+
+resource "aws_wafregional_rule" "block_zero_affiliation_param" {
+  name        = "block_zero_affiliation_param_rule"
+  metric_name = "blockZeroAffiliationParamRule"
+
+  predicate {
+    type    = "ByteMatch"
+    data_id = aws_wafregional_byte_match_set.zero_affiliation_param.id
     negated = false
   }
 }
@@ -109,6 +134,26 @@ resource "aws_wafregional_web_acl" "prod" {
 
     priority = 2
     rule_id  = aws_wafregional_rule.block_ip.id
+    type     = "REGULAR"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 3
+    rule_id  = aws_wafregional_rule.block_empty_affiliation_param.id
+    type     = "REGULAR"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 3
+    rule_id  = aws_wafregional_rule.block_zero_affiliation_param.id
     type     = "REGULAR"
   }
 }
@@ -148,6 +193,16 @@ resource "aws_wafregional_web_acl" "staging" {
 
     priority = 3
     rule_id  = aws_wafregional_rule.block_empty_affiliation_param.id
+    type     = "REGULAR"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 3
+    rule_id  = aws_wafregional_rule.block_zero_affiliation_param.id
     type     = "REGULAR"
   }
 }
