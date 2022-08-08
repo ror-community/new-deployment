@@ -53,7 +53,7 @@ resource "aws_wafv2_web_acl" "default" {
     priority = 2
 
     action {
-      type = "BLOCK"
+      block {}
     }
 
     statement {
