@@ -16,10 +16,10 @@ resource "aws_lambda_function_url" "redirect-curation-request-url" {
   authorization_type = "NONE"
 }
 
-resource "aws_wafv2_web_acl" "default" {
+resource "aws_wafv2_web_acl" "curation-request-acl" {
   provider = aws.use1
-  name        = "default"
-  description = "Default web acl for Cloudfront"
+  name        = "curation-request-acl"
+  description = "ACL for curation request form"
   scope       = "CLOUDFRONT"
 
   default_action {
@@ -129,7 +129,7 @@ resource "aws_cloudfront_distribution" "curation-request" {
     minimum_protocol_version = "TLSv1"
   }
 
-  web_acl_id = aws_wafv2_web_acl.default.arn
+  web_acl_id = aws_wafv2_web_acl.curation-request-acl.arn
 }
 
 resource "aws_route53_record" "curation-request" {
