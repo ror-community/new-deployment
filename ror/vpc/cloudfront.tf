@@ -1,3 +1,42 @@
+resource "aws_wafv2_web_acl" "site-prod-acl" {
+  provider = aws.use1
+  name        = "site-prod-acl"
+  description = "ACL for prod site"
+  scope       = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "aws-bot-control"
+    priority = 1
+
+    override_action {
+      count {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesBotControlRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "blocked-bot-site-prod"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "not-blocked-site-prod"
+    sampled_requests_enabled   = true
+  }
+}
+
 resource "aws_cloudfront_distribution" "site" {
   origin {
     domain_name = data.aws_s3_bucket.site.website_endpoint
@@ -170,6 +209,8 @@ resource "aws_cloudfront_distribution" "site" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
+
+  web_acl_id = aws_wafv2_web_acl.site-prod-acl.arn
 }
 
 resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
@@ -181,7 +222,7 @@ resource "aws_route53_record" "apex" {
 
   alias {
     name = aws_cloudfront_distribution.site.domain_name
-    zone_id = aws_cloudfront_distribution.site.hosted_zone_id 
+    zone_id = aws_cloudfront_distribution.site.hosted_zone_id
     evaluate_target_health = true
   }
 }
