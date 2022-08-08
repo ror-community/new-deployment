@@ -1,7 +1,7 @@
 resource "aws_wafv2_web_acl" "site-dev-acl" {
   provider = aws.use1
   name        = "site-dev-acl"
-  description = "ACL for dev sit"
+  description = "ACL for dev site"
   scope       = "CLOUDFRONT"
 
   default_action {
@@ -25,14 +25,14 @@ resource "aws_wafv2_web_acl" "site-dev-acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "blocked-bot"
+      metric_name                = "blocked-bot-site-dev"
       sampled_requests_enabled   = true
     }
   }
 
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name                = "not-blocked"
+    metric_name                = "not-blocked-site-dev"
     sampled_requests_enabled   = true
   }
 }
