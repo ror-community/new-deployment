@@ -48,10 +48,33 @@ resource "aws_wafv2_web_acl" "default" {
     }
   }
 
+  rule {
+    name     = "match_rule"
+    priority = 2
+
+    action {
+      type = "BLOCK"
+    }
+
+    statement {
+      label_match_statement {
+        scope = "LABEL"
+        key = "awswaf:managed:aws:bot-control:bot:verified"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "blocked-bot"
+      sampled_requests_enabled   = true
+    }
+  }
+}
+
   visibility_config {
-    cloudwatch_metrics_enabled = false
+    cloudwatch_metrics_enabled = true
     metric_name                = "not-blocked"
-    sampled_requests_enabled   = false
+    sampled_requests_enabled   = true
   }
 }
 
