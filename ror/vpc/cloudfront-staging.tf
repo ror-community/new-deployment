@@ -128,11 +128,6 @@ resource "aws_cloudfront_distribution" "site-staging" {
     default_ttl            = 86400
     max_ttl                = 2592000
 
-    lambda_function_association {
-      event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
-      include_body = false
-    }
   }
 
   ordered_cache_behavior {
@@ -159,11 +154,6 @@ resource "aws_cloudfront_distribution" "site-staging" {
     default_ttl            = 86400
     max_ttl                = 2592000
 
-    lambda_function_association {
-      event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
-      include_body = false
-    }
   }
 
   ordered_cache_behavior {
