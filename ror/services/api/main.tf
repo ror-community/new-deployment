@@ -37,6 +37,8 @@ resource "aws_lb_target_group" "api-community" {
 
   health_check {
     path = "/heartbeat"
+    interval = 300
+    timeout = 120
   }
 
   depends_on = [
@@ -54,7 +56,7 @@ resource "aws_ecs_task_definition" "api-community" {
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = "512"
-  memory = "1024"
+  memory = "2048"
 
   container_definitions =  data.template_file.api_task.rendered
 }
@@ -90,10 +92,18 @@ resource "aws_service_discovery_service" "api" {
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.internal.id
-    
+
     dns_records {
       ttl = 300
       type = "A"
     }
+  }
+}
+
+ resource "aws_s3_bucket" "data-prod" {
+  bucket = "data.ror.org"
+  acl    = "private"
+  tags = {
+      Name = "data-prod"
   }
 }

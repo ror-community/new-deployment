@@ -25,3 +25,7 @@ variable "cluster_name" {
 }
 
 variable "status_dns_name" {}
+
+variable "waf_nat_ip" {}
+variable "waf_whitelisted_ip" {}
+variable "waf_blacklisted_ip" {}

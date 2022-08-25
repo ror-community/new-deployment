@@ -2,7 +2,7 @@
   "name": "api-community",
   "image": "rorcommunity/ror-api:${version}",
   "cpu": 512,
-  "memory": 1024,
+  "memory": 2048,
   "networkMode": "awsvpc",
   "essential": true,
   "portMappings": [{
@@ -56,6 +56,22 @@
     {
       "name": "SENTRY_DSN",
       "value": "${sentry_dsn}"
+    },
+    {
+      "name": "TOKEN",
+      "value": "${token}"
+    },
+    {
+      "name": "DATA_STORE",
+      "value": "${data_store}"
+    },
+    {
+      "name": "ROUTE_USER",
+      "value": "${route_user}"
+    },
+    {
+      "name": "GITHUB_TOKEN",
+      "value": "${github_token}"
     }
   ]
 }]

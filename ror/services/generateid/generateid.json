@@ -1,0 +1,50 @@
+[
+    {
+        "name": "generateid",
+        "image": "rorcommunity/generateid:${version}",
+        "cpu": 256,
+        "memory": 512,
+        "networkMode": "awsvpc",
+        "essential": true,
+        "portMappings": [
+            {
+                "containerPort": 80,
+                "hostPort": 80
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "/ecs/generateid-dev",
+                "awslogs-region": "eu-west-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        },
+        "environment": [
+            {
+                "name": "TOKEN",
+                "value": "${token}"
+            },
+            {
+                "name": "ROUTE_USER",
+                "value": "${route_user}"
+            },
+            {
+                "name": "ROR_API_URL",
+                "value": "${ror_api_url}"
+            },
+            {
+                "name": "ALLOWED_ORIGINS",
+                "value": "${allowed_origins}"
+            },
+            {
+                "name": "MICROSERVICE_USE_TOKEN",
+                "value": "${microservice_use_token}"
+            },
+            {
+                "name": "GITHUB_VERSION",
+                "value": "${version}"
+            }
+        ]
+    }
+]

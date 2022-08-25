@@ -2,7 +2,7 @@
   "name": "api-dev",
   "image": "rorcommunity/ror-api:dev",
   "cpu": 512,
-  "memory": 1024,
+  "memory": 2048,
   "networkMode": "awsvpc",
   "essential": true,
   "portMappings": [{
@@ -60,6 +60,22 @@
     {
       "name": "GITHUB_VERSION",
       "value": "${version}"
+    },
+    {
+      "name": "TOKEN",
+      "value": "${token}"
+    },
+    {
+      "name": "DATA_STORE",
+      "value": "${data_store}"
+    },
+    {
+      "name": "ROUTE_USER",
+      "value": "${route_user}"
+    },
+    {
+      "name": "GITHUB_TOKEN",
+      "value": "${github_token}"
     }
   ]
 }]

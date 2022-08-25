@@ -1,3 +1,42 @@
+resource "aws_wafv2_web_acl" "site-dev-acl" {
+  provider = aws.use1
+  name        = "site-dev-acl"
+  description = "ACL for dev site"
+  scope       = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "aws-bot-control"
+    priority = 1
+
+    override_action {
+      count {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesBotControlRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "blocked-bot-site-dev"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "not-blocked-site-dev"
+    sampled_requests_enabled   = true
+  }
+}
+
 resource "aws_cloudfront_distribution" "site-dev" {
   origin {
     domain_name = data.aws_s3_bucket.site-dev.website_endpoint
@@ -170,6 +209,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
+
+  web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
 }
 
 //resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
@@ -181,7 +222,7 @@ resource "aws_route53_record" "site-dev" {
 
   alias {
     name = aws_cloudfront_distribution.site-dev.domain_name
-    zone_id = aws_cloudfront_distribution.site-dev.hosted_zone_id 
+    zone_id = aws_cloudfront_distribution.site-dev.hosted_zone_id
     evaluate_target_health = true
   }
 }

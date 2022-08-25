@@ -74,7 +74,7 @@ resource "aws_ecs_task_definition" "api-dev" {
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = "512"
-  memory = "1024"
+  memory = "2048"
 
   container_definitions =  data.template_file.api-dev_task.rendered
 }
@@ -84,7 +84,7 @@ resource "aws_route53_record" "api-dev" {
     name = "api.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb.dns_name]
+    records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
@@ -92,7 +92,7 @@ resource "aws_route53_record" "split-api-dev" {
   name = "api.dev.ror.org"
   type = "CNAME"
   ttl = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_service_discovery_service" "api-dev" {
@@ -109,5 +109,13 @@ resource "aws_service_discovery_service" "api-dev" {
       ttl = 300
       type = "A"
     }
+  }
+}
+
+resource "aws_s3_bucket" "data-dev" {
+  bucket = "data.dev.ror.org"
+  acl    = "private"
+  tags = {
+      Name = "data-dev"
   }
 }

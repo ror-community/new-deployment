@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "api-staging" {
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = "512"
-  memory = "1024"
+  memory = "2048"
 
   container_definitions =  data.template_file.api-staging_task.rendered
 }
@@ -118,10 +118,18 @@ resource "aws_service_discovery_service" "api-staging" {
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.internal.id
-    
+
     dns_records {
       ttl = 300
       type = "A"
     }
+  }
+}
+
+resource "aws_s3_bucket" "data-staging" {
+  bucket = "data.staging.ror.org"
+  acl    = "private"
+  tags = {
+      Name = "data-staging"
   }
 }

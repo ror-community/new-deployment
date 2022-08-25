@@ -66,6 +66,10 @@ data "template_file" "api_task" {
     public_key         = var.public_key
     sentry_dsn         = var.sentry_dsn
     django_secret_key  = var.django_secret_key
+    token              = var.token
+    route_user         = var.route_user
+    data_store         = var.data_store
+    github_token       = var.github_token
     version            = var.ror-api_tags["version"]
   }
 }
@@ -82,6 +86,10 @@ data "template_file" "api-dev_task" {
     public_key         = var.public_key
     sentry_dsn         = var.sentry_dsn
     django_secret_key  = var.django_secret_key
+    token              = var.token_dev
+    route_user         = var.route_user
+    data_store         = var.data_store_dev
+    github_token       = var.github_token
     version            = var.ror-api-dev_tags["sha"]
   }
 }
@@ -98,6 +106,10 @@ data "template_file" "api-staging_task" {
     public_key         = var.public_key
     sentry_dsn         = var.sentry_dsn
     django_secret_key  = var.django_secret_key
+    token              = var.token_staging
+    route_user         = var.route_user
+    data_store         = var.data_store_staging
+    github_token       = var.github_token
     version            = var.ror-api-staging_tags["sha"]
   }
 }
