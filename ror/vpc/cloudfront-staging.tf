@@ -50,8 +50,8 @@ resource "aws_cloudfront_distribution" "site-staging" {
     }
   }
   origin {
-    domain_name = data.aws_s3_bucket.search.bucket_domain_name
-    origin_id   = "search.ror.org"
+    domain_name = data.aws_s3_bucket.search-staging.bucket_domain_name
+    origin_id   = "search.staging.ror.org"
 
     // s3_origin_config {
     //   origin_access_identity = aws_cloudfront_origin_access_identity.search_ror_org.cloudfront_access_identity_path
@@ -108,7 +108,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
     path_pattern     = "search*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "search.ror.org"
+    target_origin_id = "search.staging.ror.org"
 
     forwarded_values {
       query_string = true
@@ -139,7 +139,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
     path_pattern     = "0*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "search.ror.org"
+    target_origin_id = "search.staging.ror.org"
 
     forwarded_values {
       query_string = false
@@ -170,7 +170,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
     path_pattern     = "assets/*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "search.ror.org"
+    target_origin_id = "search.staging.ror.org"
 
     forwarded_values {
       query_string = false

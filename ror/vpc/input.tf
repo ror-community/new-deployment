@@ -102,6 +102,10 @@ data "aws_s3_bucket" "search" {
   bucket = "search.ror.community"
 }
 
+data "aws_s3_bucket" "search-staging" {
+  bucket = "search.staging.ror.community"
+}
+
 data "aws_s3_bucket" "search-dev" {
   bucket = "search.dev.ror.community"
 }
