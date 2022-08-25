@@ -21,6 +21,14 @@ data "template_file" "search" {
   }
 }
 
+data "template_file" "search-staging" {
+  template = file("s3_cloudfront.json")
+
+  vars = {
+    bucket_name = "search.staging.ror.community"
+  }
+}
+
 data "template_file" "search-dev" {
   template = file("s3_cloudfront.json")
 
