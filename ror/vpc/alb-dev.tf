@@ -21,24 +21,10 @@ resource "aws_lb_listener" "alb-http-dev" {
     type = "redirect"
 
     redirect {
-      host        = "api.dev.ror.org"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
-  }
-}
-
-resource "aws_lb_listener" "alb-dev" {
-  load_balancer_arn = module.alb-dev.this_lb_arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = data.aws_acm_certificate.ror.arn
-
-  default_action {
-    target_group_arn = data.aws_lb_target_group.api-dev.id
-    type             = "forward"
   }
 }
 
@@ -60,6 +46,19 @@ resource "aws_lb_listener_rule" "redirect_www-dev" {
   condition {
     field  = "host-header"
     values = ["www.dev.ror.org"]
+  }
+}
+
+resource "aws_lb_listener" "alb-dev" {
+  load_balancer_arn = module.alb-dev.this_lb_arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.ror.arn
+
+  default_action {
+    target_group_arn = data.aws_lb_target_group.api-dev.id
+    type             = "forward"
   }
 }
 
