@@ -230,3 +230,11 @@ resource "aws_route53_record" "site-dev" {
     evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "www-dev" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "www.dev.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [aws_route53_record.site-dev.name]
+}
