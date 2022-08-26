@@ -44,6 +44,7 @@ resource "aws_lb_listener" "alb-dev" {
 
 resource "aws_lb_listener_rule" "redirect_www-dev" {
   listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 100
 
   action {
     type = "redirect"
