@@ -41,5 +41,32 @@ resource "aws_lb_listener" "alb-dev" {
   }
 }
 
+resource "aws_lb_listener_rule" "redirect_www-dev" {
+  listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 100
 
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "dev.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["www.dev.ror.org"]
+  }
+}
+
+resource "aws_route53_record" "www-dev" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "www.dev.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-dev.dns_name]
+}
 
