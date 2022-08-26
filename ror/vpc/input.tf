@@ -32,9 +32,9 @@ data "aws_lb" "alb-staging" {
   name = "lb-staging"
 }
 
-// data "aws_lb" "alb-dev" {
-//   name = "lb-dev"
-// }
+data "aws_lb" "alb-dev" {
+   name = "lb-dev"
+}
 
 data "aws_lb" "alb-community" {
   name = "lb-community"
