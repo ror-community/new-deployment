@@ -22,7 +22,6 @@ resource "aws_lambda_function" "index-page-community" {
   handler = "index-page-runner.handler"
   runtime = "nodejs12.x"
   source_code_hash = sha256(filebase64("index-page-runner.js.zip"))
-  //publish = true
 }
 
 resource "aws_lambda_function" "redirect-community" {
@@ -34,5 +33,4 @@ resource "aws_lambda_function" "redirect-community" {
   handler = "redirect-runner.handler"
   runtime = "nodejs12.x"
   source_code_hash = sha256(filebase64("redirect-runner.js.zip"))
-  //publish = true
 }
