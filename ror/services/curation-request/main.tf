@@ -7,7 +7,6 @@ resource "aws_lambda_function" "redirect-curation-request" {
   handler = "curation-request-redirect.handler"
   runtime = "nodejs12.x"
   source_code_hash = sha256(filebase64("curation-request-redirect.js.zip"))
-  publish = true
 }
 
 resource "aws_lambda_function_url" "redirect-curation-request-url" {
