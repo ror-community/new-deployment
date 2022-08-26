@@ -236,5 +236,5 @@ resource "aws_route53_record" "www-dev" {
     name = "www.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [aws_route53_record.site-dev.name]
+    records = [aws_cloudfront_distribution.site-dev.domain_name]
 }
