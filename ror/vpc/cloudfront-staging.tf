@@ -164,11 +164,6 @@ resource "aws_cloudfront_distribution" "site-staging" {
       lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
       include_body = false
     }
-
-    depends_on = [
-      aws_lambda_function.redirect-community.qualified_arn
-    ]
-
   }
 
   ordered_cache_behavior {
@@ -216,6 +211,9 @@ resource "aws_cloudfront_distribution" "site-staging" {
   }
 
   web_acl_id = aws_wafv2_web_acl.site-staging-acl.arn
+  depends_on = [
+      aws_lambda_function.redirect-community.qualified_arn
+    ]
 }
 
 //resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
