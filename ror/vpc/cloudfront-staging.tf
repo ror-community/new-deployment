@@ -211,6 +211,9 @@ resource "aws_cloudfront_distribution" "site-staging" {
   }
 
   web_acl_id = aws_wafv2_web_acl.site-staging-acl.arn
+  depends_on = [
+      aws_lambda_function.redirect-community
+    ]
 }
 
 //resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
