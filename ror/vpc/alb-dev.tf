@@ -14,7 +14,6 @@ module "alb-dev" {
 
 resource "aws_lb_listener" "alb-http-dev" {
   load_balancer_arn = module.alb-dev.this_lb_arn
-  priority = 100
   port              = "80"
   protocol          = "HTTP"
 
@@ -31,7 +30,7 @@ resource "aws_lb_listener" "alb-http-dev" {
 
 resource "aws_lb_listener_rule" "redirect_www-dev" {
   listener_arn = aws_lb_listener.alb-dev.arn
-  priority = 99
+  priority = 100
 
   action {
     type = "redirect"
@@ -60,10 +59,6 @@ resource "aws_lb_listener" "alb-dev" {
   default_action {
     target_group_arn = data.aws_lb_target_group.api-dev.id
     type             = "forward"
-  }
-  condition {
-    field  = "host-header"
-    values = ["api.dev.ror.org"]
   }
 }
 
