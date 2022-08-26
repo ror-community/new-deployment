@@ -211,10 +211,9 @@ resource "aws_cloudfront_distribution" "site-dev" {
   }
 
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
-
   depends_on = [
-      aws_lambda_function.redirect-community
-    ]
+    aws_lambda_function.redirect-community
+  ]
 }
 
 //resource "aws_cloudfront_origin_access_identity" "search_ror_org" {}
@@ -229,12 +228,4 @@ resource "aws_route53_record" "site-dev" {
     zone_id = aws_cloudfront_distribution.site-dev.hosted_zone_id
     evaluate_target_health = true
   }
-}
-
-resource "aws_route53_record" "www-dev" {
-    zone_id = data.aws_route53_zone.public.zone_id
-    name = "www.dev.ror.org"
-    type = "CNAME"
-    ttl = var.ttl
-    records = [aws_cloudfront_distribution.site-dev.domain_name]
 }
