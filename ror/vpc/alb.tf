@@ -29,8 +29,14 @@ resource "aws_lb_listener" "alb-http" {
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = data.aws_lb_target_group.api-community.id
-    type             = "forward"
+    type = "redirect"
+
+    redirect {
+      host        = "api.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 }
 
@@ -54,10 +60,10 @@ resource "aws_lb_listener_rule" "redirect_www" {
     type = "redirect"
 
     redirect {
-      host        = "ror.org"
+      host        = "www.ror.org"
       port        = "443"
       protocol    = "HTTPS"
-      status_code = "HTTP_302"
+      status_code = "HTTP_301"
     }
   }
 

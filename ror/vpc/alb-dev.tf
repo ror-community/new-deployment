@@ -24,7 +24,7 @@ resource "aws_lb_listener" "alb-http-dev" {
       host        = "api.dev.ror.org"
       port        = "443"
       protocol    = "HTTPS"
-      status_code = "HTTP_302"
+      status_code = "HTTP_301"
     }
   }
 }
@@ -49,10 +49,10 @@ resource "aws_lb_listener_rule" "redirect_www-dev" {
     type = "redirect"
 
     redirect {
-      host        = "dev.ror.org"
+      host        = "www.dev.ror.org"
       port        = "443"
       protocol    = "HTTPS"
-      status_code = "HTTP_302"
+      status_code = "HTTP_301"
     }
   }
 
@@ -67,5 +67,6 @@ resource "aws_route53_record" "www-dev" {
     name = "www.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb.dns_name]
+    records = [data.aws_lb.alb-dev.dns_name]
 }
+
