@@ -164,6 +164,11 @@ resource "aws_cloudfront_distribution" "site-staging" {
       lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
       include_body = false
     }
+
+    depends_on = [
+      aws_lambda_function.redirect-community.qualified_arn
+    ]
+
   }
 
   ordered_cache_behavior {
