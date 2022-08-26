@@ -49,7 +49,7 @@ resource "aws_lb_listener_rule" "redirect_www-dev" {
     type = "redirect"
 
     redirect {
-      host        = "dev.ror.org"
+      host        = "www.dev.ror.org"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_302"

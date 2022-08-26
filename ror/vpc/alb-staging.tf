@@ -21,7 +21,7 @@ resource "aws_lb_listener" "alb-http-staging" {
     type = "redirect"
 
     redirect {
-      host        = "staging.ror.org"
+      host        = "api.staging.ror.org"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_302"
