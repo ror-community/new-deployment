@@ -1,11 +1,10 @@
 resource "aws_lambda_function" "redirect-curation-request" {
   provider = aws.use1
-
   filename = "curation-request-redirect.js.zip"
   function_name = "redirect-curation-request"
   role = data.aws_iam_role.iam_for_lambda.arn
   handler = "curation-request-redirect.handler"
-  runtime = "nodejs12.x"
+  runtime = "nodejs14.x"
   source_code_hash = sha256(filebase64("curation-request-redirect.js.zip"))
 }
 
