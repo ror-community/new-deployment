@@ -4,7 +4,7 @@ resource "aws_lambda_function" "redirect-curation-request" {
   function_name = "redirect-curation-request"
   role = data.aws_iam_role.iam_for_lambda.arn
   handler = "curation-request-redirect.handler"
-  runtime = "nodejs14.x"
+  runtime = "nodejs16.x"
   source_code_hash = sha256(filebase64("curation-request-redirect.js.zip"))
 }
 
