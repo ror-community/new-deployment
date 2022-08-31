@@ -57,8 +57,9 @@ resource "aws_lb_listener_rule" "redirect_www-staging" {
   }
 
   condition {
-    field  = "host-header"
-    values = ["www.staging.ror.org"]
+    host_header {
+      values = ["www.staging.ror.org"]
+    }
   }
 }
 

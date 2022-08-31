@@ -57,8 +57,9 @@ resource "aws_lb_listener_rule" "redirect_www-dev" {
   }
 
   condition {
-    field  = "host-header"
-    values = ["www.dev.ror.org"]
+    host_header {
+      values = ["www.dev.ror.org"]
+    }
   }
 }
 
