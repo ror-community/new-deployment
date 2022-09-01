@@ -124,7 +124,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = "${aws_lambda_function.redirect-index.arn}:${aws_lambda_function.redirect-index.version}"
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
       include_body = false
     }
   }
@@ -155,7 +155,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = "${aws_lambda_function.redirect-index.arn}:${aws_lambda_function.redirect-index.version}"
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
       include_body = false
     }
   }
