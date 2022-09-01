@@ -16,4 +16,5 @@ resource "aws_lambda_function" "redirect-index" {
   handler = "redirect-runner.handler"
   runtime = "nodejs14.x"
   source_code_hash = sha256(filebase64("redirect-runner.js.zip"))
+  publish = true
 }
