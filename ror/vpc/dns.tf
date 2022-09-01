@@ -13,7 +13,7 @@
 
 resource "aws_route53_zone" "internal" {
     name = "ror.org"
-    
+
     vpc {
         vpc_id = module.vpc.vpc_id
     }
@@ -37,11 +37,6 @@ resource "aws_route53_zone" "internal" {
 //     ]
 // }
 
-// resource "aws_service_discovery_private_dns_namespace" "internal" {
-//   name = "ror.community"
-//   vpc = module.vpc.vpc_id
-// }
-
 // TODO bring under Terraform control
 // resource "aws_route53_record" "mx-ror" {
 //     zone_id = data.aws_route53_zone.public.zone_id
@@ -63,16 +58,4 @@ resource "aws_route53_record" "status" {
     type = "CNAME"
     ttl = "3600"
     records = [var.status_dns_name]
-}
-
-resource "aws_route53_zone" "public-community" {
-    name = "ror.community"
-
-    lifecycle {
-        prevent_destroy = true
-    }
-
-    tags = {
-        Environment = "public"
-    }
 }

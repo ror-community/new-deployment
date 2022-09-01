@@ -35,10 +35,6 @@ data "aws_lb" "alb-dev" {
    name = "lb-dev"
 }
 
-data "aws_lb" "alb-community" {
-  name = "lb-community"
-}
-
 data "aws_lb_target_group" "api-community" {
   name = "api-community"
 }
@@ -62,12 +58,6 @@ data "aws_acm_certificate" "ror-staging" {
   statuses = ["ISSUED"]
   most_recent = true
 }
-
-// data "aws_acm_certificate" "ror-community" {
-//   domain = "ror.community"
-//   statuses = ["ISSUED"]
-//   most_recent = true
-// }
 
 data "aws_acm_certificate" "cloudfront" {
   provider = aws.use1
@@ -107,15 +97,6 @@ data "aws_s3_bucket" "search-staging" {
 
 data "aws_s3_bucket" "search-dev" {
   bucket = "search.dev.ror.community"
-}
-
-// data "aws_iam_role" "iam_for_lambda" {
-//   name = "iam_for_lambda"
-// }
-
-data "aws_lambda_function" "index-page" {
-  provider = aws.use1
-  function_name = "index-page-community"
 }
 
 data "aws_route53_zone" "public" {
