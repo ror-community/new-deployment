@@ -96,12 +96,6 @@ resource "aws_cloudfront_distribution" "site" {
     # look at your S3 bucket for changes once per day.
     default_ttl            = 86400
     max_ttl                = 2592000
-
-    // lambda_function_association {
-    //   event_type   = "origin-request"
-    //   lambda_arn   = aws_lambda_function.index-page.qualified_arn
-    //   include_body = false
-    // }
   }
 
   ordered_cache_behavior {
@@ -130,7 +124,7 @@ resource "aws_cloudfront_distribution" "site" {
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
       include_body = false
     }
   }
@@ -161,7 +155,7 @@ resource "aws_cloudfront_distribution" "site" {
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-community.qualified_arn
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
       include_body = false
     }
   }
@@ -212,7 +206,7 @@ resource "aws_cloudfront_distribution" "site" {
 
   web_acl_id = aws_wafv2_web_acl.site-prod-acl.arn
   depends_on = [
-      aws_lambda_function.redirect-community
+      aws_lambda_function.redirect-index
     ]
 }
 
