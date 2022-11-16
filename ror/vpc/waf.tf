@@ -30,6 +30,9 @@ resource "aws_wafregional_rate_based_rule" "rate" {
   }
 }
 
+// Add IPs to blacklist and whitelist directly in AWS Web ACL Classic
+// TF aws_wafregional_ipset resource does not correctly support a list of IPs
+
 resource "aws_wafregional_rule" "block_ip" {
   name        = "block_ip_rule"
   metric_name = "blockIpRule"
