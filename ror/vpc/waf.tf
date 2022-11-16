@@ -9,26 +9,8 @@ resource "aws_wafregional_ipset" "nat" {
   }
 }
 
-resource "aws_wafregional_ipset" "whitelist" {
-  name = "whitelistIPSet"
-
-  ip_set_descriptor {
-    type  = "IPV4"
-    value = var.waf_whitelisted_ip
-  }
-}
-
-resource "aws_wafregional_ipset" "blacklist" {
-  name = "blacklistIPSet"
-
-  ip_set_descriptor {
-    type  = "IPV4"
-    value = var.waf_blacklisted_ip
-  }
-}
-
 resource "aws_wafregional_rate_based_rule" "rate" {
-  depends_on  = [aws_wafregional_ipset.nat, aws_wafregional_ipset.whitelist]
+  depends_on  = [aws_wafregional_ipset.nat]
   name        = "rate_rule"
   metric_name = "rateRule"
 
@@ -42,11 +24,14 @@ resource "aws_wafregional_rate_based_rule" "rate" {
   }
 
   predicate {
-    data_id = aws_wafregional_ipset.whitelist.id
+    data_id = data.aws_wafregional_ipset.whitelist.id
     negated = true
     type    = "IPMatch"
   }
 }
+
+// Add IPs to blacklist and whitelist directly in AWS Web ACL Classic
+// TF aws_wafregional_ipset resource does not correctly support a list of IPs
 
 resource "aws_wafregional_rule" "block_ip" {
   name        = "block_ip_rule"
@@ -54,7 +39,7 @@ resource "aws_wafregional_rule" "block_ip" {
 
   predicate {
     type    = "IPMatch"
-    data_id = aws_wafregional_ipset.blacklist.id
+    data_id = data.aws_wafregional_ipset.blacklist.id
     negated = false
   }
 }
