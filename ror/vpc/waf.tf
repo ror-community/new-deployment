@@ -11,7 +11,7 @@ resource "aws_wafregional_ipset" "nat" {
 
 resource "aws_wafregional_ipset" "whitelist" {
   name = "whitelistIPSet"
-  ip_set_descriptors = "${var.whitelisted_ips}"
+  ip_set_descriptor = "${var.whitelisted_ips}"
 }
 
 resource "aws_wafregional_ipset" "blacklist" {
