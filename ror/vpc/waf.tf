@@ -9,18 +9,8 @@ resource "aws_wafregional_ipset" "nat" {
   }
 }
 
-resource "aws_wafregional_ipset" "whitelist" {
-  name = "whitelistIPSet"
-  ip_set_descriptor = var.whitelisted_ips
-}
-
-resource "aws_wafregional_ipset" "blacklist" {
-  name = "blacklistIPSet"
-  ip_set_descriptor = var.blacklisted_ips
-}
-
 resource "aws_wafregional_rate_based_rule" "rate" {
-  depends_on  = [aws_wafregional_ipset.nat, aws_wafregional_ipset.whitelist]
+  depends_on  = [aws_wafregional_ipset.nat]
   name        = "rate_rule"
   metric_name = "rateRule"
 
@@ -34,7 +24,7 @@ resource "aws_wafregional_rate_based_rule" "rate" {
   }
 
   predicate {
-    data_id = aws_wafregional_ipset.whitelist.id
+    data_id = data.aws_wafregional_ipset.whitelist.id
     negated = true
     type    = "IPMatch"
   }
@@ -46,7 +36,7 @@ resource "aws_wafregional_rule" "block_ip" {
 
   predicate {
     type    = "IPMatch"
-    data_id = aws_wafregional_ipset.blacklist.id
+    data_id = data.aws_wafregional_ipset.blacklist.id
     negated = false
   }
 }
