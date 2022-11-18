@@ -22,14 +22,6 @@ resource "aws_wafv2_ip_set" "blacklist" {
   addresses          = var.blacklist_ips
 }
 
-resource "aws_wafv2_rule_group" "invalid-request" {
-  name     = "invalid-request-rule-group"
-  scope    = "REGIONAL"
-  capacity = 500
-}
-
-
-
 resource "aws_wafv2_web_acl" "dev-v2" {
     // metric_name = "wafDevV2"
     name        = "waf-dev-v2"
@@ -71,7 +63,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         name = "block-ip-rule"
         priority = 2
         action {
-        bloack {}
+            block {}
         }
         statement {
             ip_set_reference_statement {
@@ -89,7 +81,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         name     = "rate-limit-rule"
         priority = 3
         action {
-        block {}
+            block {}
         }
         statement {
         rate_based_statement {
@@ -108,7 +100,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         name = "block-invalid-request-rule"
         priority = 4
         action {
-        block {}
+            block {}
         }
         statement {
             or_statement {
