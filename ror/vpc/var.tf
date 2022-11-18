@@ -32,6 +32,14 @@ variable "wafv2_nat_ip" {
   type = "list"
 }
 
+variable "whitelist_ips"{
+  type = "list"
+}
+
+variable "blacklist_ips"{
+  type = "list"
+}
+
 variable "whitelist_ips_dev"{
   type = "list"
 }

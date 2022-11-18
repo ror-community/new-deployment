@@ -6,6 +6,22 @@ resource "aws_wafv2_ip_set" "nat" {
   addresses          = var.wafv2_nat_ip
 }
 
+resource "aws_wafv2_ip_set" "whitelist" {
+  name = "whitelistIPSet"
+  description        = "DEV Whitelist IP set"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.whitelist_ips
+}
+
+resource "aws_wafv2_ip_set" "blacklist" {
+  name = "blacklistIPSet"
+  description        = "DEV Blacklist IP set"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.blacklist_ips
+}
+
 resource "aws_wafv2_ip_set" "whitelist-dev" {
   name = "whitelistIPSetDev"
   description        = "DEV Whitelist IP set"
