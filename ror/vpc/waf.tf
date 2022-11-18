@@ -151,60 +151,6 @@ resource "aws_wafregional_web_acl" "prod" {
   }
 }
 
-resource "aws_wafregional_web_acl" "staging" {
-  name        = "waf-staging"
-  metric_name = "wafStaging"
-
-  default_action {
-    type = "ALLOW"
-  }
-
-  rule {
-    action {
-      type = "BLOCK"
-    }
-
-    priority = 1
-    rule_id  = aws_wafregional_rate_based_rule.rate.id
-    type     = "RATE_BASED"
-  }
-
-  rule {
-    action {
-      type = "BLOCK"
-    }
-
-    priority = 2
-    rule_id  = aws_wafregional_rule.block_ip.id
-    type     = "REGULAR"
-  }
-
-  rule {
-    action {
-      type = "BLOCK"
-    }
-
-    priority = 3
-    rule_id  = aws_wafregional_rule.block_empty_affiliation_param.id
-    type     = "REGULAR"
-  }
-
-  rule {
-    action {
-      type = "BLOCK"
-    }
-
-    priority = 4
-    rule_id  = aws_wafregional_rule.block_zero_affiliation_param.id
-    type     = "REGULAR"
-  }
-}
-
-resource "aws_wafregional_web_acl_association" "staging" {
-  resource_arn = data.aws_lb.alb-staging.arn
-  web_acl_id   = aws_wafregional_web_acl.staging.id
-}
-
 resource "aws_wafregional_web_acl_association" "prod" {
   resource_arn = data.aws_lb.alb.arn
   web_acl_id   = aws_wafregional_web_acl.prod.id
