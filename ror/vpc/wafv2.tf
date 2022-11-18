@@ -153,31 +153,6 @@ resource "aws_wafv2_web_acl" "dev-v2" {
     }
 }
 
-resource "aws_wafregional_rule" "block_ip" {
-  name        = "block_ip_rule"
-  metric_name = "blockIpRule"
-
-  predicate {
-    type    = "IPMatch"
-    data_id = data.aws_wafregional_ipset.blacklist.id
-    negated = false
-  }
-}
-
-resource "aws_wafregional_byte_match_set" "empty_affiliation_param" {
-  name = "empty_affiliation_param_byte_match_set"
-
-  byte_match_tuples {
-    text_transformation   = "NONE"
-    target_string         = "affiliation="
-    positional_constraint = "EXACTLY"
-
-    field_to_match {
-      type = "QUERY_STRING"
-    }
-  }
-}
-
 resource "aws_wafv2_web_acl_association" "dev-v2" {
     resource_arn = data.aws_lb.alb-dev.arn
     web_acl_arn  = aws_wafv2_web_acl.dev-v2.arn
