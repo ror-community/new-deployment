@@ -47,3 +47,11 @@ variable "whitelist_ips_staging"{
 variable "blacklist_ips_staging"{
   type = "list"
 }
+
+variable "whitelist_ips_prod"{
+  type = "list"
+}
+
+variable "blacklist_ips_prod"{
+  type = "list"
+}
