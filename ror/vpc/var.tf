@@ -26,7 +26,9 @@ variable "cluster_name" {
 
 variable "status_dns_name" {}
 
-variable "waf_nat_ip" {
+variable "waf_nat_ip" {}
+
+variable "wafv2_nat_ip" {
   type = "list"
 }
 
