@@ -3,7 +3,7 @@ resource "aws_wafv2_ip_set" "nat" {
   description        = "NAT IP set"
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
-  addresses          = ["{$var.waf_nat_ip}"]
+  addresses          = var.waf_nat_ip
 }
 
 resource "aws_wafv2_ip_set" "whitelist" {
