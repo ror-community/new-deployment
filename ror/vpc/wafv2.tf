@@ -62,6 +62,14 @@ resource "aws_wafv2_ip_set" "blacklist-staging" {
   addresses          = var.blacklist_ips_staging
 }
 
+resource "aws_wafv2_ip_set" "ip-ratelimit-staging" {
+  name = "ratelimitIPSetStaging"
+  description        = "STAGING Rate limit IP set"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.ratelimit_ips_staging
+}
+
 resource "aws_wafv2_ip_set" "whitelist-prod" {
   name = "whitelistIPSetProd"
   description        = "PROD Whitelist IP set"
@@ -76,6 +84,14 @@ resource "aws_wafv2_ip_set" "blacklist-prod" {
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
   addresses          = var.blacklist_ips_prod
+}
+
+resource "aws_wafv2_ip_set" "ip-ratelimit-prod" {
+  name = "ratelimitIPSetProd"
+  description        = "PROD Rate limit IP set"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.ratelimit_ips_prod
 }
 
 resource "aws_wafv2_web_acl" "dev-v2" {
@@ -279,8 +295,32 @@ resource "aws_wafv2_web_acl" "staging-v2" {
     }
 
     rule {
-        name     = "rate-limit-rule"
+        name = "rate-limit-ip-rule"
         priority = 3
+        action {
+            block {}
+        }
+        statement {
+            rate_based_statement {
+                limit              = 200
+                aggregate_key_type = "IP"
+                scope_down_statement {
+                    ip_set_reference_statement {
+                        arn = aws_wafv2_ip_set.ip-ratelimit-staging.arn
+                    }
+                }
+            }
+        }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "ratelimit-ip-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name     = "rate-limit-rule"
+        priority = 4
         action {
             block {}
         }
@@ -299,7 +339,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
 
     rule {
         name = "block-invalid-request-rule"
-        priority = 4
+        priority = 5
         action {
             block {}
         }
@@ -401,8 +441,32 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     }
 
     rule {
-        name     = "rate-limit-rule"
+        name = "rate-limit-ip-rule"
         priority = 3
+        action {
+            block {}
+        }
+        statement {
+            rate_based_statement {
+                limit              = 200
+                aggregate_key_type = "IP"
+                scope_down_statement {
+                    ip_set_reference_statement {
+                        arn = aws_wafv2_ip_set.ip-ratelimit-prod.arn
+                    }
+                }
+            }
+        }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "ratelimit-ip-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name     = "rate-limit-rule"
+        priority = 4
         action {
             block {}
         }
@@ -421,7 +485,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
 
     rule {
         name = "block-invalid-request-rule"
-        priority = 4
+        priority = 5
         action {
             block {}
         }

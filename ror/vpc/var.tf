@@ -60,10 +60,18 @@ variable "blacklist_ips_staging"{
   type = "list"
 }
 
+variable "ratelimit_ips_staging"{
+  type = "list"
+}
+
 variable "whitelist_ips_prod"{
   type = "list"
 }
 
 variable "blacklist_ips_prod"{
+  type = "list"
+}
+
+variable "ratelimit_ips_prod"{
   type = "list"
 }
