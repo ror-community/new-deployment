@@ -38,6 +38,14 @@ resource "aws_wafv2_ip_set" "blacklist-dev" {
   addresses          = var.blacklist_ips_dev
 }
 
+resource "aws_wafv2_ip_set" "ip-ratelimit-dev" {
+  name = "ratelimitIPSetDev"
+  description        = "DEV Rate limit IP set"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.ratelimit_ips_dev
+}
+
 resource "aws_wafv2_ip_set" "whitelist-staging" {
   name = "whitelistIPSetStaging"
   description        = "STAGING Whitelist IP set"
@@ -125,16 +133,40 @@ resource "aws_wafv2_web_acl" "dev-v2" {
     }
 
     rule {
-        name     = "rate-limit-rule"
+        name = "rate-limit-ip-rule"
         priority = 3
         action {
             block {}
         }
         statement {
-        rate_based_statement {
-            limit              = 2000
-            aggregate_key_type = "IP"
+            rate_based_statement {
+                limit              = 200
+                aggregate_key_type = "IP"
+            }
+            scope_down_statement {
+                ip_set_reference_statement {
+                    arn = aws_wafv2_ip_set.ip-ratelimit-dev.arn
+                }
+            }
         }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "ratelimit-ip-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name     = "rate-limit-rule"
+        priority = 4
+        action {
+            block {}
+        }
+        statement {
+            rate_based_statement {
+                limit              = 2000
+                aggregate_key_type = "IP"
+            }
         }
         visibility_config {
         cloudwatch_metrics_enabled = true
@@ -145,7 +177,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
 
     rule {
         name = "block-invalid-request-rule"
-        priority = 4
+        priority = 5
         action {
             block {}
         }
