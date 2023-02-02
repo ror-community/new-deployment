@@ -1,4 +1,4 @@
 ror-api_tags = {
-  sha = "5dafd67"
-  version = "1.3.15.1"
+  sha = "b3e38c9"
+  version = "1.3.16"
 }
