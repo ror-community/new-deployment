@@ -142,10 +142,10 @@ resource "aws_wafv2_web_acl" "dev-v2" {
             rate_based_statement {
                 limit              = 200
                 aggregate_key_type = "IP"
-            }
-            scope_down_statement {
-                ip_set_reference_statement {
-                    arn = aws_wafv2_ip_set.ip-ratelimit-dev.arn
+                scope_down_statement {
+                    ip_set_reference_statement {
+                        arn = aws_wafv2_ip_set.ip-ratelimit-dev.arn
+                    }
                 }
             }
         }
