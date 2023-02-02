@@ -107,11 +107,3 @@ data "aws_route53_zone" "internal" {
   name = "ror.org"
   private_zone = true
 }
-
-data "aws_wafregional_ipset" "whitelist" {
-  name = "whitelistIPSet"
-}
-
-data "aws_wafregional_ipset" "blacklist" {
-  name = "blacklistIPSet"
-}
