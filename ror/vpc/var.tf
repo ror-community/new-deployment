@@ -48,6 +48,10 @@ variable "blacklist_ips_dev"{
   type = "list"
 }
 
+variable "ratelimit_ips_dev"{
+  type = "list"
+}
+
 variable "whitelist_ips_staging"{
   type = "list"
 }
