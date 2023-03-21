@@ -27,6 +27,7 @@ resource "aws_lambda_function" "error-dev" {
   handler = "error-dev.handler"
   runtime = "nodejs14.x"
   source_code_hash = sha256(filebase64("error-dev.js.zip"))
+  publish = true
 }
 
 resource "aws_lambda_function_url" "error-dev-url" {
