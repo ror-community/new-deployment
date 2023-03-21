@@ -139,7 +139,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
     lambda_function_association {
       event_type   = "viewer-request"
-      lambda_arn   = aws_lambda_function.error-dev.arn
+      lambda_arn   =  "${aws_lambda_function.error-dev.arn}:${aws_lambda_function.error-dev.version}"
       include_body = false
     }
 
