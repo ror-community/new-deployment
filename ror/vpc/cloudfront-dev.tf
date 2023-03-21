@@ -1,3 +1,9 @@
+resource "aws_lambda_function_url" "redirect-curation-request-url" {
+  provider = aws.use1
+  function_name      = aws_lambda_function.redirect-dev.arn
+  authorization_type = "NONE"
+}
+
 resource "aws_wafv2_web_acl" "site-dev-acl" {
   provider = aws.use1
   name        = "site-dev-acl"
@@ -56,6 +62,17 @@ resource "aws_cloudfront_distribution" "site-dev" {
     // s3_origin_config {
     //   origin_access_identity = aws_cloudfront_origin_access_identity.search_ror_org.cloudfront_access_identity_path
     // }
+  }
+
+  origin {
+    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect-dev-url.function_url, "https://"), "/")}"
+    origin_id   = "redirect-dev.ror.org"
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols = ["TLSv1"]
+    }
   }
 
   tags = {
@@ -133,7 +150,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
     path_pattern     = "0*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "search.dev.ror.org"
+    target_origin_id = "redirect-dev.dev.ror.org"
 
     forwarded_values {
       query_string = false
@@ -153,11 +170,6 @@ resource "aws_cloudfront_distribution" "site-dev" {
     default_ttl            = 86400
     max_ttl                = 2592000
 
-    lambda_function_association {
-      event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-dev.qualified_arn
-      include_body = false
-    }
   }
 
   ordered_cache_behavior {
