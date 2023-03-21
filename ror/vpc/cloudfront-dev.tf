@@ -1,4 +1,4 @@
-resource "aws_lambda_function_url" "redirect-curation-request-url" {
+resource "aws_lambda_function_url" "redirect-dev-url" {
   provider = aws.use1
   function_name      = aws_lambda_function.redirect-dev.arn
   authorization_type = "NONE"
