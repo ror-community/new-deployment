@@ -58,17 +58,6 @@ resource "aws_cloudfront_distribution" "site-dev" {
     // }
   }
 
-  origin {
-    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.error-dev-url.function_url, "https://"), "/")}"
-    origin_id   = "error-dev.ror.org"
-    custom_origin_config {
-      http_port = 80
-      https_port = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols = ["TLSv1"]
-    }
-  }
-
   tags = {
     site        = "ror"
     environment = "dev"
@@ -138,7 +127,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
     path_pattern     = "0*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "error-dev.ror.org"
+    target_origin_id = "search.dev.ror.org"
 
     forwarded_values {
       query_string = false
@@ -148,6 +137,12 @@ resource "aws_cloudfront_distribution" "site-dev" {
       }
     }
 
+    lambda_function_association {
+      event_type   = "viewer-request"
+      lambda_arn   = aws_lambda_function.error-dev.qualified_arn
+      include_body = false
+    }
+
     # This says to redirect http to https
     viewer_protocol_policy = "redirect-to-https"
     compress               = "true"
@@ -155,8 +150,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
     # default cache time in seconds.  This is 1 day, meaning CloudFront will only
     # look at your S3 bucket for changes once per day.
-    default_ttl            = 86400
-    max_ttl                = 2592000
+    default_ttl            = 0
+    max_ttl                = 0
 
   }
 
@@ -206,8 +201,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
   depends_on = [
-    aws_lambda_function.error-dev,
-    aws_lambda_function_url.error-dev-url
+    aws_lambda_function.error-dev
   ]
 }
 
