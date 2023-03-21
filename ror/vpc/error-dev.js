@@ -4,7 +4,8 @@ exports.handler = (evt, ctx, cb) => {
         statusCode: 200,
         body: JSON.stringify(
         {
-            message: 'Let\'s ROR!',
+            message: 'ROR',
+            input: evt,
         },
         null,
         2
