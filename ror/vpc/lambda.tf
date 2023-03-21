@@ -15,12 +15,11 @@ resource "aws_lambda_function" "redirect-dev" {
   function_name = "redirect-dev"
   role = aws_iam_role.iam_for_lambda.arn
   handler = "redirect-dev.handler"
-  runtime = "nodejs16.x"
+  runtime = "nodejs14.x"
   source_code_hash = sha256(filebase64("redirect-dev.js.zip"))
 }
 
 resource "aws_lambda_function_url" "redirect-dev-url" {
-  provider = aws.use1
   function_name      = aws_lambda_function.redirect-dev.arn
   authorization_type = "NONE"
 }
