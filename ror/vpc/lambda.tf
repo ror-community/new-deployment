@@ -22,4 +22,5 @@ resource "aws_lambda_function" "redirect-dev" {
 resource "aws_lambda_function_url" "redirect-dev-url" {
   function_name = aws_lambda_function.redirect-dev.arn
   authorization_type = "NONE"
+  provider = aws.use1
 }
