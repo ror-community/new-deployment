@@ -59,7 +59,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
   }
 
   origin {
-    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect_dev_url.function_url, "https://"), "/")}"
+    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect-dev-url.function_url, "https://"), "/")}"
     origin_id   = "redirect-dev.ror.org"
     custom_origin_config {
       http_port = 80
@@ -212,7 +212,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
   depends_on = [
-    aws_lambda_function.redirect-dev
+    aws_lambda_function.redirect-dev,
+    aws_lambda_function_url.redirect-dev-url
   ]
 }
 
