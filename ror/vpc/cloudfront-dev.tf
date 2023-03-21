@@ -58,6 +58,17 @@ resource "aws_cloudfront_distribution" "site-dev" {
     // }
   }
 
+  origin {
+    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.redirect_dev_url.function_url, "https://"), "/")}"
+    origin_id   = "redirect-dev.ror.org"
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols = ["TLSv1"]
+    }
+  }
+
   tags = {
     site        = "ror"
     environment = "dev"
@@ -133,7 +144,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
     path_pattern     = "0*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "search.dev.ror.org"
+    target_origin_id = "redirect-dev.ror.org"
 
     forwarded_values {
       query_string = false
