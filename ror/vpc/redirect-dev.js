@@ -1,12 +1,15 @@
-const path = require('path')
-
 exports.handler = (evt, ctx, cb) => {
-    const {request} = evt.Records[0].cf
-    console.log("This is dev")
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify(
+        {
+            message: 'Let\'s ROR!',
+            input: evt,
+        },
+        null,
+        2
+        ),
+      };
 
-    if (!path.extname(request.uri)) {
-        request.uri = '/index.html'
-    }
-
-    cb(null, request)
-}
+    cb(null, response);
+  }
