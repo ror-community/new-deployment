@@ -8,7 +8,7 @@ module "alb" {
     bucket                      = aws_s3_bucket.logs.bucket
   }
   subnets                       = module.vpc.public_subnets
-  tags                          = map("Environment", "production")
+  tags                          = {"Environment" = "production"}
   vpc_id                        = module.vpc.vpc_id
 }
 

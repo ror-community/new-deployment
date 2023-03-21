@@ -11,13 +11,13 @@ variable "ttl" {
 variable "vpc_name" {}
 variable "vpc_cidr" {}
 variable "azs" {
-    type = "list"
+    type = list(string)
 }
 variable "private_subnets"{
-    type = "list"
+    type = list(string)
 }
 variable "public_subnets"{
-    type = "list"
+    type = list(string)
 }
 
 variable "cluster_name" {
@@ -29,49 +29,49 @@ variable "status_dns_name" {}
 variable "waf_nat_ip" {}
 
 variable "wafv2_nat_ip" {
-  type = "list"
+  type = list(string)
 }
 
 variable "whitelist_ips"{
-  type = "list"
+  type = list(string)
 }
 
 variable "blacklist_ips"{
-  type = "list"
+  type = list(string)
 }
 
 variable "whitelist_ips_dev"{
-  type = "list"
+  type = list(string)
 }
 
 variable "blacklist_ips_dev"{
-  type = "list"
+  type = list(string)
 }
 
 variable "ratelimit_ips_dev"{
-  type = "list"
+  type = list(string)
 }
 
 variable "whitelist_ips_staging"{
-  type = "list"
+  type = list(string)
 }
 
 variable "blacklist_ips_staging"{
-  type = "list"
+  type = list(string)
 }
 
 variable "ratelimit_ips_staging"{
-  type = "list"
+  type = list(string)
 }
 
 variable "whitelist_ips_prod"{
-  type = "list"
+  type = list(string)
 }
 
 variable "blacklist_ips_prod"{
-  type = "list"
+  type = list(string)
 }
 
 variable "ratelimit_ips_prod"{
-  type = "list"
+  type = list(string)
 }

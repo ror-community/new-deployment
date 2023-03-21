@@ -8,7 +8,7 @@ module "alb-staging" {
     bucket                      = aws_s3_bucket.logs.bucket
   }
   subnets                       = module.vpc.public_subnets
-  tags                          = map("Environment", "staging")
+  tags                          = {"Environment" = "staging"}
   vpc_id                        = module.vpc.vpc_id
 }
 
