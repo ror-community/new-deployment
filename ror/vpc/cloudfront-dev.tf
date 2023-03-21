@@ -1,9 +1,3 @@
-resource "aws_lambda_function_url" "redirect-dev-url" {
-  provider = aws.use1
-  function_name      = aws_lambda_function.redirect-dev.arn
-  authorization_type = "NONE"
-}
-
 resource "aws_wafv2_web_acl" "site-dev-acl" {
   provider = aws.use1
   name        = "site-dev-acl"
@@ -218,7 +212,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
   depends_on = [
-    aws_lambda_function.redirect-dev
+    aws_lambda_function.redirect-dev,
+    aws_lambda_function_url.redirect-dev-url
   ]
 }
 
