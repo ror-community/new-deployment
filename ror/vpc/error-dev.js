@@ -1,13 +1,15 @@
-module.exports.handler = async (event) => {
-    return {
-      statusCode: 200,
-      body: JSON.stringify(
+exports.handler = (evt, ctx, cb) => {
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify(
         {
-          message: 'ROR!',
-          input: event,
+            message: 'Let\'s ROR!',
+            input: evt,
         },
         null,
         2
-      ),
-    };
-  };
+        ),
+      };
+
+    cb(null, response);
+  }
