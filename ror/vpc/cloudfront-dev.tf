@@ -58,17 +58,6 @@ resource "aws_cloudfront_distribution" "site-dev" {
     // }
   }
 
-  origin {
-    domain_name = "${trimsuffix(trimprefix(aws_lambda_function_url.error-dev-url.function_url, "https://"), "/")}"
-    origin_id   = "error-dev.ror.org"
-    custom_origin_config {
-      http_port = 80
-      https_port = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols = ["TLSv1"]
-    }
-  }
-
   tags = {
     site        = "ror"
     environment = "dev"
@@ -146,6 +135,12 @@ resource "aws_cloudfront_distribution" "site-dev" {
       cookies {
         forward = "none"
       }
+    }
+
+    lambda_function_association {
+      event_type   = "origin-request"
+      lambda_arn   =  "${aws_lambda_function.error-dev.arn}:${aws_lambda_function.error-dev.version}"
+      include_body = true
     }
 
     # This says to redirect http to https
