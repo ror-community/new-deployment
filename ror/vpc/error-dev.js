@@ -1,6 +1,6 @@
 exports.handler = (evt, ctx, cb) => {
     const response = {
-        status: '200',
+        statusCode: 200,
         body: JSON.stringify(
         {
             message: 'Let\'s ROR!',
