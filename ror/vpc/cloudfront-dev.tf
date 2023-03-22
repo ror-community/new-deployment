@@ -127,7 +127,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
     path_pattern     = "0*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "error-dev.ror.org"
+    target_origin_id = "search.dev.ror.org"
 
     forwarded_values {
       query_string = false
