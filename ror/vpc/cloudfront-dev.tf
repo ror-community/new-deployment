@@ -121,6 +121,12 @@ resource "aws_cloudfront_distribution" "site-dev" {
     # look at your S3 bucket for changes once per day.
     default_ttl            = 0
     max_ttl                = 0
+
+    lambda_function_association {
+      event_type   = "origin-request"
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
+      include_body = false
+    }
   }
 
   ordered_cache_behavior {
