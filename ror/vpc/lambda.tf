@@ -26,5 +26,5 @@ resource "aws_lambda_function" "id-not-found-error" {
   role = aws_iam_role.iam_for_lambda.arn
   handler = "id-not-found-error.handler"
   runtime = "nodejs14.x"
-  source_code_hash = sha256(filebase64("id-not-found-error.zip"))
+  source_code_hash = sha256(filebase64("id-not-found-error.js.zip"))
 }
