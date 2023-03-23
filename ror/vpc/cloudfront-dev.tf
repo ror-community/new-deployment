@@ -139,7 +139,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
     lambda_function_association {
       event_type   = "origin-response"
-      lambda_arn   =  aws_lambda_function.id-not-found-error.arn.qualified_arn
+      lambda_arn   =  aws_lambda_function.id-not-found-error.qualified_arn
       include_body = false
     }
 
