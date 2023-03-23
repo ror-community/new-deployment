@@ -119,8 +119,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
     # default cache time in seconds.  This is 1 day, meaning CloudFront will only
     # look at your S3 bucket for changes once per day.
-    default_ttl            = 86400
-    max_ttl                = 2592000
+    default_ttl            = 0
+    max_ttl                = 0
   }
 
   ordered_cache_behavior {
