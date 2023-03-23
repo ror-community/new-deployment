@@ -208,7 +208,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
   depends_on = [
     aws_lambda_function.id-not-found-error,
-    aws_lambda_function_url.redirect-index
+    aws_lambda_function.redirect-index
   ]
 }
 
