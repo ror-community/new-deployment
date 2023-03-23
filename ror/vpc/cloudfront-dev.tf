@@ -65,8 +65,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   custom_error_response {
     error_code            = "404"
-    error_caching_min_ttl = "5"
-    response_code         = "200"
+    error_caching_min_ttl = "10"
+    response_code         = "404"
     response_page_path    = "/404.html"
   }
 
@@ -138,9 +138,15 @@ resource "aws_cloudfront_distribution" "site-dev" {
     }
 
     lambda_function_association {
+      event_type   = "origin-response"
+      lambda_arn   =  aws_lambda_function.id-not-found-error.arn.qualified_arn
+      include_body = false
+    }
+
+    lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   =  "${aws_lambda_function.error-dev.arn}:${aws_lambda_function.error-dev.version}"
-      include_body = true
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
+      include_body = false
     }
 
     # This says to redirect http to https
@@ -201,8 +207,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
   depends_on = [
-    aws_lambda_function.error-dev,
-    aws_lambda_function_url.error-dev-url
+    aws_lambda_function.id-not-found-error,
+    aws_lambda_function_url.redirect-index
   ]
 }
 
