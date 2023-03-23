@@ -18,5 +18,4 @@ exports.handler = async function (event) {
         response.body = "ROR ID not found"
     }
     return response
-
 }
