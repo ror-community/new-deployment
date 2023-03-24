@@ -193,7 +193,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
   }
 
   logging_config {
-    include_cookies = fals4
+    include_cookies = false
     bucket          = data.aws_s3_bucket.logs.bucket_domain_name
 
     prefix = "cf-dev/"
