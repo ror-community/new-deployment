@@ -99,7 +99,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "search*"
+    path_pattern     = "search"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "search.dev.ror.org"
