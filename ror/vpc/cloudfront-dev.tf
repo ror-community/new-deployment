@@ -144,14 +144,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
     }
 
     lambda_function_association {
-      event_type   = "origin-response"
-      lambda_arn   =  "${aws_lambda_function.id-not-found-error.arn}:${aws_lambda_function.id-not-found-error.version}"
-      include_body = false
-    }
-
-    lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
+      lambda_arn   =  "${aws_lambda_function.check-id-redirect-index.arn}:${aws_lambda_function.check-id-redirect-index.version}"
       include_body = false
     }
 
@@ -213,7 +207,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   web_acl_id = aws_wafv2_web_acl.site-dev-acl.arn
   depends_on = [
-    aws_lambda_function.id-not-found-error,
+    aws_lambda_function.check-id-redirect-index,
     aws_lambda_function.redirect-index
   ]
 }
