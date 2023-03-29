@@ -66,7 +66,7 @@ resource "aws_cloudfront_distribution" "site" {
   custom_error_response {
     error_code            = "404"
     error_caching_min_ttl = "5"
-    response_code         = "200"
+    response_code         = "404"
     response_page_path    = "/404.html"
   }
 
