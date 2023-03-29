@@ -9,16 +9,6 @@ resource "aws_lambda_function" "redirect-index" {
   publish = true
 }
 
-resource "aws_lambda_function" "error-dev" {
-  provider = aws.use1
-  filename = "error-dev.js.zip"
-  function_name = "error-dev"
-  role = aws_iam_role.iam_for_lambda.arn
-  handler = "error-dev.handler"
-  runtime = "nodejs14.x"
-  source_code_hash = sha256(filebase64("error-dev.js.zip"))
-}
-
 resource "aws_lambda_function" "id-not-found-error" {
   provider = aws.use1
   filename = "id-not-found-error.js.zip"
@@ -27,5 +17,16 @@ resource "aws_lambda_function" "id-not-found-error" {
   handler = "id-not-found-error.handler"
   runtime = "nodejs14.x"
   source_code_hash = sha256(filebase64("id-not-found-error.js.zip"))
+  publish = true
+}
+
+resource "aws_lambda_function" "check-id-redirect-index" {
+  provider = aws.use1
+  filename = "check-id-redirect-index.js.zip"
+  function_name = "check-id-redirect-index"
+  role = aws_iam_role.iam_for_lambda.arn
+  handler = "check-id-redirect-index.handler"
+  runtime = "nodejs14.x"
+  source_code_hash = sha256(filebase64("check-id-redirect-index.js.zip"))
   publish = true
 }

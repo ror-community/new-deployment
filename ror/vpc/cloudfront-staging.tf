@@ -99,7 +99,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "search*"
+    path_pattern     = "search"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "search.staging.ror.org"
@@ -150,12 +150,12 @@ resource "aws_cloudfront_distribution" "site-staging" {
 
     # default cache time in seconds.  This is 1 day, meaning CloudFront will only
     # look at your S3 bucket for changes once per day.
-    default_ttl            = 86400
-    max_ttl                = 2592000
+    default_ttl            = 0
+    max_ttl                = 0
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
+      lambda_arn   =  "${aws_lambda_function.check-id-redirect-index.arn}:${aws_lambda_function.check-id-redirect-index.version}"
       include_body = false
     }
   }
@@ -206,6 +206,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
 
   web_acl_id = aws_wafv2_web_acl.site-staging-acl.arn
   depends_on = [
+      aws_lambda_function.check-id-redirect-index,
       aws_lambda_function.redirect-index
     ]
 }
