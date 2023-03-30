@@ -1,5 +1,5 @@
 const https = require("https");
-let url = "https://api.dev.ror.org/organizations";
+let url = "https://api.ror.org/organizations";
 
 exports.handler = async function (event) {
     const request = event.Records[0].cf.request;
