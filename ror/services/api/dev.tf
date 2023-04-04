@@ -3,7 +3,7 @@ resource "aws_ecs_service" "api-dev" {
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api-dev.arn
-  desired_count = 1
+  desired_count = 2
 
   # give container time to start up
   health_check_grace_period_seconds = 600
@@ -26,6 +26,30 @@ resource "aws_ecs_service" "api-dev" {
   depends_on = [
     data.aws_lb_listener.alb-dev
   ]
+}
+
+resource "aws_appautoscaling_target" "api-dev-autoscale-target" {
+  max_capacity = 4
+  min_capacity = 2
+  resource_id = "service/${data.aws_ecs_cluster.default.id}/api-dev"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "api-dev-autoscale-policy" {
+  name = "api-dev-cpu"
+  policy_type = "TargetTrackingScaling"
+  resource_id = aws_appautoscaling_target.api-dev-autoscale-target.resource_id
+  scalable_dimension = aws_appautoscaling_target.api-dev-autoscale-target.scalable_dimension
+  service_namespace = aws_appautoscaling_target.api-dev-autoscale-target.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+
+    target_value = 80
+  }
 }
 
 resource "aws_lb_target_group" "api-dev" {
