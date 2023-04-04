@@ -31,7 +31,7 @@ resource "aws_ecs_service" "api-dev" {
 resource "aws_appautoscaling_target" "api-dev-autoscale-target" {
   max_capacity = 4
   min_capacity = 2
-  resource_id = aws_ecs_service.api-dev.id
+  resource_id = "service/default/api-dev"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace = "ecs"
 }
