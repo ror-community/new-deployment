@@ -1,10 +1,10 @@
 resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   domain_name           = "elasticsearch-dev"
-  elasticsearch_version = "6.3"
+  elasticsearch_version = "6.8"
 
   cluster_config {
-    instance_type = "t3.medium.elasticsearch"
-    instance_count = 1
+    instance_type = "m4.large.elasticsearch"
+    instance_count = 2
   }
 
   advanced_options = {
@@ -18,7 +18,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   ebs_options{
       ebs_enabled = true
       volume_type = "gp2"
-      volume_size = 100
+      volume_size = 50
   }
 
   vpc_options {
