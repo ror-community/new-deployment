@@ -32,7 +32,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
     log_type                 = "ES_APPLICATION_LOGS"
   }
 
-  auto_tune_options {
+  auto_tune_options = {
     desired_state = "ENABLED"
   }
 
