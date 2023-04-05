@@ -28,7 +28,8 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   }
 
   log_publishing_options {
-    cloudwatch_log_group_arn = aws_cloudwatch_log_group.es-dev.arn
+    cloudwatch_log_group_arn = "${aws_cloudwatch_log_group.es-dev.arn}"
+    enabled = true
     log_type = "ES_APPLICATION_LOGS"
   }
 
