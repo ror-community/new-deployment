@@ -5,7 +5,9 @@ variable "region" {
 }
 
 variable "private_security_group" {}
-variable "private_subnet" {}
+variable "private_subnets" {
+  type = "list"
+}
 
 variable "ttl" {
   default = "300"

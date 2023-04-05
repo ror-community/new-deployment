@@ -24,7 +24,10 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
 
   vpc_options {
     security_group_ids = [data.aws_security_group.private_security_group.id]
-    subnet_ids = [data.aws_subnet.private_subnet.id]
+    subnet_ids = [
+      data.aws_subnet.private_subnet.ids[0],
+      data.aws_subnet.private_subnet.ids[1]
+    ]
   }
 
   log_publishing_options {
