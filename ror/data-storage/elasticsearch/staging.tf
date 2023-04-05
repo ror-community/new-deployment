@@ -1,6 +1,6 @@
 resource "aws_elasticsearch_domain" "elasticsearch-staging" {
   domain_name           = "elasticsearch-staging"
-  elasticsearch_version = "6.3"
+  elasticsearch_version = "6.8"
 
   cluster_config {
     instance_type = "t3.medium.elasticsearch"
@@ -26,9 +26,21 @@ resource "aws_elasticsearch_domain" "elasticsearch-staging" {
     subnet_ids = [data.aws_subnet.private_subnet.id]
   }
 
+  log_publishing_options {
+    cloudwatch_log_group_arn = "${aws_cloudwatch_log_group.es-staging.arn}"
+    enabled = true
+    log_type = "ES_APPLICATION_LOGS"
+  }
+
   tags = {
     Domain = "elasticsearch-staging"
   }
+
+  depends_on = [aws_cloudwatch_log_group.es-staging]
+}
+
+resource "aws_cloudwatch_log_group" "es-staging" {
+  name = "es-staging"
 }
 
 resource "aws_route53_record" "elasticsearch-staging" {
