@@ -37,6 +37,11 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   }
 }
 
+resource "aws_cloudwatch_log_resource_policy" "es-dev-log-policy" {
+  policy_name     = "es-dev-log-policy"
+  policy_document = file("elasticsearch_logs_policy.json")
+}
+
 resource "aws_cloudwatch_log_group" "es-dev" {
   name = "/es/dev"
 }
