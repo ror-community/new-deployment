@@ -3,7 +3,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   elasticsearch_version = "6.8"
 
   cluster_config {
-    instance_type = "m4.large.elasticsearch"
+    instance_type = "m5.large.elasticsearch"
     instance_count = 2
     zone_awareness_enabled = true
   }
@@ -29,12 +29,13 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
 
   log_publishing_options {
     cloudwatch_log_group_arn = aws_cloudwatch_log_group.es-dev.arn
-    log_type                 = "ES_APPLICATION_LOGS"
+    log_type = "ES_APPLICATION_LOGS"
   }
 
   tags = {
     Domain = "elasticsearch-dev"
   }
+  depends_on = [aws_cloudwatch_log_group.es-dev]
 }
 
 resource "aws_cloudwatch_log_resource_policy" "es-dev-log-policy" {
