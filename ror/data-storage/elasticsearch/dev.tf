@@ -2,10 +2,6 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   domain_name           = "elasticsearch-dev"
   elasticsearch_version = "6.8"
 
-  auto_tune_options {
-    desired_state = "ENABLED"
-  }
-
   cluster_config {
     instance_type = "m4.large.elasticsearch"
     instance_count = 2
