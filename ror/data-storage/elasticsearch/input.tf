@@ -10,7 +10,7 @@ data "aws_security_group" "private_security_group" {
 }
 
 data "aws_subnet" "private_subnet" {
-  ids = var.private_subnets
+  ids = var.private_subnet
 }
 
 data "aws_route53_zone" "internal" {

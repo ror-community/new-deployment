@@ -5,8 +5,11 @@ variable "region" {
 }
 
 variable "private_security_group" {}
-variable "private_subnets" {
-  type = "list"
+
+variable "private_subnet" {}
+
+variable "private_subnet_ids" {
+  type = list(string)
 }
 
 variable "ttl" {
