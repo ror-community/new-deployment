@@ -45,7 +45,7 @@ resource "aws_cloudwatch_log_resource_policy" "es-dev-log-policy" {
 }
 
 resource "aws_cloudwatch_log_group" "es-dev" {
-  name = "/es/dev"
+  name = "es-dev"
 }
 
 resource "aws_route53_record" "elasticsearch-dev" {
