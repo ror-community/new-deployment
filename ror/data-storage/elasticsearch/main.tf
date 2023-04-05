@@ -5,11 +5,12 @@
 
 resource "aws_elasticsearch_domain" "elasticsearch" {
   domain_name           = "elasticsearch"
-  elasticsearch_version = "6.3"
+  elasticsearch_version = "6.8"
 
   cluster_config {
-    instance_type = "m5.xlarge.elasticsearch"
-    instance_count = 1
+    instance_type = "m5.large.elasticsearch"
+    instance_count = 2
+    zone_awareness_enabled = true
   }
 
   advanced_options = {
@@ -28,12 +29,24 @@ resource "aws_elasticsearch_domain" "elasticsearch" {
 
   vpc_options {
     security_group_ids = [data.aws_security_group.private_security_group.id]
-    subnet_ids = [data.aws_subnet.private_subnet.id]
+    subnet_ids = var.private_subnet_ids
+  }
+
+  log_publishing_options {
+    cloudwatch_log_group_arn = "${aws_cloudwatch_log_group.es-prod.arn}"
+    enabled = true
+    log_type = "ES_APPLICATION_LOGS"
   }
 
   tags = {
     Domain = "elasticsearch"
   }
+
+  depends_on = [aws_cloudwatch_log_group.es-prod]
+}
+
+resource "aws_cloudwatch_log_group" "es-prod" {
+  name = "es-prod"
 }
 
 resource "aws_elasticsearch_domain_policy" "ror" {
