@@ -10,6 +10,7 @@ module "alb-staging" {
   subnets                       = module.vpc.public_subnets
   tags                          = {"Environment" = "staging"}
   vpc_id                        = module.vpc.vpc_id
+  idle_timeout                  = "240"
 }
 
 resource "aws_lb_listener" "alb-http-staging" {
