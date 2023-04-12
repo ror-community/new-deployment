@@ -10,6 +10,7 @@ module "alb-dev" {
   subnets                       = module.vpc.public_subnets
   tags                          = {"Environment" = "dev"}
   vpc_id                        = module.vpc.vpc_id
+  idle_timeout                  = "240"
 }
 
 resource "aws_lb_listener" "alb-http-dev" {
