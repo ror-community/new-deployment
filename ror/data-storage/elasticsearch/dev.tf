@@ -3,9 +3,8 @@ resource "aws_elasticsearch_domain" "elasticsearch-dev" {
   elasticsearch_version = "6.8"
 
   cluster_config {
-    instance_type = "m5.large.elasticsearch"
-    instance_count = 2
-    zone_awareness_enabled = true
+    instance_type = "t3.medium.elasticsearch"
+    instance_count = 1
   }
 
   advanced_options = {
