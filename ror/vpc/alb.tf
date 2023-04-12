@@ -10,6 +10,7 @@ module "alb" {
   subnets                       = module.vpc.public_subnets
   tags                          = {"Environment" = "production"}
   vpc_id                        = module.vpc.vpc_id
+  idle_timeout                  = "240"
 }
 
 resource "aws_s3_bucket" "logs" {
