@@ -95,7 +95,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-v7-dev" {
   depends_on = [aws_cloudwatch_log_group.es-v7-dev]
 }
 
-resource "aws_cloudwatch_log_group" "es-dev" {
+resource "aws_cloudwatch_log_group" "es-v7-dev" {
   name = "es-v7-dev"
 }
 
