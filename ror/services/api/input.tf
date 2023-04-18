@@ -71,6 +71,7 @@ data "template_file" "api_task" {
     data_store         = var.data_store
     github_token       = var.github_token
     version            = var.ror-api_tags["version"]
+    launch_darkly_key  = var.launch_darkly_key
   }
 }
 
@@ -93,6 +94,7 @@ data "template_file" "api-dev_task" {
     data_store         = var.data_store_dev
     github_token       = var.github_token
     version            = var.ror-api-dev_tags["sha"]
+    launch_darkly_key  = var.launch_darkly_key_dev
   }
 }
 
@@ -113,6 +115,7 @@ data "template_file" "api-staging_task" {
     data_store         = var.data_store_staging
     github_token       = var.github_token
     version            = var.ror-api-staging_tags["sha"]
+    launch_darkly_key  = var.launch_darkly_key_staging
   }
 }
 

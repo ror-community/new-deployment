@@ -84,6 +84,10 @@
     {
       "name": "GITHUB_TOKEN",
       "value": "${github_token}"
+    },
+    {
+      "name": "LAUNCH_DARKLY_KEY",
+      "value": "${launch_darkly_key}"
     }
   ]
 }]
