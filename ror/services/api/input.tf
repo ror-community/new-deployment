@@ -60,6 +60,8 @@ data "template_file" "api_task" {
   vars = {
     elastic_host       = var.elastic_host
     elastic_port       = var.elastic_port
+    elastic7_host      = var.elastic7_host
+    elastic7_port      = var.elastic7_port
     access_key         = var.access_key
     secret_key         = var.secret_key
     region             = var.region
@@ -104,6 +106,8 @@ data "template_file" "api-staging_task" {
   vars = {
     elastic_host_staging = var.elastic_host_staging
     elastic_port_staging = var.elastic_port_staging
+    elastic7_host_staging   = var.elastic7_host_staging
+    elastic7_port_staging   = var.elastic7_port_staging
     access_key         = var.access_key
     secret_key         = var.secret_key
     region             = var.region
