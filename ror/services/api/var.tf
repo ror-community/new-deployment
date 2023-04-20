@@ -20,6 +20,12 @@ variable "elastic_host" {
 variable "elastic_port" {
   default = "80"
 }
+variable "elastic7_host" {
+  default = "elasticsearch-v7.ror.org"
+}
+variable "elastic7_port" {
+  default = "80"
+}
 variable "elastic_host_dev" {
   default = "elasticsearch.dev.ror.org"
 }
@@ -36,6 +42,12 @@ variable "elastic_host_staging" {
   default = "elasticsearch.staging.ror.org"
 }
 variable "elastic_port_staging" {
+  default = "80"
+}
+variable "elastic7_host_staging" {
+  default = "elasticsearch-v7.staging.ror.org"
+}
+variable "elastic7_port_staging" {
   default = "80"
 }
 variable "es_name" {
