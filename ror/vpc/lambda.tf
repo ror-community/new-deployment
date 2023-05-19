@@ -16,6 +16,7 @@ resource "aws_lambda_function" "check-id-redirect-index" {
   role = aws_iam_role.iam_for_lambda.arn
   handler = "check-id-redirect-index.handler"
   runtime = "nodejs14.x"
+  timeout = "5"
   source_code_hash = sha256(filebase64("check-id-redirect-index.js.zip"))
   publish = true
 }
