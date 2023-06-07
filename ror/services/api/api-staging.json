@@ -26,20 +26,12 @@
       "value": "staging"
     },
     {
-      "name": "ELASTIC_HOST",
-      "value": "${elastic_host_staging}"
-    },
-    {
-      "name": "ELASTIC_PORT",
-      "value": "${elastic_port_staging}"
-    },
-    {
       "name": "ELASTIC7_HOST",
       "value": "${elastic7_host_staging}"
     },
     {
       "name": "ELASTIC7_PORT",
-      "value": "${elastic_port_staging}"
+      "value": "${elastic7_port_staging}"
     },
     {
       "name": "AWS_ACCESS_KEY_ID",

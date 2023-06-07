@@ -32,12 +32,6 @@ variable "elastic7_host_dev" {
 variable "elastic7_port_dev" {
   default = "80"
 }
-variable "elastic_host_staging" {
-  default = "elasticsearch.staging.ror.org"
-}
-variable "elastic_port_staging" {
-  default = "80"
-}
 variable "elastic7_host_staging" {
   default = "elasticsearch-v7.staging.ror.org"
 }
