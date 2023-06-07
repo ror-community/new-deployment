@@ -102,8 +102,6 @@ data "template_file" "api-staging_task" {
   template = file("api-staging.json")
 
   vars = {
-    elastic_host_staging = var.elastic_host_staging
-    elastic_port_staging = var.elastic_port_staging
     elastic7_host_staging   = var.elastic7_host_staging
     elastic7_port_staging   = var.elastic7_port_staging
     access_key         = var.access_key
