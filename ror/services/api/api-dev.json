@@ -26,20 +26,12 @@
       "value": "dev"
     },
     {
-      "name": "ELASTIC_HOST",
-      "value": "${elastic_host_dev}"
-    },
-    {
-      "name": "ELASTIC_PORT",
-      "value": "${elastic_port_dev}"
-    },
-    {
       "name": "ELASTIC7_HOST",
       "value": "${elastic7_host_dev}"
     },
     {
       "name": "ELASTIC7_PORT",
-      "value": "${elastic_port_dev}"
+      "value": "${elastic7_port_dev}"
     },
     {
       "name": "AWS_ACCESS_KEY_ID",

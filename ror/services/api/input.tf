@@ -81,8 +81,6 @@ data "template_file" "api-dev_task" {
   template = file("api-dev.json")
 
   vars = {
-    elastic_host_dev   = var.elastic_host_dev
-    elastic_port_dev   = var.elastic_port_dev
     elastic7_host_dev   = var.elastic7_host_dev
     elastic7_port_dev   = var.elastic7_port_dev
     access_key         = var.access_key
