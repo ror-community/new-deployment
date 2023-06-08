@@ -14,12 +14,6 @@ variable "private_subnet_ids" {
 }
 variable "private_security_group_id" {}
 
-variable "elastic_host" {
-  default = "elasticsearch.ror.org"
-}
-variable "elastic_port" {
-  default = "80"
-}
 variable "elastic7_host" {
   default = "elasticsearch-v7.ror.org"
 }

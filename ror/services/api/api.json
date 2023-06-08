@@ -26,20 +26,12 @@
       "value": "production"
     },
     {
-      "name": "ELASTIC_HOST",
-      "value": "${elastic_host}"
-    },
-    {
-      "name": "ELASTIC_PORT",
-      "value": "${elastic_port}"
-    },
-    {
       "name": "ELASTIC7_HOST",
       "value": "${elastic7_host}"
     },
     {
       "name": "ELASTIC7_PORT",
-      "value": "${elastic_port}"
+      "value": "${elastic7_port}"
     },
     {
       "name": "AWS_ACCESS_KEY_ID",
