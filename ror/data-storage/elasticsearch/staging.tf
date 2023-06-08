@@ -5,6 +5,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-v7-staging" {
   cluster_config {
     instance_type = "t3.medium.elasticsearch"
     instance_count = 2
+    zone_awareness_enabled = true
   }
 
   advanced_options = {
