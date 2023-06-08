@@ -4,7 +4,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-v7-staging" {
 
   cluster_config {
     instance_type = "t3.medium.elasticsearch"
-    instance_count = 1
+    instance_count = 2
   }
 
   advanced_options = {
