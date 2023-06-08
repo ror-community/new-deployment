@@ -24,7 +24,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-v7-staging" {
 
   vpc_options {
     security_group_ids = [data.aws_security_group.private_security_group.id]
-    subnet_ids = [data.aws_subnet.private_subnet.id]
+    subnet_ids = var.private_subnet_ids
   }
 
   log_publishing_options {
