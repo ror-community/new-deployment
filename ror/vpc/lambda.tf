@@ -14,7 +14,7 @@ resource "aws_lambda_function" "check-id-redirect-index-dev" {
   filename = "check-id-redirect-index-dev.js.zip"
   function_name = "check-id-redirect-index-dev"
   role = aws_iam_role.iam_for_lambda.arn
-  handler = "check-id-redirect-index.handler"
+  handler = "check-id-redirect-index-dev.handler"
   runtime = "nodejs14.x"
   timeout = "10"
   source_code_hash = sha256(filebase64("check-id-redirect-index-dev.js.zip"))
@@ -26,7 +26,7 @@ resource "aws_lambda_function" "check-id-redirect-index-staging" {
   filename = "check-id-redirect-index-staging.js.zip"
   function_name = "check-id-redirect-index-staging"
   role = aws_iam_role.iam_for_lambda.arn
-  handler = "check-id-redirect-index.handler"
+  handler = "check-id-redirect-index-staging.handler"
   runtime = "nodejs14.x"
   timeout = "10"
   source_code_hash = sha256(filebase64("check-id-redirect-index-staging.js.zip"))
