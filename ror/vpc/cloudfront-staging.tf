@@ -155,7 +155,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
 
     lambda_function_association {
       event_type   = "origin-request"
-      lambda_arn   =  "${aws_lambda_function.check-id-redirect-index.arn}:${aws_lambda_function.check-id-redirect-index.version}"
+      lambda_arn   =  "${aws_lambda_function.check-id-redirect-index-staging.arn}:${aws_lambda_function.check-id-redirect-index-staging.version}"
       include_body = false
     }
   }
@@ -206,7 +206,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
 
   web_acl_id = aws_wafv2_web_acl.site-staging-acl.arn
   depends_on = [
-      aws_lambda_function.check-id-redirect-index,
+      aws_lambda_function.check-id-redirect-index-staging,
       aws_lambda_function.redirect-index
     ]
 }
