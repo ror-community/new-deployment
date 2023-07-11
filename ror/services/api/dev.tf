@@ -59,10 +59,6 @@ resource "aws_lb_target_group" "api-dev" {
   vpc_id   = var.vpc_id
   target_type = "ip"
 
-  health_check {
-    path = "/heartbeat"
-  }
-
   depends_on = [
     data.aws_lb_listener.alb-dev
   ]
