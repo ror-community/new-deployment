@@ -1,0 +1,13 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": "*"
+        },
+        "Action": "es:*",
+        "Resource": "arn:aws:es:eu-west-1:855857491983:domain/elasticsearch-v7-dev/*"
+      }
+    ]
+  }

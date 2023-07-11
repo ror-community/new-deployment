@@ -43,6 +43,11 @@ resource "aws_cloudwatch_log_group" "es-v7-dev" {
   name = "es-v7-dev"
 }
 
+resource "aws_elasticsearch_domain_policy" "ror-v7-dev" {
+  domain_name = aws_elasticsearch_domain.elasticsearch-v7-dev.domain_name
+  access_policies = file("elasticsearch_policy_dev.json")
+}
+
 resource "aws_route53_record" "elasticsearch-v7-dev" {
    zone_id = data.aws_route53_zone.internal.zone_id
    name = "elasticsearch-v7.dev.ror.org"
