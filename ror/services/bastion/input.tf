@@ -5,9 +5,6 @@ provider "aws" {
   version    = "~> 2.7"
 }
 
-data "aws_route53_zone" "public-community" {
-  name         = "ror.community"
-}
 data "aws_route53_zone" "public" {
   name         = "ror.org"
 }

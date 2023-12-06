@@ -22,14 +22,6 @@ resource "aws_eip_association" "bastion" {
   allocation_id = aws_eip.bastion.id
 }
 
-resource "aws_route53_record" "bastion-community" {
-    zone_id = data.aws_route53_zone.public-community.zone_id
-    name = "${var.hostname}.ror.community"
-    type = "A"
-    ttl = var.ttl
-    records = [aws_eip.bastion.public_ip]
-}
-
 resource "aws_route53_record" "bastion" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "${var.hostname}.ror.org"
@@ -97,14 +89,6 @@ resource "aws_eip" "bastion-2023" {
 resource "aws_eip_association" "bastion-2023" {
   instance_id = aws_instance.bastion-2023.id
   allocation_id = aws_eip.bastion-2023.id
-}
-
-resource "aws_route53_record" "bastion-2023-community" {
-    zone_id = data.aws_route53_zone.public-community.zone_id
-    name = "${var.hostname_linux_2023}.ror.community"
-    type = "A"
-    ttl = var.ttl
-    records = [aws_eip.bastion-2023.public_ip]
 }
 
 resource "aws_route53_record" "bastion-2023" {
