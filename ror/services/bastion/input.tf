@@ -32,3 +32,12 @@ data "template_file" "bastion-user-data-cfg" {
     fqdn         = "${var.hostname}.ror.community"
   }
 }
+
+data "template_file" "bastion-2023-user-data-cfg" {
+  template = file("user_data.cfg")
+
+  vars = {
+    hostname     = var.hostname_linux_2023
+    fqdn         = "${var.hostname_linux_2023}.ror.community"
+  }
+}
