@@ -14,18 +14,6 @@ variable "public_subnet_id" {}
 variable "private_subnet_id" {}
 variable "private_security_group_id" {}
 
-variable "ami" {
-  type = "map"
-  description = "Amazon Linux default AMI"
-
-  default = {
-    eu-west-1 = "ami-1a962263"
-  }
-}
-
-variable "hostname" {}
-variable "key_name" {}
-
 variable "ami_linux_2023" {
   type = "map"
   description = "Amazon Linux 2023 AMI"

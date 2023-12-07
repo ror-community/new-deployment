@@ -1,43 +1,3 @@
-# delete after testing new bastion host
-# ssh key generated manually in AWS console
-resource "aws_instance" "bastion" {
-    ami = var.ami["eu-west-1"]
-    instance_type = "t2.micro"
-    vpc_security_group_ids = [aws_security_group.bastion.id]
-    subnet_id = data.aws_subnet.public_subnet.id
-    key_name = var.key_name
-    associate_public_ip_address = "true"
-    user_data = data.template_file.bastion-user-data-cfg.rendered
-    tags = {
-        Name = "Bastion"
-    }
-}
-
-resource "aws_eip" "bastion" {
-  vpc = "true"
-}
-
-resource "aws_eip_association" "bastion" {
-  instance_id = aws_instance.bastion.id
-  allocation_id = aws_eip.bastion.id
-}
-
-resource "aws_route53_record" "bastion" {
-    zone_id = data.aws_route53_zone.public.zone_id
-    name = "${var.hostname}.ror.org"
-    type = "A"
-    ttl = var.ttl
-    records = [aws_eip.bastion.public_ip]
-}
-
-resource "aws_route53_record" "split-bastion" {
-    zone_id = data.aws_route53_zone.internal.zone_id
-    name = "${var.hostname}.ror.org"
-    type = "A"
-    ttl = var.ttl
-    records = [aws_instance.bastion.private_ip]
-}
-
 resource "aws_security_group" "bastion" {
     name = "bastion"
     description = "Managed by Terraform"
@@ -69,6 +29,7 @@ resource "aws_security_group" "bastion" {
     }
 }
 
+# ssh key generated manually in AWS console
 resource "aws_instance" "bastion-2023" {
     ami = var.ami_linux_2023["eu-west-1"]
     instance_type = "t2.micro"

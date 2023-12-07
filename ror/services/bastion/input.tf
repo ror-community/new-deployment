@@ -21,15 +21,6 @@ data "aws_subnet" "private_subnet" {
 data "aws_security_group" "private_security_group" {
   id = var.private_security_group_id
 }
-data "template_file" "bastion-user-data-cfg" {
-  template = file("user_data.cfg")
-
-  vars = {
-    hostname     = var.hostname
-    fqdn         = "${var.hostname}.ror.community"
-  }
-}
-
 data "template_file" "bastion-2023-user-data-cfg" {
   template = file("user_data.cfg")
 
