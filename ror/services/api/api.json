@@ -1,8 +1,8 @@
 [{
   "name": "api-community",
   "image": "rorcommunity/ror-api:${version}",
-  "cpu": 512,
-  "memory": 2048,
+  "cpu": 1024,
+  "memory": 4096,
   "networkMode": "awsvpc",
   "essential": true,
   "portMappings": [{
