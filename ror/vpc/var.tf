@@ -26,11 +26,11 @@ variable "cluster_name" {
 
 variable "status_dns_name" {}
 
-variable "mailchimp_cname_1 {}
+variable "mailchimp_cname_1" {}
 
-variable "mailchimp_cname_2 {}
+variable "mailchimp_cname_2" {}
 
-variable "mailchimp_dmarc {}
+variable "mailchimp_dmarc" {}
 
 variable "waf_nat_ip" {}
 
