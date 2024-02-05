@@ -59,3 +59,27 @@ resource "aws_route53_record" "status" {
     ttl = "3600"
     records = [var.status_dns_name]
 }
+
+resource "aws_route53_record" "mailchimp-1" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "k2._domainkey.ror.org"
+    type = "CNAME"
+    ttl = "300"
+    records = [var.mailchimp_cname_1]
+}
+
+resource "aws_route53_record" "mailchimp-2" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "k3._domainkey.ror.org"
+    type = "CNAME"
+    ttl = "300"
+    records = [var.mailchimp_cname_2]
+}
+
+resource "aws_route53_record" "mailchimp-dmarc" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "_dmarc.ror.org"
+    type = "TXT"
+    ttl = "300"
+    records = [var.mailchimp_dmarc]
+}
