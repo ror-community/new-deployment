@@ -256,6 +256,12 @@ resource "aws_wafv2_web_acl" "staging-v2" {
     description = "Staging ALB WAF"
     scope       = "REGIONAL"
 
+    custom_response_body {
+        key           = "rate_limit_blocked_response"
+        content       = "Rate Limit Exceeded. ROR API rate limit is 2000 requests per 5 minute period."
+        content_type  = "TEXT_PLAIN"
+    }
+
     default_action {
         allow {}
     }
@@ -309,7 +315,12 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         name = "rate-limit-ip-rule"
         priority = 3
         action {
-            block {}
+            block {
+                custom_response {
+                    custom_response_body_key  = "rate_limit_blocked_response"
+                    response_code             = 429
+                }
+            }
         }
         statement {
             rate_based_statement {
@@ -402,6 +413,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     description = "Prod ALB WAF"
     scope       = "REGIONAL"
 
+    custom_response_body {
+        key           = "rate_limit_blocked_response"
+        content       = "Rate Limit Exceeded. ROR API rate limit is 2000 requests per 5 minute period."
+        content_type  = "TEXT_PLAIN"
+    }
+
     default_action {
         allow {}
     }
@@ -455,7 +472,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         name = "rate-limit-ip-rule"
         priority = 3
         action {
-            block {}
+            block {
+                custom_response {
+                    custom_response_body_key  = "rate_limit_blocked_response"
+                    response_code             = 429
+                }
+            }
         }
         statement {
             rate_based_statement {
