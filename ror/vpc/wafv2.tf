@@ -206,7 +206,11 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         name = "block-invalid-request-rule"
         priority = 5
         action {
-            block {}
+            block {
+                custom_response {
+                    response_code = 400
+                }
+            }
         }
         statement {
             or_statement {
@@ -363,7 +367,11 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         name = "block-invalid-request-rule"
         priority = 5
         action {
-            block {}
+            block {
+                custom_response {
+                    response_code = 400
+                }
+            }
         }
         statement {
             or_statement {
@@ -520,7 +528,11 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         name = "block-invalid-request-rule"
         priority = 5
         action {
-            block {}
+            block {
+                custom_response {
+                    response_code = 400
+                }
+            }
         }
         statement {
             or_statement {
