@@ -105,6 +105,12 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         content_type  = "TEXT_PLAIN"
     }
 
+    custom_response_body {
+        key           = "invalid_req_blocked_response"
+        content       = "Bad Request"
+        content_type  = "TEXT_PLAIN"
+    }
+
     default_action {
         allow {}
     }
@@ -158,7 +164,11 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         name = "rate-limit-ip-rule"
         priority = 3
         action {
-            block {}
+            block {
+                custom_response {
+                    response_code = 429
+                }
+            }
         }
         statement {
             rate_based_statement {
@@ -208,6 +218,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         action {
             block {
                 custom_response {
+                    custom_response_body_key  = "invalid_req_blocked_response"
                     response_code = 400
                 }
             }
@@ -319,7 +330,11 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         name = "rate-limit-ip-rule"
         priority = 3
         action {
-            block {}
+            block {
+                custom_response {
+                    response_code = 429
+                }
+            }
         }
         statement {
             rate_based_statement {
@@ -369,6 +384,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         action {
             block {
                 custom_response {
+                    custom_response_body_key  = "invalid_req_blocked_response"
                     response_code = 400
                 }
             }
@@ -480,7 +496,11 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         name = "rate-limit-ip-rule"
         priority = 3
         action {
-            block {}
+            block {
+                custom_response {
+                    response_code = 429
+                }
+            }
         }
         statement {
             rate_based_statement {
@@ -530,6 +550,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         action {
             block {
                 custom_response {
+                    custom_response_body_key  = "invalid_req_blocked_response"
                     response_code = 400
                 }
             }
