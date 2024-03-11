@@ -131,3 +131,32 @@ resource "aws_service_discovery_service" "api" {
       Name = "data-prod"
   }
 }
+
+resource "aws_s3_bucket" "public-prod" {
+  bucket = "public.ror.org"
+  tags = {
+      Name = "public-prod"
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "prod-bucket-ownership-controls" {
+  bucket = aws_s3_bucket.public.ror.org.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "prod-block-public-access" {
+  bucket = aws_s3_bucket.public.ror.org.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "public-prod-bucket-policy" {
+  bucket = aws_s3_bucket.public.ror.org.bucket
+  policy = templatefile("s3_punlic.json", {
+    bucket_name = "public.ror.org"
+  })
+}
