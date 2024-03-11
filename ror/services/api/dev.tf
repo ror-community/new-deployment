@@ -139,3 +139,27 @@ resource "aws_s3_bucket" "data-dev" {
       Name = "data-dev"
   }
 }
+
+resource "aws_s3_bucket" "public-dev" {
+  bucket = "public.dev.ror.org"
+  tags = {
+      Name = "public-dev"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "dev-block-public-access" {
+  bucket = aws_s3_bucket.public-dev.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
+  bucket = aws_s3_bucket.public-dev.bucket
+  policy = templatefile("s3_public.json", {
+    bucket_name = "public.dev.ror.org"
+  })
+}
+
+

@@ -133,3 +133,25 @@ resource "aws_s3_bucket" "data-staging" {
       Name = "data-staging"
   }
 }
+
+resource "aws_s3_bucket" "public-staging" {
+  bucket = "public.staging.ror.org"
+  tags = {
+      Name = "public-staging"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "staging-block-public-access" {
+  bucket = aws_s3_bucket.public-staging.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "public-staging-bucket-policy" {
+  bucket = aws_s3_bucket.public-staging.bucket
+  policy = templatefile("s3_public.json", {
+    bucket_name = "public.staging.ror.org"
+  })
+}

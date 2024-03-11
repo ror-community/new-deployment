@@ -70,6 +70,10 @@
       "value": "${data_store}"
     },
     {
+        "name": "PUBLIC_STORE",
+        "value": "${public_store}"
+    },
+    {
       "name": "ROUTE_USER",
       "value": "${route_user}"
     },

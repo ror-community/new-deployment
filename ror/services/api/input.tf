@@ -69,6 +69,7 @@ data "template_file" "api_task" {
     token              = var.token
     route_user         = var.route_user
     data_store         = var.data_store
+    public_store       = var.public_store
     github_token       = var.github_token
     version            = var.ror-api_tags["version"]
     launch_darkly_key  = var.launch_darkly_key
@@ -90,6 +91,7 @@ data "template_file" "api-dev_task" {
     token              = var.token_dev
     route_user         = var.route_user
     data_store         = var.data_store_dev
+    public_store       = var.public_store_dev
     github_token       = var.github_token
     version            = var.ror-api-dev_tags["sha"]
     launch_darkly_key  = var.launch_darkly_key_dev
@@ -111,6 +113,7 @@ data "template_file" "api-staging_task" {
     token              = var.token_staging
     route_user         = var.route_user
     data_store         = var.data_store_staging
+    public_store       = var.public_store_staging
     github_token       = var.github_token
     version            = var.ror-api-staging_tags["sha"]
     launch_darkly_key  = var.launch_darkly_key_staging

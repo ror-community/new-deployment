@@ -131,3 +131,25 @@ resource "aws_service_discovery_service" "api" {
       Name = "data-prod"
   }
 }
+
+resource "aws_s3_bucket" "public-prod" {
+  bucket = "public.ror.org"
+  tags = {
+      Name = "public-prod"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "prod-block-public-access" {
+  bucket = aws_s3_bucket.public-prod.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "public-prod-bucket-policy" {
+  bucket = aws_s3_bucket.public-prod.bucket
+  policy = templatefile("s3_public.json", {
+    bucket_name = "public.ror.org"
+  })
+}
