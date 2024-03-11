@@ -139,15 +139,8 @@ resource "aws_s3_bucket" "public-prod" {
   }
 }
 
-resource "aws_s3_bucket_ownership_controls" "prod-bucket-ownership-controls" {
-  bucket = aws_s3_bucket.public.ror.org.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
-}
-
 resource "aws_s3_bucket_public_access_block" "prod-block-public-access" {
-  bucket = aws_s3_bucket.public.ror.org.id
+  bucket = aws_s3_bucket.public-prod.id
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
@@ -155,8 +148,8 @@ resource "aws_s3_bucket_public_access_block" "prod-block-public-access" {
 }
 
 resource "aws_s3_bucket_policy" "public-prod-bucket-policy" {
-  bucket = aws_s3_bucket.public.ror.org.bucket
-  policy = templatefile("s3_punlic.json", {
+  bucket = aws_s3_bucket.public-prod.bucket
+  policy = templatefile("s3_public.json", {
     bucket_name = "public.ror.org"
   })
 }
