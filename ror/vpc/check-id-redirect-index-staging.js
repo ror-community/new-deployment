@@ -2,7 +2,7 @@
 
 const https = require("https");
 const path = require('path');
-let url = "https://api.staging.ror.org/organizations";
+let url = "https://api.staging.ror.org/v2/organizations";
 
 exports.handler = async function (event, callback) {
     const request = event.Records[0].cf.request;
