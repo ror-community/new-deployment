@@ -277,6 +277,12 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         content_type  = "TEXT_PLAIN"
     }
 
+    custom_response_body {
+        key           = "invalid_req_blocked_response"
+        content       = "Bad Request"
+        content_type  = "TEXT_PLAIN"
+    }
+
     default_action {
         allow {}
     }
@@ -440,6 +446,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     custom_response_body {
         key           = "rate_limit_blocked_response"
         content       = "Rate Limit Exceeded. ROR API rate limit is 2000 requests per 5 minute period."
+        content_type  = "TEXT_PLAIN"
+    }
+
+    custom_response_body {
+        key           = "invalid_req_blocked_response"
+        content       = "Bad Request"
         content_type  = "TEXT_PLAIN"
     }
 
