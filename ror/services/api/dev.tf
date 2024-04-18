@@ -93,7 +93,7 @@ resource "aws_ecs_task_definition" "api-dev" {
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = "1045"
+  cpu = "1024"
   memory = "4096"
 
   container_definitions =  data.template_file.api-dev_task.rendered
