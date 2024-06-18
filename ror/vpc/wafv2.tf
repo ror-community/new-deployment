@@ -16,7 +16,7 @@ resource "aws_wafv2_ip_set" "whitelist" {
 
 resource "aws_wafv2_ip_set" "blacklist" {
   name = "blacklistIPSet"
-  description        = "DEV Blacklist IP set"
+  description        = "PROD Blacklist IP set"
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
   addresses          = var.blacklist_ips
@@ -76,6 +76,14 @@ resource "aws_wafv2_ip_set" "whitelist-prod" {
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
   addresses          = var.whitelist_ips_prod
+}
+
+resource "aws_wafv2_ip_set" "blacklist-custom-msg-prod" {
+  name = "blacklistCustomMsgIPSetProd"
+  description        = "PROD Blacklist custom msg IP set"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.blacklist_custom_msg_ips_prod
 }
 
 resource "aws_wafv2_ip_set" "blacklist-prod" {
@@ -444,6 +452,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     scope       = "REGIONAL"
 
     custom_response_body {
+        key           = "bad_behavior_blocked_response"
+        content       = "You have been blocked due to bad behavior. Please stop sending large volumes of concurrent requests from multiple IP addresses. ROR API is a community resource. Please be considerate of other users."
+        content_type  = "TEXT_PLAIN"
+    }
+
+    custom_response_body {
         key           = "rate_limit_blocked_response"
         content       = "Rate Limit Exceeded. ROR API rate limit is 2000 requests per 5 minute period."
         content_type  = "TEXT_PLAIN"
@@ -487,8 +501,31 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     }
 
     rule {
-        name = "block-ip-rule"
+        name = "block-custom-msg-ip-rule"
         priority = 2
+        action {
+            block {
+                custom_response {
+                    custom_response_body_key  = "bad_behavior_blocked_response"
+                    response_code = 403
+                }
+            }
+        }
+        statement {
+            ip_set_reference_statement {
+                arn = aws_wafv2_ip_set.blacklist-custom-msg-prod.arn
+            }
+        }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "block-ip-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name = "block-ip-rule"
+        priority = 3
         action {
             block {}
         }
@@ -506,7 +543,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
 
     rule {
         name = "rate-limit-ip-rule"
-        priority = 3
+        priority = 4
         action {
             block {
                 custom_response {
@@ -534,7 +571,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
 
     rule {
         name     = "rate-limit-rule"
-        priority = 4
+        priority = 5
         action {
             block {
                 custom_response {
@@ -558,7 +595,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
 
     rule {
         name = "block-invalid-request-rule"
-        priority = 5
+        priority = 6
         action {
             block {
                 custom_response {

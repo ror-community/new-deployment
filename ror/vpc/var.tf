@@ -81,3 +81,7 @@ variable "blacklist_ips_prod"{
 variable "ratelimit_ips_prod"{
   type = list(string)
 }
+
+variable "blacklist_custom_msg_ips_prod"{
+  type = list(string)
+}
