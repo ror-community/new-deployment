@@ -458,6 +458,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     }
 
     custom_response_body {
+        key           = "country_rate_limited_response"
+        content       = "Due to frequent abuse of the ROR API by IPs originating from certain countries, a restricted rate limit has been applied to requests from those country codes. Contact support@ror.org with questions."
+        content_type  = "TEXT_PLAIN"
+    }
+
+    custom_response_body {
         key           = "rate_limit_blocked_response"
         content       = "Rate Limit Exceeded. ROR API rate limit is 2000 requests per 5 minute period."
         content_type  = "TEXT_PLAIN"
@@ -570,8 +576,37 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     }
 
     rule {
-        name     = "rate-limit-rule"
+        name = "rate-limit-country-rule"
         priority = 5
+        action {
+            block {
+                custom_response {
+                    custom_response_body_key  = "country_rate_limited_response"
+                    response_code = 429
+                }
+            }
+        }
+        statement {
+            rate_based_statement {
+                limit              = 200
+                aggregate_key_type = "IP"
+                scope_down_statement {
+                    geo_match_statement {
+                        country_codes = ["RU"]
+                    }
+                }
+            }
+        }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "ratelimit-ip-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name     = "rate-limit-rule"
+        priority = 6
         action {
             block {
                 custom_response {
@@ -595,7 +630,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
 
     rule {
         name = "block-invalid-request-rule"
-        priority = 6
+        priority = 7
         action {
             block {
                 custom_response {
