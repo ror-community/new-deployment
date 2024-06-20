@@ -599,7 +599,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         }
         visibility_config {
         cloudwatch_metrics_enabled = true
-        metric_name                = "ratelimit-ip-metric"
+        metric_name                = "ratelimit-country-metric"
         sampled_requests_enabled   = true
         }
     }
