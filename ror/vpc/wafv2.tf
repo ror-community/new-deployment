@@ -259,6 +259,19 @@ resource "aws_wafv2_web_acl" "dev-v2" {
                         }
                     }
                 }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "CONTAINS"
+                        search_string = "affiliation=no%20affiliation"
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
             }
         }
         visibility_config {
