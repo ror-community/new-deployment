@@ -272,6 +272,19 @@ resource "aws_wafv2_web_acl" "dev-v2" {
                         }
                     }
                 }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "EXACTLY"
+                        search_string = "affiliation=Department%20of%20Physics%2C%20Yale%20University%2C%20New%20Haven%2C%20CT%2006520%2C%20USA%20Russian%20Federation"
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
             }
         }
         visibility_config {
@@ -435,6 +448,32 @@ resource "aws_wafv2_web_acl" "staging-v2" {
                     byte_match_statement {
                         positional_constraint = "EXACTLY"
                         search_string = "affiliation=0"
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "CONTAINS"
+                        search_string = "affiliation=no%20affiliation"
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "EXACTLY"
+                        search_string = "affiliation=Department%20of%20Physics%2C%20Yale%20University%2C%20New%20Haven%2C%20CT%2006520%2C%20USA%20Russian%20Federation"
                         field_to_match {
                             query_string {}
                         }
@@ -671,6 +710,32 @@ resource "aws_wafv2_web_acl" "prod-v2" {
                     byte_match_statement {
                         positional_constraint = "EXACTLY"
                         search_string = "affiliation=0"
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "CONTAINS"
+                        search_string = "affiliation=no%20affiliation"
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "EXACTLY"
+                        search_string = "affiliation=Department%20of%20Physics%2C%20Yale%20University%2C%20New%20Haven%2C%20CT%2006520%2C%20USA%20Russian%20Federation"
                         field_to_match {
                             query_string {}
                         }
