@@ -202,8 +202,4 @@ resource "aws_apigatewayv2_integration" "api-dev-gateway-integration" {
   integration_method = "ANY"
   connection_type    = "VPC_LINK"
   connection_id      = aws_apigatewayv2_vpc_link.api-dev-vpc-link.id
-
-  tls_config {
-    server_name_to_verify = "ror.org"
-  }
 }
