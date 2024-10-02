@@ -194,12 +194,12 @@ resource "aws_apigatewayv2_route" "api-dev-gateway-route" {
 }
 
 resource "aws_apigatewayv2_integration" "api-dev-gateway-integration" {
-  api_id           = aws_apigatewayv2_api.api-dev-gateway-integration.id
+  api_id           = aws_apigatewayv2_api.api-dev-gateway.id
   description      = "DEV API gateway integration with ECS"
   integration_type = "HTTP_PROXY"
   integration_uri  = data.aws_lb_listener.alb-dev.arn
 
   integration_method = "ANY"
   connection_type    = "VPC_LINK"
-  connection_id      = aws_apigatewayv2_vpc_link.api-dev-vpc-link.id
+  connection_id      = aws_apigatewayv2_vpc_link.api-dev-gateway-vpc-link.id
 }
