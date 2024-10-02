@@ -165,4 +165,41 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
   })
 }
 
+resource "aws_apigatewayv2_vpc_link" "api-dev-gateway-vpc-link" {
+  name               = "api-dev-vpc-link"
+  security_group_ids = [var.private_security_group_id]
+  subnet_ids         = var.private_subnet_ids
 
+  tags = {
+    environment = "ror-dev"
+  }
+}
+
+resource "aws_apigatewayv2_api" "api-dev-gateway" {
+  name          = "api-dev-gateway"
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_stage" "api-dev-gateway-stage" {
+  api_id = aws_apigatewayv2_api.api-dev-gateway.id
+  name   = "api-dev-gateway-stage"
+  auto_deploy = true
+}
+
+resource "aws_apigatewayv2_route" "api-dev-gateway-route" {
+  api_id    = aws_apigatewayv2_api.api-dev-gateway.id
+  route_key = "ANY /{proxy+}"
+
+  target = "integrations/${aws_apigatewayv2_integration.api-dev-gateway-integration.id}"
+}
+
+resource "aws_apigatewayv2_integration" "api-dev-gateway-integration" {
+  api_id           = aws_apigatewayv2_api.api-dev-gateway.id
+  description      = "DEV API gateway integration with ECS"
+  integration_type = "HTTP_PROXY"
+  integration_uri  = data.aws_lb_listener.alb-dev.arn
+
+  integration_method = "ANY"
+  connection_type    = "VPC_LINK"
+  connection_id      = aws_apigatewayv2_vpc_link.api-dev-gateway-vpc-link.id
+}
