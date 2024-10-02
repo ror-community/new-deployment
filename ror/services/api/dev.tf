@@ -23,6 +23,10 @@ resource "aws_ecs_service" "api-dev" {
     container_port   = "80"
   }
 
+  tags {
+    environment = "ror-dev"
+  }
+
   depends_on = [
     data.aws_lb_listener.alb-dev
   ]
@@ -137,6 +141,7 @@ resource "aws_s3_bucket" "data-dev" {
   acl    = "private"
   tags = {
       Name = "data-dev"
+      environment = "ror-dev"
   }
 }
 

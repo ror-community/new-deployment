@@ -8,7 +8,7 @@ module "alb-dev" {
     bucket                      = aws_s3_bucket.logs.bucket
   }
   subnets                       = module.vpc.public_subnets
-  tags                          = {"Environment" = "dev"}
+  tags                          = {"environment" = "ror-dev"}
   vpc_id                        = module.vpc.vpc_id
   idle_timeout                  = "240"
 }
