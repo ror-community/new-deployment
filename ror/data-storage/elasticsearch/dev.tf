@@ -35,6 +35,7 @@ resource "aws_elasticsearch_domain" "elasticsearch-v7-dev" {
 
   tags = {
     Domain = "elasticsearch-v7-dev"
+    environment = "ror-dev"
   }
   depends_on = [aws_cloudwatch_log_group.es-v7-dev]
 }

@@ -60,7 +60,7 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   tags = {
     site        = "ror"
-    environment = "dev"
+    environment = "ror-dev"
   }
 
   custom_error_response {
