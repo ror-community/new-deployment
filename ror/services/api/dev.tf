@@ -165,7 +165,7 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
   })
 }
 
-resource "aws_apigatewayv2_vpc_link" "dev-api-gateway-vpc-link {
+resource "aws_apigatewayv2_vpc_link" "dev-api-gateway-vpc-link" {
   name               = "api-dev-vpc-link"
   security_group_ids = [var.private_security_group_id]
   subnet_ids         = var.private_subnet_ids
