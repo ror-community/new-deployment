@@ -106,7 +106,7 @@ resource "aws_route53_record" "api-dev" {
     name = "api.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_apigatewayv2_api.api-dev-gateway.dns_name]
+    records = [aws_apigatewayv2_api.api-dev-gateway.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
