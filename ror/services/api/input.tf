@@ -127,3 +127,9 @@ data "aws_s3_bucket" "search-ror-community" {
 data "aws_s3_bucket" "main-ror-community" {
   bucket = "main.ror.community"
 }
+
+data "aws_acm_certificate" "ror" {
+  domain = "ror.org"
+  statuses = ["ISSUED"]
+  most_recent = true
+}
