@@ -194,4 +194,5 @@ resource "aws_apigatewayv2_domain_name" "api-dev-gateway-domain" {
 resource "aws_apigatewayv2_api_mapping" "api-dev-gateway-mapping" {
   api_id      = aws_apigatewayv2_api.api-dev-gateway.id
   domain_name = aws_apigatewayv2_domain_name.api-dev-gateway-domain.id
+  stage       = aws_apigatewayv2_stage.api-dev-gateway-stage.id
 }
