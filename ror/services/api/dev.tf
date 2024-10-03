@@ -190,7 +190,6 @@ resource "aws_apigatewayv2_integration" "api-dev-gateway-integration" {
 
 resource "aws_apigatewayv2_domain_name" "api-dev-gateway-domain" {
   domain_name = "api.dev.ror.org"
-
   domain_name_configuration {
     certificate_arn = data.aws_acm_certificate.ror.arn
     endpoint_type   = "REGIONAL"
