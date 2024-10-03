@@ -164,6 +164,12 @@ resource "aws_apigatewayv2_api" "api-dev-gateway" {
   protocol_type = "HTTP"
 }
 
+resource "aws_apigatewayv2_stage" "api-dev-gateway-stage" {
+  api_id = aws_apigatewayv2_api.api-dev-gateway.id
+  name   = "$default"
+  auto_deploy = true
+}
+
 resource "aws_apigatewayv2_route" "api-dev-gateway-route" {
   api_id    = aws_apigatewayv2_api.api-dev-gateway.id
   route_key = "ANY /{proxy+}"
