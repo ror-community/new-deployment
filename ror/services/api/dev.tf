@@ -106,7 +106,7 @@ resource "aws_route53_record" "api-dev" {
     name = "api.dev.ror.org"
     type = "CNAME"
     ttl = var.ttl
-    records = [data.aws_lb.alb-dev.dns_name]
+    records = [data.aws_apigatewayv2_api.api-dev-gateway.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
@@ -182,7 +182,7 @@ resource "aws_apigatewayv2_api" "api-dev-gateway" {
 
 resource "aws_apigatewayv2_stage" "api-dev-gateway-stage" {
   api_id = aws_apigatewayv2_api.api-dev-gateway.id
-  name   = "api-dev-gateway-stage"
+  name   = "$default"
   auto_deploy = true
 }
 
