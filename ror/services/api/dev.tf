@@ -101,6 +101,22 @@ resource "aws_ecs_task_definition" "api-dev" {
   container_definitions =  data.template_file.api-dev_task.rendered
 }
 
+resource "aws_route53_record" "api-dev" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "api.dev.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-dev.dns_name]
+}
+
+resource "aws_route53_record" "split-api-dev" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name = "api.dev.ror.org"
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb-dev.dns_name]
+}
+
 resource "aws_service_discovery_service" "api-dev" {
   name = "api.dev"
 
@@ -147,58 +163,4 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
   policy = templatefile("s3_public.json", {
     bucket_name = "public.dev.ror.org"
   })
-}
-
-resource "aws_apigatewayv2_vpc_link" "api-dev-gateway-vpc-link" {
-  name               = "api-dev-vpc-link"
-  security_group_ids = [var.private_security_group_id]
-  subnet_ids         = var.private_subnet_ids
-
-  tags = {
-    environment = "ror-dev"
-  }
-}
-
-resource "aws_apigatewayv2_api" "api-dev-gateway" {
-  name          = "api-dev-gateway"
-  protocol_type = "HTTP"
-}
-
-resource "aws_apigatewayv2_stage" "api-dev-gateway-stage" {
-  api_id = aws_apigatewayv2_api.api-dev-gateway.id
-  name   = "$default"
-  auto_deploy = true
-}
-
-resource "aws_apigatewayv2_route" "api-dev-gateway-route" {
-  api_id    = aws_apigatewayv2_api.api-dev-gateway.id
-  route_key = "ANY /{proxy+}"
-
-  target = "integrations/${aws_apigatewayv2_integration.api-dev-gateway-integration.id}"
-}
-
-resource "aws_apigatewayv2_integration" "api-dev-gateway-integration" {
-  api_id           = aws_apigatewayv2_api.api-dev-gateway.id
-  description      = "DEV API gateway integration with ECS"
-  integration_type = "HTTP_PROXY"
-  integration_uri  = data.aws_lb_listener.alb-dev.arn
-
-  integration_method = "ANY"
-  connection_type    = "VPC_LINK"
-  connection_id      = aws_apigatewayv2_vpc_link.api-dev-gateway-vpc-link.id
-}
-
-resource "aws_apigatewayv2_domain_name" "api-dev-gateway-domain" {
-  domain_name = "api.dev.ror.org"
-  domain_name_configuration {
-    certificate_arn = data.aws_acm_certificate.ror.arn
-    endpoint_type   = "REGIONAL"
-    security_policy = "TLS_1_2"
-  }
-}
-
-resource "aws_apigatewayv2_api_mapping" "api-dev-gateway-mapping" {
-  api_id      = aws_apigatewayv2_api.api-dev-gateway.id
-  domain_name = aws_apigatewayv2_domain_name.api-dev-gateway-domain.id
-  stage       = aws_apigatewayv2_stage.api-dev-gateway-stage.id
 }
