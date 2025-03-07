@@ -36,10 +36,10 @@ variable "aws_service_discovery_private_dns_namespace_id" {}
 variable "lb_arn" {}
 
 variable "ror_api_dev" {
-  default = "https://api.dev.ror.org"
+  default = "https://api.ror.org"
 }
 variable "ror_api_staging" {
-  default = "https://api.staging.ror.org"
+  default = "https://api.ror.org"
 }
 variable "ror_api" {
   default = "https://api.ror.org"
