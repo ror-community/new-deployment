@@ -57,6 +57,8 @@ data "template_file" "reconcile_task" {
     secret_key  = var.secret_key
     region      = var.region
     public_key  = var.public_key
+    ror_api     = var.ror_api
+    ror_recon   = var.ror_recon
     version     = var.ror-reconcile_tags["sha"]
   }
 }

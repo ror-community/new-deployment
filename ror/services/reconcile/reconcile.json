@@ -38,6 +38,14 @@
       "value": "${region}"
     },
     {
+        "name": "ROR_API",
+        "value": "${ror_api}"
+      },
+      {
+        "name": "ROR_RECON",
+        "value": "${ror_recon}"
+      },
+    {
       "name": "PUBLIC_KEY",
       "value": "${public_key}"
     },
