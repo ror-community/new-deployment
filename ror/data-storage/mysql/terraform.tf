@@ -12,7 +12,7 @@ terraform {
     organization = "ror"
 
     workspaces {
-      name = "dev-data-storage-mysql"
+      name = "ror-data-storage-mysql"
     }
   }
 }
