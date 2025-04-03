@@ -9,7 +9,7 @@ terraform {
   required_version = ">= 1.6"
 
   cloud {
-    organization = "ror-ng"
+    organization = "ror"
 
     workspaces {
       name = "dev-data-storage-mysql"
