@@ -12,7 +12,7 @@ resource "aws_db_instance" "db-dev" {
   backup_window               = "17:00-17:30"
   backup_retention_period     = 1
   availability_zone           = "eu-west-1a"
-  vpc_security_group_ids      = [data.aws_security_group.private_security_group.id]
+  vpc_security_group_ids      = [var.private_security_group]
   parameter_group_name        = "ror-dev-mysql8"
   auto_minor_version_upgrade  = "true"
   allow_major_version_upgrade = "true"

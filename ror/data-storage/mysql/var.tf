@@ -7,6 +7,6 @@ variable "region" {
 variable "mysql_user" {}
 variable "mysql_password" {}
 
-variable "security_group_id" {}
+variable "private_security_group" {}
 
 variable "private_subnet_ids" {}
