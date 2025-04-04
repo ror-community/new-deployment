@@ -6,6 +6,7 @@ resource "aws_db_instance" "db-dev" {
   engine_version              = "8.0.36"
   instance_class              = "db.t3.micro"
   username                    = var.mysql_user
+  db_subnet_group_name        = "ror-dev"
   password                    = var.mysql_password
   maintenance_window          = "Mon:00:00-Mon:01:00"
   backup_window               = "17:00-17:30"
@@ -60,5 +61,14 @@ resource "aws_db_parameter_group" "ror-dev-mysql8" {
   parameter {
     name  = "log_output"
     value = "FILE"
+  }
+}
+
+resource "aws_db_subnet_group" "ror-dev" {
+  name       = "ror-dev"
+  subnet_ids = var.private_subnet_ids
+
+  tags = {
+    Name = "RDS subnet group for dev"
   }
 }
