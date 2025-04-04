@@ -17,7 +17,7 @@ resource "aws_db_instance" "db-dev" {
   auto_minor_version_upgrade  = "true"
   allow_major_version_upgrade = "true"
   max_allocated_storage       = 20
-  multi_az 					  = "false"
+  multi_az 					          = "false"
   publicly_accessible         = "false"
 
   tags = {
@@ -32,6 +32,10 @@ resource "aws_db_instance" "db-dev" {
   }
 
   apply_immediately = "true"
+  depends_on = [
+    aws_db_subnet_group.ror-dev,
+    aws_db_parameter_group.ror-dev-mysql8
+  ]
 }
 
 resource "aws_db_parameter_group" "ror-dev-mysql8" {
