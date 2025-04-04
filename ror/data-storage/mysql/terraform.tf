@@ -1,11 +1,7 @@
 terraform {
-  required_version = ">= 1.6"
+  required_version = ">= 0.12"
 
-  cloud {
-    organization = "ror"
-
-    workspaces {
-      name = "ror-data-storage-mysql"
-    }
+  backend "atlas" {
+    name         = "ror/ror-data-storage-mysql"
   }
 }
