@@ -73,3 +73,9 @@ variable "github_token" {}
 variable "launch_darkly_key" {}
 variable "launch_darkly_key_dev" {}
 variable "launch_darkly_key_staging" {}
+
+variable "db_password_dev" {}
+variable "db_username_dev" {}
+variable "db_host_dev" {}
+variable "db_port_dev" {}
+variable "db_name" {}
