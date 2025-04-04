@@ -78,3 +78,4 @@ variable "db_password_dev" {}
 variable "db_username_dev" {}
 variable "db_host_dev" {}
 variable "db_port_dev" {}
+variable "db_name" {}
