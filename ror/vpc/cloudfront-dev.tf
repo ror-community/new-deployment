@@ -186,6 +186,37 @@ resource "aws_cloudfront_distribution" "site-dev" {
     max_ttl                = 2592000
   }
 
+  ordered_cache_behavior {
+    path_pattern     = "api-client-id"
+    allowed_methods  = ["GET", "POST"]
+    cached_methods   = ["GET"]
+    target_origin_id = "search.dev.ror.org"
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    # This says to redirect http to https
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = "true"
+    min_ttl                = 0
+
+    # default cache time in seconds.  This is 1 day, meaning CloudFront will only
+    # look at your S3 bucket for changes once per day.
+    default_ttl            = 0
+    max_ttl                = 0
+
+    lambda_function_association {
+      event_type   = "origin-request"
+      lambda_arn   = aws_lambda_function.redirect-index.qualified_arn
+      include_body = false
+    }
+  }
+
   logging_config {
     include_cookies = false
     bucket          = data.aws_s3_bucket.logs.bucket_domain_name
