@@ -19,6 +19,7 @@ resource "aws_db_instance" "db-dev" {
   max_allocated_storage       = 20
   multi_az 					          = "false"
   publicly_accessible         = "false"
+  db_name                     = "rorapi"
 
   tags = {
     Name = "dev"
