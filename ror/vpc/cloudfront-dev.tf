@@ -100,8 +100,8 @@ resource "aws_cloudfront_distribution" "site-dev" {
 
   ordered_cache_behavior {
     path_pattern     = "api-client-id"
-    allowed_methods  = ["GET", "POST"]
-    cached_methods   = ["GET"]
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
     target_origin_id = "search.dev.ror.org"
 
     forwarded_values {
