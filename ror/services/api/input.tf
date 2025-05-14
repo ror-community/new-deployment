@@ -122,6 +122,11 @@ data "template_file" "api-staging_task" {
     github_token       = var.github_token
     version            = var.ror-api-staging_tags["sha"]
     launch_darkly_key  = var.launch_darkly_key_staging
+    db_host            = var.db_host_staging
+    db_password        = var.db_password_staging
+    db_port            = var.db_port_staging
+    db_name            = var.db_name
+    db_user            = var.db_username_staging
   }
 }
 
