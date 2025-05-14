@@ -8,7 +8,7 @@ resource "aws_db_instance" "db-staging" {
   username                    = var.mysql_user
   db_subnet_group_name        = "ror-staging"
   password                    = var.mysql_password
-  db_name 					  = "rorapi"
+  name 					      = "rorapi"
   maintenance_window          = "Mon:00:00-Mon:01:00"
   backup_window               = "17:00-17:30"
   backup_retention_period     = 1
