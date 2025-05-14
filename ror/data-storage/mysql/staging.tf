@@ -8,7 +8,7 @@ resource "aws_db_instance" "db-staging" {
   username                    = var.mysql_user
   db_subnet_group_name        = "ror-staging"
   password                    = var.mysql_password
-  name 					      = "rorapi"
+  name                        = "rorapi"
   maintenance_window          = "Mon:00:00-Mon:01:00"
   backup_window               = "17:00-17:30"
   backup_retention_period     = 1
@@ -18,7 +18,7 @@ resource "aws_db_instance" "db-staging" {
   auto_minor_version_upgrade  = "true"
   allow_major_version_upgrade = "true"
   max_allocated_storage       = 20
-  multi_az 					  = "false"
+  multi_az                    = "false"
   publicly_accessible         = "false"
 
   tags = {
@@ -27,13 +27,13 @@ resource "aws_db_instance" "db-staging" {
 
   lifecycle {
     prevent_destroy = "true"
-    ignore_changes = [
+    ignore_changes  = [
       engine_version
      ]
   }
 
   apply_immediately = "true"
-  depends_on = [
+  depends_on        = [
     aws_db_subnet_group.ror-staging,
     aws_db_parameter_group.ror-staging-mysql8
   ]
