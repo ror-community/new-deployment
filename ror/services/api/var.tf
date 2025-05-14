@@ -75,7 +75,15 @@ variable "launch_darkly_key_dev" {}
 variable "launch_darkly_key_staging" {}
 
 variable "db_password_dev" {}
+variable "db_password_staging" {}
+
 variable "db_username_dev" {}
+variable "db_username_staging" {}
+
 variable "db_host_dev" {}
+variable "db_host_staging" {}
+
 variable "db_port_dev" {}
+variable "db_port_staging" {}
+
 variable "db_name" {}
