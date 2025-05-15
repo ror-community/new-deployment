@@ -12,7 +12,6 @@ resource "aws_db_instance" "db" {
   maintenance_window          = "Mon:00:00-Mon:01:00"
   backup_window               = "17:00-17:30"
   backup_retention_period     = 1
-  availability_zone           = "eu-west-1a"
   vpc_security_group_ids      = [var.private_security_group]
   parameter_group_name        = "ror-mysql8"
   auto_minor_version_upgrade  = "true"
