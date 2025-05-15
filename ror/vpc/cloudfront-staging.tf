@@ -98,7 +98,7 @@ resource "aws_cloudfront_distribution" "site-staging" {
     max_ttl                = 2592000
   }
 
-   ordered_cache_behavior {
+  ordered_cache_behavior {
     path_pattern     = "api-client-id"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
