@@ -73,6 +73,11 @@ data "template_file" "api_task" {
     github_token       = var.github_token
     version            = var.ror-api_tags["version"]
     launch_darkly_key  = var.launch_darkly_key
+    db_host            = var.db_host
+    db_password        = var.db_password
+    db_port            = var.db_port
+    db_name            = var.db_name
+    db_user            = var.db_username
   }
 }
 
