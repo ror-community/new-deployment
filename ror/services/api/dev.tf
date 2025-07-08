@@ -421,15 +421,11 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 
 # Route53 record for API Gateway
 resource "aws_route53_record" "api_gateway_test" {
-  zone_id = data.aws_route53_zone.public.zone_id
-  name    = "api-test.dev.ror.org"
-  type    = "A"
-  
-  alias {
-    name                   = aws_api_gateway_deployment.api_gateway_test.invoke_url
-    zone_id                = aws_api_gateway_rest_api.api_gateway_test.arn
-    evaluate_target_health = false
-  }
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "api-test.dev.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-dev.dns_name]
 }
 
 # IAM role for API Gateway to write logs
