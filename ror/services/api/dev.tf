@@ -213,6 +213,22 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
+# Listener rule for API Gateway test service
+resource "aws_lb_listener_rule" "api_gateway_test" {
+  listener_arn = data.aws_lb_listener.alb-http.arn
+
+  action {
+    type  = "forward"
+    target_group_arn = aws_lb_target_group.api_gateway_test.arn
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["api-test.dev.ror.org"]
+  }
+}
+
+
 resource "aws_ecs_task_definition" "api_gateway_test" {
   family = "api-gateway-test"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
@@ -426,6 +442,15 @@ resource "aws_route53_record" "api_gateway_test" {
     type = "CNAME"
     ttl = var.ttl
     records = [data.aws_lb.alb-dev.dns_name]
+}
+
+# Route53 record for API Gateway test service
+resource "aws_route53_record" "api_gateway_test_internal" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name = "api-gateway-test.dev.ror.org"
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 # IAM role for API Gateway to write logs
