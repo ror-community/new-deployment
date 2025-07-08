@@ -142,3 +142,30 @@ data "aws_s3_bucket" "search-ror-community" {
 data "aws_s3_bucket" "main-ror-community" {
   bucket = "main.ror.community"
 }
+
+data "template_file" "api_gateway_test_task" {
+  template = file("api-dev.json")
+
+  vars = {
+    elastic7_host_dev   = var.elastic7_host_dev
+    elastic7_port_dev   = var.elastic7_port_dev
+    access_key         = var.access_key
+    secret_key         = var.secret_key
+    region             = var.region
+    public_key         = var.public_key
+    sentry_dsn         = var.sentry_dsn
+    django_secret_key  = var.django_secret_key
+    token              = var.token_dev
+    route_user         = var.route_user
+    data_store         = var.data_store_dev
+    public_store       = var.public_store_dev
+    github_token       = var.github_token
+    version            = var.ror-api-dev_tags["sha"]
+    launch_darkly_key  = var.launch_darkly_key_dev
+    db_host            = var.db_host_dev
+    db_password        = var.db_password_dev
+    db_port            = var.db_port_dev
+    db_name            = var.db_name
+    db_user            = var.db_username_dev
+  }
+}
