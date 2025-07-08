@@ -144,7 +144,7 @@ data "aws_s3_bucket" "main-ror-community" {
 }
 
 data "template_file" "api_gateway_test_task" {
-  template = file("api-dev.json")
+  template = file("api-gateway-test.json")
 
   vars = {
     elastic7_host_dev   = var.elastic7_host_dev

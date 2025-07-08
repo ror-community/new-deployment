@@ -427,7 +427,7 @@ resource "aws_route53_record" "api_gateway_test" {
   
   alias {
     name                   = aws_api_gateway_deployment.api_gateway_test.invoke_url
-    zone_id                = aws_api_gateway_rest_api.api_gateway_test.arn
+    zone_id                = "Z1UJRXOUMOOFQ8"
     evaluate_target_health = false
   }
 }
