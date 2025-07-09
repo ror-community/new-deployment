@@ -393,6 +393,20 @@ resource "aws_api_gateway_method_response" "v1_organizations_get" {
   }
 }
 
+# Method response for v1/organizations OPTIONS
+resource "aws_api_gateway_method_response" "v1_organizations_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_organizations.id
+  http_method = aws_api_gateway_method.v1_organizations_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
 # GET method for v2/organizations
 resource "aws_api_gateway_method" "v2_organizations_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
@@ -454,6 +468,20 @@ resource "aws_api_gateway_integration" "v1_organizations_options_integration" {
   }
 }
 
+# Integration response for v1/organizations OPTIONS
+resource "aws_api_gateway_integration_response" "v1_organizations_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_organizations.id
+  http_method = aws_api_gateway_method.v1_organizations_options.http_method
+  status_code = aws_api_gateway_method_response.v1_organizations_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
 # Integration for v2/organizations
 resource "aws_api_gateway_integration" "v2_organizations_integration" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
@@ -490,6 +518,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
 resource "aws_api_gateway_deployment" "api_gateway_test" {
   depends_on = [
     aws_api_gateway_integration.v1_organizations_integration,
+    aws_api_gateway_integration.v1_organizations_options_integration,
     aws_api_gateway_integration.v2_organizations_integration,
     aws_api_gateway_integration.v1_heartbeat_integration,
     aws_api_gateway_integration.v2_heartbeat_integration,
@@ -497,6 +526,10 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   stage_name  = "test"
+  
+  variables = {
+    deployed_at = timestamp()
+  }
   
   lifecycle {
     create_before_destroy = true
