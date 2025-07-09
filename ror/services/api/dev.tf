@@ -441,7 +441,7 @@ resource "aws_route53_record" "api_gateway_test" {
     name = "api-test.dev.ror.org"
     type = "A"
     alias {
-        name                   = aws_api_gateway_deployment.api_gateway_test.invoke_url
+        name                   = "${aws_api_gateway_rest_api.api_gateway_test.id}.execute-api.eu-west-1.amazonaws.com"
         zone_id                = "Z2FDTNDATAQYW2"
         evaluate_target_health = false
     }
