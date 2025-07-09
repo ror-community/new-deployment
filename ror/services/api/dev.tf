@@ -217,11 +217,15 @@ resource "aws_lb_target_group" "api_gateway_test" {
 # Listener rule for API Gateway test service - host-based routing
 resource "aws_lb_listener_rule" "api_gateway_test_host" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 200
-
   action {
-    type  = "forward"
-    target_group_arn = aws_lb_target_group.api_gateway_test.arn
+    type = "redirect"
+
+    redirect {
+      host        = "api-gateway-test.dev.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
+    }
   }
 
   condition {
