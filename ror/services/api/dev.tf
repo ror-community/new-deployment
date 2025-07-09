@@ -68,6 +68,7 @@ resource "aws_lb_target_group" "api-dev" {
 
 resource "aws_lb_listener_rule" "redirect-api-dev" {
   listener_arn = data.aws_lb_listener.alb-http.arn
+  priority = 100
 
   action {
     type = "redirect"
@@ -217,7 +218,7 @@ resource "aws_lb_target_group" "api_gateway_test" {
 # Listener rule for API Gateway test service - host-based routing
 resource "aws_lb_listener_rule" "api_gateway_test_host" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 200
+  priority = 50
 
   action {
     type  = "forward"
@@ -401,6 +402,20 @@ resource "aws_api_gateway_method" "v2_organizations_get" {
   authorization = "NONE"
 }
 
+# Method response for v2/organizations
+resource "aws_api_gateway_method_response" "v2_organizations_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_organizations.id
+  http_method = aws_api_gateway_method.v2_organizations_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
 # GET method for v1/heartbeat
 resource "aws_api_gateway_method" "v1_heartbeat_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
@@ -409,12 +424,40 @@ resource "aws_api_gateway_method" "v1_heartbeat_get" {
   authorization = "NONE"
 }
 
+# Method response for v1/heartbeat
+resource "aws_api_gateway_method_response" "v1_heartbeat_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_heartbeat.id
+  http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
 # GET method for v2/heartbeat
 resource "aws_api_gateway_method" "v2_heartbeat_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
   resource_id   = aws_api_gateway_resource.v2_heartbeat.id
   http_method   = "GET"
   authorization = "NONE"
+}
+
+# Method response for v2/heartbeat
+resource "aws_api_gateway_method_response" "v2_heartbeat_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_heartbeat.id
+  http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
 }
 
 # Integration for v1/organizations
@@ -426,6 +469,10 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/organizations/"
+  
+  request_parameters = {
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
+  }
 }
 
 # Integration response for v1/organizations
@@ -477,6 +524,24 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/organizations/"
+  
+  request_parameters = {
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
+  }
+}
+
+# Integration response for v2/organizations
+resource "aws_api_gateway_integration_response" "v2_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_organizations.id
+  http_method = aws_api_gateway_method.v2_organizations_get.http_method
+  status_code = aws_api_gateway_method_response.v2_organizations_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
 }
 
 # Integration for v1/heartbeat
@@ -488,6 +553,24 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat/"
+  
+  request_parameters = {
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
+  }
+}
+
+# Integration response for v1/heartbeat
+resource "aws_api_gateway_integration_response" "v1_heartbeat_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_heartbeat.id
+  http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
+  status_code = aws_api_gateway_method_response.v1_heartbeat_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
 }
 
 # Integration for v2/heartbeat
@@ -499,6 +582,24 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat/"
+  
+  request_parameters = {
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
+  }
+}
+
+# Integration response for v2/heartbeat
+resource "aws_api_gateway_integration_response" "v2_heartbeat_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_heartbeat.id
+  http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
+  status_code = aws_api_gateway_method_response.v2_heartbeat_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
 }
 
 resource "aws_api_gateway_deployment" "api_gateway_test" {
@@ -508,6 +609,9 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     aws_api_gateway_integration.v2_organizations_integration,
     aws_api_gateway_integration.v1_heartbeat_integration,
     aws_api_gateway_integration.v2_heartbeat_integration,
+    aws_api_gateway_integration_response.v2_organizations_integration,
+    aws_api_gateway_integration_response.v1_heartbeat_integration,
+    aws_api_gateway_integration_response.v2_heartbeat_integration,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
@@ -515,6 +619,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   
   variables = {
     deployed_at = timestamp()
+    force_update = "true"
   }
   
   lifecycle {
