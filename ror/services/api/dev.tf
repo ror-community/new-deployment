@@ -856,13 +856,39 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   }
 }
 
-# Route53 record for API Gateway
+# API Gateway Custom Domain Name
+resource "aws_api_gateway_domain_name" "api_gateway_test" {
+  domain_name = "api-gateway-test.dev.ror.org"
+  
+  regional_certificate_arn = data.aws_acm_certificate.ror_org.arn
+  
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+# Base path mapping for API Gateway custom domain
+resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
+  api_id      = aws_api_gateway_rest_api.api_gateway_test.id
+  stage_name  = aws_api_gateway_deployment.api_gateway_test.stage_name
+  domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
+  
+  depends_on = [
+    aws_api_gateway_deployment.api_gateway_test
+  ]
+}
+
+# Route53 record for API Gateway custom domain
 resource "aws_route53_record" "api_gateway_test" {
     zone_id = data.aws_route53_zone.public.zone_id
     name    = "api-gateway-test.dev.ror.org"
-    type    = "CNAME"
-    ttl     = var.ttl
-    records = ["${aws_api_gateway_rest_api.api_gateway_test.id}.execute-api.eu-west-1.amazonaws.com/test"]
+    type    = "A"
+    
+    alias {
+        name                   = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
+        zone_id                = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
+        evaluate_target_health = false
+    }
     
     lifecycle {
         create_before_destroy = true
