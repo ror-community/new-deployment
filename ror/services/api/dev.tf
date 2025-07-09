@@ -224,8 +224,8 @@ resource "aws_lb_listener_rule" "api_gateway_test" {
   }
 
   condition {
-    field  = "host-header"
-    values = ["api-gateway-test.dev.ror.org"]
+    field  = "path-pattern"
+    values = ["/v1/*", "/v2/*"]
   }
 }
 
