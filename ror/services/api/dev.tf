@@ -185,7 +185,7 @@ resource "aws_ecs_service" "api_gateway_test" {
   }
 
   service_registries {
-    registry_arn = aws_service_discovery_service.api_gateway_test.arn
+    registry_arn = aws_service_discovery_service.api-dev-gateway.arn
   }
 
   load_balancer {
@@ -230,8 +230,8 @@ resource "aws_lb_listener_rule" "api_gateway_test" {
 }
 
 
-resource "aws_ecs_task_definition" "api_gateway_test" {
-  family = "api-gateway-test"
+resource "aws_ecs_task_definition" "api-dev-gateway" {
+  family = "api-dev-gateway"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -245,7 +245,7 @@ resource "aws_service_discovery_service" "api_gateway_test" {
   name = "api-gateway-test"
 
   health_check_custom_config {
-    failure_threshold = 3
+    failure_threshold = 1
   }
 
   dns_config {
