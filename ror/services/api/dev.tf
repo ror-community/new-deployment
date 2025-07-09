@@ -860,7 +860,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 resource "aws_api_gateway_domain_name" "api_gateway_test" {
   domain_name = "api-gateway-test.dev.ror.org"
   
-  regional_certificate_arn = data.aws_acm_certificate.ror_org.arn
+  regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
   endpoint_configuration {
     types = ["REGIONAL"]
