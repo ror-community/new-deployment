@@ -203,7 +203,7 @@ resource "aws_ecs_service" "api_gateway_test" {
 }
 
 resource "aws_lb_target_group" "api_gateway_test" {
-  name     = "api-gateway-test"
+  name     = "api-gateway-test-new"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -264,7 +264,7 @@ resource "aws_service_discovery_service" "api_gateway_test" {
 }
 
 resource "aws_cloudwatch_log_group" "api_gateway_test" {
-  name = "/ecs/api-gateway-test"
+  name = "/ecs/api-gateway-test-new"
 }
 
 # Autoscaling for API Gateway test service
