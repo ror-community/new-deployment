@@ -442,6 +442,10 @@ resource "aws_route53_record" "api_gateway_test" {
     type    = "CNAME"
     ttl     = var.ttl
     records = ["${aws_api_gateway_rest_api.api_gateway_test.id}.execute-api.eu-west-1.amazonaws.com"]
+    
+    lifecycle {
+        create_before_destroy = true
+    }
 }
 
 # Route53 record for API Gateway test service
