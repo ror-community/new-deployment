@@ -199,6 +199,7 @@ resource "aws_ecs_service" "api_gateway_test" {
   depends_on = [
     data.aws_lb_listener.alb-dev
   ]
+
 }
 
 resource "aws_lb_target_group" "api_gateway_test" {
@@ -224,7 +225,7 @@ resource "aws_lb_listener_rule" "api_gateway_test" {
 
   condition {
     field  = "host-header"
-    values = ["api-test.dev.ror.org"]
+    values = ["api-gateway-test.dev.ror.org"]
   }
 }
 
@@ -254,6 +255,10 @@ resource "aws_service_discovery_service" "api_gateway_test" {
       ttl = 300
       type = "A"
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -438,7 +443,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 # Route53 record for API Gateway
 resource "aws_route53_record" "api_gateway_test" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name    = "api-test.dev.ror.org"
+    name    = "api-gateway-test.dev.ror.org"
     type    = "CNAME"
     ttl     = var.ttl
     records = ["${aws_api_gateway_rest_api.api_gateway_test.id}.execute-api.eu-west-1.amazonaws.com"]
