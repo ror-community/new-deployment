@@ -214,8 +214,8 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
-# Listener rule for API Gateway test service - path-based routing
-resource "aws_lb_listener_rule" "api_gateway_test_host" {
+# Listener rule for API Gateway test service - v1 paths
+resource "aws_lb_listener_rule" "api_gateway_test_v1" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
   priority = 50
 
@@ -226,7 +226,23 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
 
   condition {
     field  = "path-pattern"
-    values = ["/v1/*", "/v2/*"]
+    values = ["/v1/*"]
+  }
+}
+
+# Listener rule for API Gateway test service - v2 paths
+resource "aws_lb_listener_rule" "api_gateway_test_v2" {
+  listener_arn = data.aws_lb_listener.alb-dev.arn
+  priority = 51
+
+  action {
+    type  = "forward"
+    target_group_arn = aws_lb_target_group.api_gateway_test.arn
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/v2/*"]
   }
 }
 
