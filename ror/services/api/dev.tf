@@ -438,13 +438,10 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 # Route53 record for API Gateway
 resource "aws_route53_record" "api_gateway_test" {
     zone_id = data.aws_route53_zone.public.zone_id
-    name = "api-test.dev.ror.org"
-    type = "A"
-    alias {
-        name                   = "${aws_api_gateway_rest_api.api_gateway_test.id}.execute-api.eu-west-1.amazonaws.com"
-        zone_id                = "Z2FDTNDATAQYW2"
-        evaluate_target_health = false
-    }
+    name    = "api-test.dev.ror.org"
+    type    = "CNAME"
+    ttl     = var.ttl
+    records = ["${aws_api_gateway_rest_api.api_gateway_test.id}.execute-api.eu-west-1.amazonaws.com"]
 }
 
 # Route53 record for API Gateway test service
