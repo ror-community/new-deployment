@@ -373,40 +373,12 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
   authorization = "NONE"
 }
 
-# OPTIONS method for v1/organizations (CORS)
-resource "aws_api_gateway_method" "v1_organizations_options" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v1_organizations.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-
 # Method response for v1/organizations
 resource "aws_api_gateway_method_response" "v1_organizations_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   resource_id = aws_api_gateway_resource.v1_organizations.id
   http_method = aws_api_gateway_method.v1_organizations_get.http_method
   status_code = "200"
-  
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v1/organizations OPTIONS
-resource "aws_api_gateway_method_response" "v1_organizations_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_options.http_method
-  status_code = "200"
-  
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
 }
 
 # GET method for v2/organizations
@@ -423,12 +395,6 @@ resource "aws_api_gateway_method_response" "v2_organizations_get" {
   resource_id = aws_api_gateway_resource.v2_organizations.id
   http_method = aws_api_gateway_method.v2_organizations_get.http_method
   status_code = "200"
-  
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
 }
 
 # GET method for v1/heartbeat
@@ -445,12 +411,6 @@ resource "aws_api_gateway_method_response" "v1_heartbeat_get" {
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
   status_code = "200"
-  
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
 }
 
 # GET method for v2/heartbeat
@@ -467,12 +427,6 @@ resource "aws_api_gateway_method_response" "v2_heartbeat_get" {
   resource_id = aws_api_gateway_resource.v2_heartbeat.id
   http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
   status_code = "200"
-  
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
 }
 
 # Integration for v1/organizations
@@ -524,13 +478,9 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
 resource "aws_api_gateway_deployment" "api_gateway_test" {
   depends_on = [
     aws_api_gateway_integration.v1_organizations_integration,
-    aws_api_gateway_integration.v1_organizations_options_integration,
     aws_api_gateway_integration.v2_organizations_integration,
     aws_api_gateway_integration.v1_heartbeat_integration,
     aws_api_gateway_integration.v2_heartbeat_integration,
-    aws_api_gateway_integration_response.v2_organizations_integration,
-    aws_api_gateway_integration_response.v1_heartbeat_integration,
-    aws_api_gateway_integration_response.v2_heartbeat_integration,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
