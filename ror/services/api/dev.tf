@@ -401,6 +401,10 @@ resource "aws_api_gateway_method" "v1_organizations_id_get" {
   resource_id   = aws_api_gateway_resource.v1_organizations_id.id
   http_method   = "GET"
   authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.id" = true
+  }
 }
 
 # OPTIONS method for v1/organizations/{id} (CORS)
@@ -453,6 +457,10 @@ resource "aws_api_gateway_method" "v2_organizations_id_get" {
   resource_id   = aws_api_gateway_resource.v2_organizations_id.id
   http_method   = "GET"
   authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.id" = true
+  }
 }
 
 # OPTIONS method for v2/organizations/{id} (CORS)
@@ -637,6 +645,10 @@ resource "aws_api_gateway_integration" "v1_organizations_id_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v1/organizations/{id}"
+  
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
 }
 
 # Integration response for v1/organizations/{id}
@@ -713,6 +725,10 @@ resource "aws_api_gateway_integration" "v2_organizations_id_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v2/organizations/{id}"
+  
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
 }
 
 # Integration response for v2/organizations/{id}
