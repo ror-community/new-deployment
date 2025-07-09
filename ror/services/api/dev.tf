@@ -388,7 +388,7 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.dev.ror.org/v1/organizations/"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/organizations/"
 }
 
 # Integration for v2/organizations
@@ -399,7 +399,7 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.dev.ror.org/v2/organizations/"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/organizations/"
 }
 
 # Integration for v1/heartbeat
@@ -410,7 +410,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.dev.ror.org/v1/heartbeat/"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat/"
 }
 
 # Integration for v2/heartbeat
@@ -421,7 +421,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.dev.ror.org/v2/heartbeat/"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat/"
 }
 
 resource "aws_api_gateway_deployment" "api_gateway_test" {
