@@ -425,7 +425,7 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api-gateway-test.dev.ror.org/v1/organizations/"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/organizations/"
 }
 
 # Integration response for v1/organizations
@@ -476,7 +476,7 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api-gateway-test.dev.ror.org/v2/organizations/"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/organizations/"
 }
 
 # Integration for v1/heartbeat
@@ -487,7 +487,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api-gateway-test.dev.ror.org/v1/heartbeat/"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat/"
 }
 
 # Integration for v2/heartbeat
@@ -498,7 +498,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api-gateway-test.dev.ror.org/v2/heartbeat/"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat/"
 }
 
 resource "aws_api_gateway_deployment" "api_gateway_test" {
@@ -535,14 +535,7 @@ resource "aws_route53_record" "api_gateway_test" {
     }
 }
 
-# Route53 record for API Gateway test service
-resource "aws_route53_record" "api_gateway_test_internal" {
-  zone_id = data.aws_route53_zone.internal.zone_id
-  name = "api-gateway-test.dev.ror.org"
-  type = "CNAME"
-  ttl = var.ttl
-  records = [data.aws_lb.alb-dev.dns_name]
-}
+
 
 # IAM role for API Gateway to write logs
 resource "aws_iam_role" "api_gateway_cloudwatch" {
