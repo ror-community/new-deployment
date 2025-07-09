@@ -486,7 +486,7 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/organizations/"
   
   request_parameters = {
-    "integration.request.header.Host" = "api.dev.ror.org"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
@@ -541,7 +541,7 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/organizations/"
   
   request_parameters = {
-    "integration.request.header.Host" = "api.dev.ror.org"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
@@ -570,7 +570,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat/"
   
   request_parameters = {
-    "integration.request.header.Host" = "api.dev.ror.org"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
@@ -599,7 +599,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
   uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat/"
   
   request_parameters = {
-    "integration.request.header.Host" = "api.dev.ror.org"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
