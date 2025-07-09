@@ -12,7 +12,7 @@
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {
-      "awslogs-group": "/ecs/api-gateway-test",
+      "awslogs-group": "/ecs/api-gateway-test-new",
       "awslogs-region": "eu-west-1",
       "awslogs-stream-prefix": "ecs"
     }
