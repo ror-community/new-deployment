@@ -622,7 +622,7 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v1/organizations"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/organizations"
 }
 
 # Integration response for v1/organizations
@@ -673,7 +673,7 @@ resource "aws_api_gateway_integration" "v1_organizations_id_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v1/organizations/{id}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/organizations/{id}"
   
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -728,7 +728,7 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v2/organizations"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/organizations"
 }
 
 # Integration for organizations (without version - uses default v2)
@@ -739,7 +739,7 @@ resource "aws_api_gateway_integration" "organizations_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/organizations"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/organizations"
 }
 
 # Integration response for v2/organizations
@@ -778,7 +778,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v2/organizations/{id}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/organizations/{id}"
   
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -833,7 +833,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v1/heartbeat"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat"
 }
 
 # Integration response for v1/heartbeat
@@ -859,7 +859,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v2/heartbeat"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat"
 }
 
 # Integration response for v2/heartbeat
