@@ -590,10 +590,6 @@ resource "aws_api_gateway_integration_response" "v1_proxy_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.v1_proxy_integration
-  ]
 }
 
 # OPTIONS integration for v1/{proxy+} (CORS)
@@ -620,10 +616,6 @@ resource "aws_api_gateway_integration_response" "v1_proxy_options_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.v1_proxy_options_integration
-  ]
 }
 
 # Integration for v2/{proxy+}
@@ -654,10 +646,6 @@ resource "aws_api_gateway_integration_response" "v2_proxy_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.v2_proxy_integration
-  ]
 }
 
 # OPTIONS integration for v2/{proxy+} (CORS)
@@ -684,10 +672,6 @@ resource "aws_api_gateway_integration_response" "v2_proxy_options_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.v2_proxy_options_integration
-  ]
 }
 
 # Integration for organizations/{proxy+}
@@ -718,10 +702,6 @@ resource "aws_api_gateway_integration_response" "organizations_proxy_integration
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.organizations_proxy_integration
-  ]
 }
 
 # OPTIONS integration for organizations/{proxy+} (CORS)
@@ -748,10 +728,6 @@ resource "aws_api_gateway_integration_response" "organizations_proxy_options_int
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.organizations_proxy_options_integration
-  ]
 }
 
 # Integration for heartbeat/{proxy+}
@@ -782,10 +758,6 @@ resource "aws_api_gateway_integration_response" "heartbeat_proxy_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.heartbeat_proxy_integration
-  ]
 }
 
 # OPTIONS integration for heartbeat/{proxy+} (CORS)
@@ -812,10 +784,6 @@ resource "aws_api_gateway_integration_response" "heartbeat_proxy_options_integra
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-  
-  depends_on = [
-    aws_api_gateway_integration.heartbeat_proxy_options_integration
-  ]
 }
 
 
