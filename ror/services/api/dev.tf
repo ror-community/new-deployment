@@ -214,8 +214,8 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
-# Listener rule for API Gateway test service - v1 paths
-resource "aws_lb_listener_rule" "api_gateway_test_v1" {
+# Listener rule for API Gateway test service - routes all traffic for api-gateway-test.dev.ror.org
+resource "aws_lb_listener_rule" "api_gateway_test_host" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
   priority = 50
 
@@ -225,42 +225,12 @@ resource "aws_lb_listener_rule" "api_gateway_test_v1" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/v1/*"]
+    field  = "host-header"
+    values = ["api-gateway-test.dev.ror.org"]
   }
 }
 
-# Listener rule for API Gateway test service - v2 paths
-resource "aws_lb_listener_rule" "api_gateway_test_v2" {
-  listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 51
 
-  action {
-    type  = "forward"
-    target_group_arn = aws_lb_target_group.api_gateway_test.arn
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/v2/*"]
-  }
-}
-
-# Listener rule for API Gateway test service - organizations path (without version)
-resource "aws_lb_listener_rule" "api_gateway_test_organizations" {
-  listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 52
-
-  action {
-    type  = "forward"
-    target_group_arn = aws_lb_target_group.api_gateway_test.arn
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/organizations*"]
-  }
-}
 
 
 resource "aws_ecs_task_definition" "api_gateway_test" {
