@@ -307,124 +307,83 @@ resource "aws_api_gateway_rest_api" "api_gateway_test" {
   }
 }
 
-# v1 resource
-resource "aws_api_gateway_resource" "v1" {
+# v1 proxy resource - captures everything under /v1/*
+resource "aws_api_gateway_resource" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   parent_id   = aws_api_gateway_rest_api.api_gateway_test.root_resource_id
   path_part   = "v1"
 }
 
-# v2 resource
-resource "aws_api_gateway_resource" "v2" {
+resource "aws_api_gateway_resource" "v1_proxy_catch_all" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  parent_id   = aws_api_gateway_resource.v1_proxy.id
+  path_part   = "{proxy+}"
+}
+
+# v2 proxy resource - captures everything under /v2/*
+resource "aws_api_gateway_resource" "v2_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   parent_id   = aws_api_gateway_rest_api.api_gateway_test.root_resource_id
   path_part   = "v2"
 }
 
-# organizations resource under v1
-resource "aws_api_gateway_resource" "v1_organizations" {
+resource "aws_api_gateway_resource" "v2_proxy_catch_all" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "organizations"
+  parent_id   = aws_api_gateway_resource.v2_proxy.id
+  path_part   = "{proxy+}"
 }
 
-# organization ID resource under v1/organizations
-resource "aws_api_gateway_resource" "v1_organizations_id" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.v1_organizations.id
-  path_part   = "{id}"
-}
-
-# organizations resource under v2
-resource "aws_api_gateway_resource" "v2_organizations" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.v2.id
-  path_part   = "organizations"
-}
-
-# organization ID resource under v2/organizations
-resource "aws_api_gateway_resource" "v2_organizations_id" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.v2_organizations.id
-  path_part   = "{id}"
-}
-
-# organizations resource (without version - uses default v2)
-resource "aws_api_gateway_resource" "organizations" {
+# organizations proxy resource - captures everything under /organizations*
+resource "aws_api_gateway_resource" "organizations_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   parent_id   = aws_api_gateway_rest_api.api_gateway_test.root_resource_id
   path_part   = "organizations"
 }
 
-# organization ID resource under organizations (without version)
-resource "aws_api_gateway_resource" "organizations_id" {
+resource "aws_api_gateway_resource" "organizations_proxy_catch_all" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.organizations.id
-  path_part   = "{id}"
+  parent_id   = aws_api_gateway_resource.organizations_proxy.id
+  path_part   = "{proxy+}"
 }
 
-# heartbeat resource (without version)
-resource "aws_api_gateway_resource" "heartbeat" {
+# heartbeat proxy resource - captures everything under /heartbeat*
+resource "aws_api_gateway_resource" "heartbeat_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   parent_id   = aws_api_gateway_rest_api.api_gateway_test.root_resource_id
   path_part   = "heartbeat"
 }
 
-# heartbeat resource under v1
-resource "aws_api_gateway_resource" "v1_heartbeat" {
+resource "aws_api_gateway_resource" "heartbeat_proxy_catch_all" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "heartbeat"
+  parent_id   = aws_api_gateway_resource.heartbeat_proxy.id
+  path_part   = "{proxy+}"
 }
 
-# heartbeat resource under v2
-resource "aws_api_gateway_resource" "v2_heartbeat" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  parent_id   = aws_api_gateway_resource.v2.id
-  path_part   = "heartbeat"
-}
-
-# GET method for v1/organizations
-resource "aws_api_gateway_method" "v1_organizations_get" {
+# GET method for v1/{proxy+}
+resource "aws_api_gateway_method" "v1_proxy_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v1_organizations.id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-# OPTIONS method for v1/organizations (CORS)
-resource "aws_api_gateway_method" "v1_organizations_options" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v1_organizations.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-
-# GET method for v1/organizations/{id}
-resource "aws_api_gateway_method" "v1_organizations_id_get" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v1_organizations_id.id
+  resource_id   = aws_api_gateway_resource.v1_proxy_catch_all.id
   http_method   = "GET"
   authorization = "NONE"
   
   request_parameters = {
-    "method.request.path.id" = true
+    "method.request.path.proxy" = true
   }
 }
 
-# OPTIONS method for v1/organizations/{id} (CORS)
-resource "aws_api_gateway_method" "v1_organizations_id_options" {
+# OPTIONS method for v1/{proxy+} (CORS)
+resource "aws_api_gateway_method" "v1_proxy_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v1_organizations_id.id
+  resource_id   = aws_api_gateway_resource.v1_proxy_catch_all.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
-# Method response for v1/organizations
-resource "aws_api_gateway_method_response" "v1_organizations_get" {
+# Method response for v1/{proxy+}
+resource "aws_api_gateway_method_response" "v1_proxy_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_get.http_method
+  resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v1_proxy_get.http_method
   status_code = "200"
   
   response_parameters = {
@@ -434,11 +393,11 @@ resource "aws_api_gateway_method_response" "v1_organizations_get" {
   }
 }
 
-# Method response for v1/organizations OPTIONS
-resource "aws_api_gateway_method_response" "v1_organizations_options" {
+# Method response for v1/{proxy+} OPTIONS
+resource "aws_api_gateway_method_response" "v1_proxy_options" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_options.http_method
+  resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v1_proxy_options.http_method
   status_code = "200"
   
   response_parameters = {
@@ -448,58 +407,42 @@ resource "aws_api_gateway_method_response" "v1_organizations_options" {
   }
 }
 
-# GET method for v2/organizations
-resource "aws_api_gateway_method" "v2_organizations_get" {
+# GET method for v2/{proxy+}
+resource "aws_api_gateway_method" "v2_proxy_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v2_organizations.id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-# GET method for organizations (without version - uses default v2)
-resource "aws_api_gateway_method" "organizations_get" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.organizations.id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-# GET method for organizations/{id} (without version)
-resource "aws_api_gateway_method" "organizations_id_get" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.organizations_id.id
+  resource_id   = aws_api_gateway_resource.v2_proxy_catch_all.id
   http_method   = "GET"
   authorization = "NONE"
   
   request_parameters = {
-    "method.request.path.id" = true
+    "method.request.path.proxy" = true
   }
 }
 
-# OPTIONS method for organizations/{id} (CORS)
-resource "aws_api_gateway_method" "organizations_id_options" {
+# OPTIONS method for v2/{proxy+} (CORS)
+resource "aws_api_gateway_method" "v2_proxy_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.organizations_id.id
+  resource_id   = aws_api_gateway_resource.v2_proxy_catch_all.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
-# GET method for v2/organizations/{id}
-resource "aws_api_gateway_method" "v2_organizations_id_get" {
+# GET method for organizations/{proxy+}
+resource "aws_api_gateway_method" "organizations_proxy_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v2_organizations_id.id
+  resource_id   = aws_api_gateway_resource.organizations_proxy_catch_all.id
   http_method   = "GET"
   authorization = "NONE"
   
   request_parameters = {
-    "method.request.path.id" = true
+    "method.request.path.proxy" = true
   }
 }
 
-# OPTIONS method for v2/organizations/{id} (CORS)
-resource "aws_api_gateway_method" "v2_organizations_id_options" {
+# OPTIONS method for organizations/{proxy+} (CORS)
+resource "aws_api_gateway_method" "organizations_proxy_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v2_organizations_id.id
+  resource_id   = aws_api_gateway_resource.organizations_proxy_catch_all.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
@@ -588,48 +531,24 @@ resource "aws_api_gateway_method_response" "v2_organizations_id_options" {
   }
 }
 
-# GET method for v1/heartbeat
-resource "aws_api_gateway_method" "v1_heartbeat_get" {
+# GET method for heartbeat/{proxy+}
+resource "aws_api_gateway_method" "heartbeat_proxy_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v1_heartbeat.id
+  resource_id   = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
   http_method   = "GET"
   authorization = "NONE"
-}
-
-# Method response for v1/heartbeat
-resource "aws_api_gateway_method_response" "v1_heartbeat_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id = aws_api_gateway_resource.v1_heartbeat.id
-  http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
-  status_code = "200"
   
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
+  request_parameters = {
+    "method.request.path.proxy" = true
   }
 }
 
-# GET method for v2/heartbeat
-resource "aws_api_gateway_method" "v2_heartbeat_get" {
+# OPTIONS method for heartbeat/{proxy+} (CORS)
+resource "aws_api_gateway_method" "heartbeat_proxy_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id   = aws_api_gateway_resource.v2_heartbeat.id
-  http_method   = "GET"
+  resource_id   = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
+  http_method   = "OPTIONS"
   authorization = "NONE"
-}
-
-# Method response for v2/heartbeat
-resource "aws_api_gateway_method_response" "v2_heartbeat_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
-  resource_id = aws_api_gateway_resource.v2_heartbeat.id
-  http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
-  status_code = "200"
-  
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
 }
 
 # Method response for organizations/{id}
@@ -679,6 +598,34 @@ resource "aws_api_gateway_method_response" "heartbeat_options" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   resource_id = aws_api_gateway_resource.heartbeat.id
   http_method = aws_api_gateway_method.heartbeat_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for organizations/{proxy+}
+resource "aws_api_gateway_method_response" "organizations_proxy_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_proxy.id
+  http_method = aws_api_gateway_method.organizations_proxy_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for organizations/{proxy+} OPTIONS
+resource "aws_api_gateway_method_response" "organizations_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_proxy.id
+  http_method = aws_api_gateway_method.organizations_proxy_options.http_method
   status_code = "200"
   
   response_parameters = {
@@ -1099,6 +1046,230 @@ resource "aws_api_gateway_integration_response" "heartbeat_options_integration" 
   }
 }
 
+# Integration for v1/{proxy+}
+resource "aws_api_gateway_integration" "v1_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v1_proxy_get.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "GET"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
+  
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
+  }
+}
+
+# Integration response for v1/{proxy+}
+resource "aws_api_gateway_integration_response" "v1_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v1_proxy_get.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# OPTIONS integration for v1/{proxy+} (CORS)
+resource "aws_api_gateway_integration" "v1_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v1_proxy_options.http_method
+
+  type = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Integration response for v1/{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "v1_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v1_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# Integration for v2/{proxy+}
+resource "aws_api_gateway_integration" "v2_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v2_proxy_get.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "GET"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
+  
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
+  }
+}
+
+# Integration response for v2/{proxy+}
+resource "aws_api_gateway_integration_response" "v2_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v2_proxy_get.http_method
+  status_code = aws_api_gateway_method_response.v2_proxy_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# OPTIONS integration for v2/{proxy+} (CORS)
+resource "aws_api_gateway_integration" "v2_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v2_proxy_options.http_method
+
+  type = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Integration response for v2/{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "v2_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
+  http_method = aws_api_gateway_method.v2_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.v2_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# Integration for organizations/{proxy+}
+resource "aws_api_gateway_integration" "organizations_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
+  http_method = aws_api_gateway_method.organizations_proxy_get.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "GET"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
+  
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
+  }
+}
+
+# Integration response for organizations/{proxy+}
+resource "aws_api_gateway_integration_response" "organizations_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
+  http_method = aws_api_gateway_method.organizations_proxy_get.http_method
+  status_code = aws_api_gateway_method_response.organizations_proxy_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# OPTIONS integration for organizations/{proxy+} (CORS)
+resource "aws_api_gateway_integration" "organizations_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
+  http_method = aws_api_gateway_method.organizations_proxy_options.http_method
+
+  type = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Integration response for organizations/{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "organizations_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
+  http_method = aws_api_gateway_method.organizations_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.organizations_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# Integration for heartbeat/{proxy+}
+resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
+  http_method = aws_api_gateway_method.heartbeat_proxy_get.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "GET"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
+  
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
+  }
+}
+
+# Integration response for heartbeat/{proxy+}
+resource "aws_api_gateway_integration_response" "heartbeat_proxy_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
+  http_method = aws_api_gateway_method.heartbeat_proxy_get.http_method
+  status_code = aws_api_gateway_method_response.heartbeat_proxy_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+# OPTIONS integration for heartbeat/{proxy+} (CORS)
+resource "aws_api_gateway_integration" "heartbeat_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
+  http_method = aws_api_gateway_method.heartbeat_proxy_options.http_method
+
+  type = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Integration response for heartbeat/{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "heartbeat_proxy_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
+  http_method = aws_api_gateway_method.heartbeat_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.heartbeat_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
 
 resource "aws_api_gateway_deployment" "api_gateway_test" {
   depends_on = [
@@ -1128,6 +1299,26 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     aws_api_gateway_integration_response.organizations_id_options_integration,
     aws_api_gateway_integration_response.heartbeat_integration,
     aws_api_gateway_integration_response.heartbeat_options_integration,
+    aws_api_gateway_integration.organizations_proxy_integration,
+    aws_api_gateway_integration_response.organizations_proxy_integration,
+    aws_api_gateway_integration.organizations_proxy_options_integration,
+    aws_api_gateway_integration_response.organizations_proxy_options_integration,
+    aws_api_gateway_integration.v1_proxy_integration,
+    aws_api_gateway_integration_response.v1_proxy_integration,
+    aws_api_gateway_integration.v1_proxy_options_integration,
+    aws_api_gateway_integration_response.v1_proxy_options_integration,
+    aws_api_gateway_integration.v2_proxy_integration,
+    aws_api_gateway_integration_response.v2_proxy_integration,
+    aws_api_gateway_integration.v2_proxy_options_integration,
+    aws_api_gateway_integration_response.v2_proxy_options_integration,
+    aws_api_gateway_integration.organizations_proxy_integration,
+    aws_api_gateway_integration_response.organizations_proxy_integration,
+    aws_api_gateway_integration.organizations_proxy_options_integration,
+    aws_api_gateway_integration_response.organizations_proxy_options_integration,
+    aws_api_gateway_integration.heartbeat_proxy_integration,
+    aws_api_gateway_integration_response.heartbeat_proxy_integration,
+    aws_api_gateway_integration.heartbeat_proxy_options_integration,
+    aws_api_gateway_integration_response.heartbeat_proxy_options_integration,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
