@@ -832,6 +832,7 @@ resource "aws_iam_role" "api_gateway_cloudwatch" {
   })
 }
 
+### NEW
 resource "aws_iam_role_policy" "api_gateway_cloudwatch" {
   name = "api-gateway-cloudwatch-policy"
   role = aws_iam_role.api_gateway_cloudwatch.id
