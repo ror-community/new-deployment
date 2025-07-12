@@ -556,7 +556,7 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
   }
 }
 
@@ -582,7 +582,7 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
   }
 }
 
@@ -608,7 +608,7 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
   }
 }
 
@@ -634,7 +634,7 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
   }
 }
 
