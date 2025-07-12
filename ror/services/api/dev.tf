@@ -763,6 +763,17 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     deployed_at = timestamp()
   }
   
+  depends_on = [
+    aws_api_gateway_integration.v1_proxy_integration,
+    aws_api_gateway_integration.v1_proxy_options_integration,
+    aws_api_gateway_integration.v2_proxy_integration,
+    aws_api_gateway_integration.v2_proxy_options_integration,
+    aws_api_gateway_integration.organizations_proxy_integration,
+    aws_api_gateway_integration.organizations_proxy_options_integration,
+    aws_api_gateway_integration.heartbeat_proxy_integration,
+    aws_api_gateway_integration.heartbeat_proxy_options_integration
+  ]
+  
   lifecycle {
     create_before_destroy = true
   }
