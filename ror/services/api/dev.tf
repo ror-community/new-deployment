@@ -295,7 +295,7 @@ resource "aws_appautoscaling_policy" "api_gateway_test_autoscale_policy" {
 # API Gateway REST API
 resource "aws_api_gateway_rest_api" "api_gateway_test" {
   name = "ror-api-test"
-  description = "ROR API Gateway for testing"
+  description = "ROR API Gateway for testing - updated configuration"
   
   endpoint_configuration {
     types = ["REGIONAL"]
