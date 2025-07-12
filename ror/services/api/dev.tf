@@ -552,7 +552,7 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -578,7 +578,7 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -604,7 +604,7 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -630,7 +630,7 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
