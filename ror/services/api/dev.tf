@@ -790,6 +790,25 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   }
   
   depends_on = [
+    # Methods
+    aws_api_gateway_method.v1_proxy_get,
+    aws_api_gateway_method.v1_proxy_options,
+    aws_api_gateway_method.v2_proxy_get,
+    aws_api_gateway_method.v2_proxy_options,
+    aws_api_gateway_method.organizations_proxy_get,
+    aws_api_gateway_method.organizations_proxy_options,
+    aws_api_gateway_method.heartbeat_proxy_get,
+    aws_api_gateway_method.heartbeat_proxy_options,
+    # Method responses
+    aws_api_gateway_method_response.v1_proxy_get,
+    aws_api_gateway_method_response.v1_proxy_options,
+    aws_api_gateway_method_response.v2_proxy_get,
+    aws_api_gateway_method_response.v2_proxy_options,
+    aws_api_gateway_method_response.organizations_proxy_get,
+    aws_api_gateway_method_response.organizations_proxy_options,
+    aws_api_gateway_method_response.heartbeat_proxy_get,
+    aws_api_gateway_method_response.heartbeat_proxy_options,
+    # Integrations
     aws_api_gateway_integration.v1_proxy_integration,
     aws_api_gateway_integration.v1_proxy_options_integration,
     aws_api_gateway_integration.v2_proxy_integration,
@@ -798,6 +817,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     aws_api_gateway_integration.organizations_proxy_options_integration,
     aws_api_gateway_integration.heartbeat_proxy_integration,
     aws_api_gateway_integration.heartbeat_proxy_options_integration,
+    # Integration responses
     aws_api_gateway_integration_response.v1_proxy_integration,
     aws_api_gateway_integration_response.v1_proxy_options_integration,
     aws_api_gateway_integration_response.v2_proxy_integration,
