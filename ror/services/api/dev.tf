@@ -833,36 +833,37 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   }
 }
 
+# Comment out custom domain for now - use direct API Gateway invoke URL
 # API Gateway Custom Domain Name
-resource "aws_api_gateway_domain_name" "api_gateway_test" {
-  domain_name = "gateway-api.dev.ror.org"
-  
-  regional_certificate_arn = data.aws_acm_certificate.ror.arn
-  
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
-}
+# resource "aws_api_gateway_domain_name" "api_gateway_test" {
+#   domain_name = "gateway-api.dev.ror.org"
+#   
+#   regional_certificate_arn = data.aws_acm_certificate.ror.arn
+#   
+#   endpoint_configuration {
+#     types = ["REGIONAL"]
+#   }
+# }
 
 # Base path mapping for API Gateway custom domain
-resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
-  api_id      = aws_api_gateway_rest_api.api_gateway_test.id
-  stage_name  = aws_api_gateway_deployment.api_gateway_test.stage_name
-  domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
-}
+# resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
+#   api_id      = aws_api_gateway_rest_api.api_gateway_test.id
+#   stage_name  = aws_api_gateway_deployment.api_gateway_test.stage_name
+#   domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
+# }
 
 # Route53 record pointing directly to API Gateway
-resource "aws_route53_record" "api_gateway_test" {
-  zone_id = data.aws_route53_zone.public.zone_id
-  name    = "gateway-api.dev.ror.org"
-  type    = "A"
-  
-  alias {
-    name                   = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
-    zone_id                = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
-    evaluate_target_health = false
-  }
-}
+# resource "aws_route53_record" "api_gateway_test" {
+#   zone_id = data.aws_route53_zone.public.zone_id
+#   name    = "gateway-api.dev.ror.org"
+#   type    = "A"
+#   
+#   alias {
+#     name                   = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
+#     zone_id                = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
+#     evaluate_target_health = false
+#   }
+# }
 
 
 
