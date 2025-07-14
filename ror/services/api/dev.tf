@@ -214,27 +214,7 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
-# Listener rule for API Gateway test service - routes all traffic for api-gateway-test.dev.ror.org
-resource "aws_lb_listener_rule" "api_gateway_test_host" {
-  listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 60
 
-  action {
-    type = "redirect"
-
-    redirect {
-      host        = "api-gateway-test.dev.ror.org"
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_302"
-    }
-  }
-
-  condition {
-    field  = "host-header"
-    values = ["api-gateway-test.dev.ror.org"]
-  }
-}
 
 
 resource "aws_ecs_task_definition" "api_gateway_test" {
@@ -558,11 +538,11 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/v1/{proxy}"
+  uri                     = "http://api.dev.local/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -584,11 +564,11 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/v2/{proxy}"
+  uri                     = "http://api.dev.local/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -610,11 +590,11 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/organizations/{proxy}"
+  uri                     = "http://api.dev.local/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -636,11 +616,11 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/heartbeat/{proxy}"
+  uri                     = "http://api.dev.local/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -803,22 +783,7 @@ resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
   domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
 }
 
-# Route53 record for API Gateway custom domain
-resource "aws_route53_record" "api_gateway_test" {
-    zone_id = data.aws_route53_zone.public.zone_id
-    name    = "api-gateway-test.dev.ror.org"
-    type    = "A"
-    
-    alias {
-        name                   = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
-        zone_id                = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
-        evaluate_target_health = false
-    }
-    
-    lifecycle {
-        create_before_destroy = true
-    }
-}
+
 
 # IAM role for API Gateway to write logs
 resource "aws_iam_role" "api_gateway_cloudwatch" {
@@ -862,3 +827,5 @@ resource "aws_iam_role_policy" "api_gateway_cloudwatch" {
     ]
   })
 }
+
+
