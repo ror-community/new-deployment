@@ -556,7 +556,9 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/v1/{proxy}"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_api_gateway_vpc_link.api_gateway_vpc_link.id
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -582,7 +584,9 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/v2/{proxy}"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_api_gateway_vpc_link.api_gateway_vpc_link.id
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -608,7 +612,9 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/organizations/{proxy}"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_api_gateway_vpc_link.api_gateway_vpc_link.id
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -634,7 +640,9 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/heartbeat/{proxy}"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_api_gateway_vpc_link.api_gateway_vpc_link.id
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -809,6 +817,8 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   }
   
   depends_on = [
+    # VPC Link
+    aws_api_gateway_vpc_link.api_gateway_vpc_link,
     # Methods
     aws_api_gateway_method.v1_proxy_get,
     aws_api_gateway_method.v1_proxy_options,
@@ -874,6 +884,18 @@ resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
   ]
 }
 
+# VPC Link for API Gateway to communicate with ALB
+resource "aws_api_gateway_vpc_link" "api_gateway_vpc_link" {
+  name               = "api-gateway-vpc-link"
+  description        = "VPC Link for API Gateway to communicate with ALB"
+  target_arns        = [data.aws_lb.alb-dev.arn]
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-integration"
+  }
+}
+
 # Route53 record pointing directly to API Gateway
 resource "aws_route53_record" "api_gateway" {
   zone_id = data.aws_route53_zone.public.zone_id
@@ -886,17 +908,6 @@ resource "aws_route53_record" "api_gateway" {
     evaluate_target_health = false
   }
 }
-
-# CNAME record for API Gateway to load balancer routing
-resource "aws_route53_record" "api_gateway_to_alb" {
-  zone_id = data.aws_route53_zone.public.zone_id
-  name    = "gateway-api.dev.ror.org"
-  type    = "CNAME"
-  ttl     = var.ttl
-  records = [data.aws_lb.alb-dev.dns_name]
-}
-
-
 
 # IAM role for API Gateway to write logs
 resource "aws_iam_role" "api_gateway_cloudwatch" {
