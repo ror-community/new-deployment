@@ -239,9 +239,6 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
   }
 }
 
-
-
-
 resource "aws_ecs_task_definition" "api_gateway_test" {
   family = "api-gateway-test"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
@@ -254,7 +251,7 @@ resource "aws_ecs_task_definition" "api_gateway_test" {
 }
 
 resource "aws_service_discovery_service" "api_gateway_test" {
-  name = "api-gateway-test"
+  name = "gateway-api"
 
   health_check_custom_config {
     failure_threshold = 1
@@ -282,7 +279,7 @@ resource "aws_cloudwatch_log_group" "api_gateway_test" {
 resource "aws_appautoscaling_target" "api_gateway_test_autoscale_target" {
   max_capacity = 4
   min_capacity = 2
-  resource_id = "service/default/gateway-api"
+  resource_id = "service/default/api-gateway-test"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace = "ecs"
 }
