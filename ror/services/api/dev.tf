@@ -558,11 +558,11 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/v1/{proxy}"
+  uri                     = "http://api.dev.local/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -584,11 +584,11 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/v2/{proxy}"
+  uri                     = "http://api.dev.local/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -610,11 +610,11 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/organizations/{proxy}"
+  uri                     = "http://api.dev.local/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -636,11 +636,11 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://api-gateway-test.internal/heartbeat/{proxy}"
+  uri                     = "http://api.dev.local/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-gateway-test.internal'"
+    "integration.request.header.Host" = "'api.dev.local'"
   }
 }
 
@@ -862,3 +862,5 @@ resource "aws_iam_role_policy" "api_gateway_cloudwatch" {
     ]
   })
 }
+
+
