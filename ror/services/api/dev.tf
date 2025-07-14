@@ -641,6 +641,7 @@ resource "aws_api_gateway_integration_response" "v1_proxy_integration" {
   resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
   http_method = aws_api_gateway_method.v1_proxy_get.http_method
   status_code = aws_api_gateway_method_response.v1_proxy_get.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -654,6 +655,7 @@ resource "aws_api_gateway_integration_response" "v1_proxy_options_integration" {
   resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
   http_method = aws_api_gateway_method.v1_proxy_options.http_method
   status_code = aws_api_gateway_method_response.v1_proxy_options.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -667,6 +669,7 @@ resource "aws_api_gateway_integration_response" "v2_proxy_integration" {
   resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
   http_method = aws_api_gateway_method.v2_proxy_get.http_method
   status_code = aws_api_gateway_method_response.v2_proxy_get.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -680,6 +683,7 @@ resource "aws_api_gateway_integration_response" "v2_proxy_options_integration" {
   resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
   http_method = aws_api_gateway_method.v2_proxy_options.http_method
   status_code = aws_api_gateway_method_response.v2_proxy_options.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -693,6 +697,7 @@ resource "aws_api_gateway_integration_response" "organizations_proxy_integration
   resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
   http_method = aws_api_gateway_method.organizations_proxy_get.http_method
   status_code = aws_api_gateway_method_response.organizations_proxy_get.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -706,6 +711,7 @@ resource "aws_api_gateway_integration_response" "organizations_proxy_options_int
   resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
   http_method = aws_api_gateway_method.organizations_proxy_options.http_method
   status_code = aws_api_gateway_method_response.organizations_proxy_options.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -719,6 +725,7 @@ resource "aws_api_gateway_integration_response" "heartbeat_proxy_integration" {
   resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
   http_method = aws_api_gateway_method.heartbeat_proxy_get.http_method
   status_code = aws_api_gateway_method_response.heartbeat_proxy_get.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -732,6 +739,7 @@ resource "aws_api_gateway_integration_response" "heartbeat_proxy_options_integra
   resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
   http_method = aws_api_gateway_method.heartbeat_proxy_options.http_method
   status_code = aws_api_gateway_method_response.heartbeat_proxy_options.status_code
+  selection_pattern = ".*"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -757,7 +765,15 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     aws_api_gateway_integration.organizations_proxy_integration,
     aws_api_gateway_integration.organizations_proxy_options_integration,
     aws_api_gateway_integration.heartbeat_proxy_integration,
-    aws_api_gateway_integration.heartbeat_proxy_options_integration
+    aws_api_gateway_integration.heartbeat_proxy_options_integration,
+    aws_api_gateway_integration_response.v1_proxy_integration,
+    aws_api_gateway_integration_response.v1_proxy_options_integration,
+    aws_api_gateway_integration_response.v2_proxy_integration,
+    aws_api_gateway_integration_response.v2_proxy_options_integration,
+    aws_api_gateway_integration_response.organizations_proxy_integration,
+    aws_api_gateway_integration_response.organizations_proxy_options_integration,
+    aws_api_gateway_integration_response.heartbeat_proxy_integration,
+    aws_api_gateway_integration_response.heartbeat_proxy_options_integration
   ]
   
   lifecycle {
