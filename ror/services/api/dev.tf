@@ -179,7 +179,7 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 
 # API Gateway for testing - separate ECS service with same container and security settings
 resource "aws_ecs_service" "api_gateway_test" {
-  name = "gateway-api"
+  name = "api-gateway-test"
   cluster = data.aws_ecs_cluster.default.id
   launch_type = "FARGATE"
   task_definition = aws_ecs_task_definition.api_gateway_test.arn
@@ -243,7 +243,7 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
 
 
 resource "aws_ecs_task_definition" "api_gateway_test" {
-  family = "gateway-api"
+  family = "api-gateway-test"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -254,7 +254,7 @@ resource "aws_ecs_task_definition" "api_gateway_test" {
 }
 
 resource "aws_service_discovery_service" "api_gateway_test" {
-  name = "gateway-api"
+  name = "api-gateway-test"
 
   health_check_custom_config {
     failure_threshold = 1
@@ -858,17 +858,16 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   }
 }
 
-# Comment out custom domain for now - use direct API Gateway invoke URL
 # API Gateway Custom Domain Name
-# resource "aws_api_gateway_domain_name" "api_gateway_test" {
-#   domain_name = "gateway-api.dev.ror.org"
-#   
-#   regional_certificate_arn = data.aws_acm_certificate.ror.arn
-#   
-#   endpoint_configuration {
-#     types = ["REGIONAL"]
-#   }
-# }
+resource "aws_api_gateway_domain_name" "api_gateway_test" {
+  domain_name = "gateway-api.dev.ror.org"
+  
+  regional_certificate_arn = data.aws_acm_certificate.ror.arn
+  
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
 
 # Base path mapping for API Gateway custom domain
 # resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
@@ -878,17 +877,17 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 # }
 
 # Route53 record pointing directly to API Gateway
-# resource "aws_route53_record" "api_gateway_test" {
-#   zone_id = data.aws_route53_zone.public.zone_id
-#   name    = "gateway-api.dev.ror.org"
-#   type    = "A"
-#   
-#   alias {
-#     name                   = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
-#     zone_id                = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
-#     evaluate_target_health = false
-#   }
-# }
+resource "aws_route53_record" "api_gateway" {
+  zone_id = data.aws_route53_zone.public.zone_id
+  name    = "gateway-api.dev.ror.org"
+  type    = "A"
+  
+  alias {
+    name = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
+    zone_id = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
+    evaluate_target_health = false
+  }
+}
 
 
 
