@@ -556,7 +556,7 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
   resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
   http_method = aws_api_gateway_method.v1_proxy_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://api-gateway-test.internal/v1/{proxy}"
   
@@ -582,7 +582,7 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
   resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
   http_method = aws_api_gateway_method.v2_proxy_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://api-gateway-test.internal/v2/{proxy}"
   
@@ -608,7 +608,7 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
   resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
   http_method = aws_api_gateway_method.organizations_proxy_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://api-gateway-test.internal/organizations/{proxy}"
   
@@ -634,7 +634,7 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
   resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
   http_method = aws_api_gateway_method.heartbeat_proxy_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://api-gateway-test.internal/heartbeat/{proxy}"
   
