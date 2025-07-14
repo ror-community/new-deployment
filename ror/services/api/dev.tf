@@ -542,7 +542,7 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-test.dev.ror.org'"
+    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
   }
 }
 
@@ -568,7 +568,7 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-test.dev.ror.org'"
+    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
   }
 }
 
@@ -594,7 +594,7 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-test.dev.ror.org'"
+    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
   }
 }
 
@@ -620,7 +620,7 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api-test.dev.ror.org'"
+    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
   }
 }
 
@@ -815,7 +815,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 
 # API Gateway Custom Domain Name
 resource "aws_api_gateway_domain_name" "api_gateway_test" {
-  domain_name = "api-test.dev.ror.org"
+  domain_name = "gateway-api.dev.ror.org"
   
   regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
@@ -834,7 +834,7 @@ resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
 # Route53 record pointing directly to API Gateway
 resource "aws_route53_record" "api_gateway_test" {
   zone_id = data.aws_route53_zone.public.zone_id
-  name    = "api-test.dev.ror.org"
+  name    = "gateway-api.dev.ror.org"
   type    = "A"
   
   alias {
