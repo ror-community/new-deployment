@@ -643,6 +643,10 @@ resource "aws_api_gateway_integration_response" "v1_proxy_integration" {
   status_code = aws_api_gateway_method_response.v1_proxy_get.status_code
   selection_pattern = ".*"
 
+  depends_on = [
+    aws_api_gateway_integration.v1_proxy_integration
+  ]
+
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
@@ -656,6 +660,10 @@ resource "aws_api_gateway_integration_response" "v1_proxy_options_integration" {
   http_method = aws_api_gateway_method.v1_proxy_options.http_method
   status_code = aws_api_gateway_method_response.v1_proxy_options.status_code
   selection_pattern = ".*"
+
+  depends_on = [
+    aws_api_gateway_integration.v1_proxy_options_integration
+  ]
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -671,6 +679,10 @@ resource "aws_api_gateway_integration_response" "v2_proxy_integration" {
   status_code = aws_api_gateway_method_response.v2_proxy_get.status_code
   selection_pattern = ".*"
 
+  depends_on = [
+    aws_api_gateway_integration.v2_proxy_integration
+  ]
+
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
@@ -684,6 +696,10 @@ resource "aws_api_gateway_integration_response" "v2_proxy_options_integration" {
   http_method = aws_api_gateway_method.v2_proxy_options.http_method
   status_code = aws_api_gateway_method_response.v2_proxy_options.status_code
   selection_pattern = ".*"
+
+  depends_on = [
+    aws_api_gateway_integration.v2_proxy_options_integration
+  ]
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -699,6 +715,10 @@ resource "aws_api_gateway_integration_response" "organizations_proxy_integration
   status_code = aws_api_gateway_method_response.organizations_proxy_get.status_code
   selection_pattern = ".*"
 
+  depends_on = [
+    aws_api_gateway_integration.organizations_proxy_integration
+  ]
+
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
@@ -712,6 +732,10 @@ resource "aws_api_gateway_integration_response" "organizations_proxy_options_int
   http_method = aws_api_gateway_method.organizations_proxy_options.http_method
   status_code = aws_api_gateway_method_response.organizations_proxy_options.status_code
   selection_pattern = ".*"
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_proxy_options_integration
+  ]
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -727,6 +751,10 @@ resource "aws_api_gateway_integration_response" "heartbeat_proxy_integration" {
   status_code = aws_api_gateway_method_response.heartbeat_proxy_get.status_code
   selection_pattern = ".*"
 
+  depends_on = [
+    aws_api_gateway_integration.heartbeat_proxy_integration
+  ]
+
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
@@ -740,6 +768,10 @@ resource "aws_api_gateway_integration_response" "heartbeat_proxy_options_integra
   http_method = aws_api_gateway_method.heartbeat_proxy_options.http_method
   status_code = aws_api_gateway_method_response.heartbeat_proxy_options.status_code
   selection_pattern = ".*"
+
+  depends_on = [
+    aws_api_gateway_integration.heartbeat_proxy_options_integration
+  ]
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
