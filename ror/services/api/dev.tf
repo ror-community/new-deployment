@@ -214,7 +214,7 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
-# Listener rule for API Gateway test service - routes all traffic for gateway-test-api.dev.ror.org
+# Listener rule for API Gateway test service - routes traffic to API Gateway test service
 resource "aws_lb_listener_rule" "api_gateway_test_host" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
   priority = 60
@@ -226,7 +226,7 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
 
   condition {
     field  = "host-header"
-    values = ["gateway-test-api.dev.ror.org"]
+    values = ["gateway-test-api.dev.ror.org", "api.dev.ror.org"]
   }
 }
 
@@ -556,7 +556,7 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -582,7 +582,7 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -608,7 +608,7 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -634,7 +634,7 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}:443/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -805,6 +805,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
   
   variables = {
     deployed_at = timestamp()
+    force_update = "true"
   }
   
   depends_on = [
