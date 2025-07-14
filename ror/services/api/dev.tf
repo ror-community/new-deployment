@@ -220,8 +220,14 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
   priority = 60
 
   action {
-    type  = "forward"
-    target_group_arn = aws_lb_target_group.api_gateway_test.arn
+    type = "redirect"
+
+    redirect {
+      host        = "api-gateway-test.dev.ror.org"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
+    }
   }
 
   condition {
@@ -552,11 +558,11 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
+  uri                     = "http://api-gateway-test.internal/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.internal'"
   }
 }
 
@@ -578,11 +584,11 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
+  uri                     = "http://api-gateway-test.internal/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.internal'"
   }
 }
 
@@ -604,11 +610,11 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
+  uri                     = "http://api-gateway-test.internal/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.internal'"
   }
 }
 
@@ -630,11 +636,11 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
+  uri                     = "http://api-gateway-test.internal/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'api.dev.ror.org'"
+    "integration.request.header.Host" = "'api-gateway-test.internal'"
   }
 }
 
