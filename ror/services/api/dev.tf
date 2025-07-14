@@ -831,6 +831,19 @@ resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
   domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
 }
 
+# Route53 record pointing directly to API Gateway
+resource "aws_route53_record" "api_gateway_test" {
+  zone_id = data.aws_route53_zone.public.zone_id
+  name    = "api-test.dev.ror.org"
+  type    = "A"
+  
+  alias {
+    name                   = aws_api_gateway_domain_name.api_gateway_test.regional_domain_name
+    zone_id                = aws_api_gateway_domain_name.api_gateway_test.regional_zone_id
+    evaluate_target_health = false
+  }
+}
+
 
 
 # IAM role for API Gateway to write logs

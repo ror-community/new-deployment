@@ -64,23 +64,6 @@ resource "aws_lb_listener_rule" "redirect_www-dev" {
   }
 }
 
-# API Gateway test listener rule - higher priority than default action
-resource "aws_lb_listener_rule" "api_gateway_test" {
-  listener_arn = aws_lb_listener.alb-dev.arn
-  priority = 50  # Higher priority than default action
-
-  action {
-    type             = "forward"
-    target_group_arn = data.aws_lb_target_group.api_gateway_test.id
-  }
-
-  condition {
-    host_header {
-      values = ["api-gateway-test.dev.ror.org"]
-    }
-  }
-}
-
 resource "aws_route53_record" "www-dev" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "www.dev.ror.org"
@@ -88,17 +71,3 @@ resource "aws_route53_record" "www-dev" {
     ttl = var.ttl
     records = [data.aws_lb.alb-dev.dns_name]
 }
-
-resource "aws_route53_record" "api_gateway_test" {
-    zone_id = data.aws_route53_zone.public.zone_id
-    name = "api-gateway-test.dev.ror.org"
-    type = "CNAME"
-    ttl = var.ttl
-    records = [data.aws_lb.alb-dev.dns_name]
-}
-
-# Data source for API Gateway test target group
-data "aws_lb_target_group" "api_gateway_test" {
-  name = "api-gateway-test-new"
-}
-
