@@ -536,13 +536,13 @@ resource "aws_api_gateway_integration" "v1_proxy_integration" {
   resource_id = aws_api_gateway_resource.v1_proxy_catch_all.id
   http_method = aws_api_gateway_method.v1_proxy_get.http_method
 
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
@@ -562,13 +562,13 @@ resource "aws_api_gateway_integration" "v2_proxy_integration" {
   resource_id = aws_api_gateway_resource.v2_proxy_catch_all.id
   http_method = aws_api_gateway_method.v2_proxy_get.http_method
 
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
@@ -588,13 +588,13 @@ resource "aws_api_gateway_integration" "organizations_proxy_integration" {
   resource_id = aws_api_gateway_resource.organizations_proxy_catch_all.id
   http_method = aws_api_gateway_method.organizations_proxy_get.http_method
 
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/organizations/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
@@ -614,13 +614,13 @@ resource "aws_api_gateway_integration" "heartbeat_proxy_integration" {
   resource_id = aws_api_gateway_resource.heartbeat_proxy_catch_all.id
   http_method = aws_api_gateway_method.heartbeat_proxy_get.http_method
 
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/heartbeat/{proxy}"
   
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "'gateway-api.dev.ror.org'"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
 
