@@ -863,11 +863,15 @@ resource "aws_api_gateway_domain_name" "api_gateway_test" {
 }
 
 # Base path mapping for API Gateway custom domain
-# resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
-#   api_id      = aws_api_gateway_rest_api.api_gateway_test.id
-#   stage_name  = aws_api_gateway_deployment.api_gateway_test.stage_name
-#   domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
-# }
+resource "aws_api_gateway_base_path_mapping" "api_gateway_test" {
+  api_id      = aws_api_gateway_rest_api.api_gateway_test.id
+  stage_name  = aws_api_gateway_deployment.api_gateway_test.stage_name
+  domain_name = aws_api_gateway_domain_name.api_gateway_test.domain_name
+  
+  depends_on = [
+    aws_api_gateway_deployment.api_gateway_test
+  ]
+}
 
 # Route53 record pointing directly to API Gateway
 resource "aws_route53_record" "api_gateway" {
