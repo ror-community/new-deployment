@@ -877,7 +877,7 @@ resource "aws_api_gateway_domain_name" "api_gateway_test" {
 # }
 
 # Route53 record pointing directly to API Gateway
-resource "aws_route53_record" "api_gateway_test" {
+resource "aws_route53_record" "api_gateway" {
   zone_id = data.aws_route53_zone.public.zone_id
   name    = "gateway-api.dev.ror.org"
   type    = "A"
