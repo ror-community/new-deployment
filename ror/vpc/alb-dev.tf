@@ -99,6 +99,6 @@ resource "aws_route53_record" "api_gateway_test" {
 
 # Data source for API Gateway test target group
 data "aws_lb_target_group" "api_gateway_test" {
-  name = "api-gateway-test"
+  name = "api-gateway-test-new"
 }
 
