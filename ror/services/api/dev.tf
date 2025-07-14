@@ -767,7 +767,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 
 # API Gateway Custom Domain Name
 resource "aws_api_gateway_domain_name" "api_gateway_test" {
-  domain_name = "api-gateway-test.dev.ror.org"
+  domain_name = "api-test.dev.ror.org"
   
   regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
