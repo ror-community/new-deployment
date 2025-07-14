@@ -214,8 +214,8 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
-# Listener rule for API Gateway test service - host-based routing
-resource "aws_lb_listener_rule" "api_gateway_test_host" {
+# Listener rule for API Gateway test service - v1 paths
+resource "aws_lb_listener_rule" "api_gateway_test_v1" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
   priority = 50
 
@@ -225,8 +225,40 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
   }
 
   condition {
-    field  = "host-header"
-    values = ["api-gateway-test.dev.ror.org"]
+    field  = "path-pattern"
+    values = ["/v1/*"]
+  }
+}
+
+# Listener rule for API Gateway test service - v2 paths
+resource "aws_lb_listener_rule" "api_gateway_test_v2" {
+  listener_arn = data.aws_lb_listener.alb-dev.arn
+  priority = 51
+
+  action {
+    type  = "forward"
+    target_group_arn = aws_lb_target_group.api_gateway_test.arn
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/v2/*"]
+  }
+}
+
+# Listener rule for API Gateway test service - organizations path (without version)
+resource "aws_lb_listener_rule" "api_gateway_test_organizations" {
+  listener_arn = data.aws_lb_listener.alb-dev.arn
+  priority = 52
+
+  action {
+    type  = "forward"
+    target_group_arn = aws_lb_target_group.api_gateway_test.arn
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/organizations*"]
   }
 }
 
@@ -607,10 +639,6 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/organizations"
-  
-  request_parameters = {
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
-  }
 }
 
 # Integration response for v1/organizations
@@ -665,7 +693,6 @@ resource "aws_api_gateway_integration" "v1_organizations_id_integration" {
   
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
   }
 }
 
@@ -718,10 +745,6 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/organizations"
-  
-  request_parameters = {
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
-  }
 }
 
 # Integration for organizations (without version - uses default v2)
@@ -733,10 +756,6 @@ resource "aws_api_gateway_integration" "organizations_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/organizations"
-  
-  request_parameters = {
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
-  }
 }
 
 # Integration response for v2/organizations
@@ -779,7 +798,6 @@ resource "aws_api_gateway_integration" "v2_organizations_id_integration" {
   
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
   }
 }
 
@@ -832,10 +850,6 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat"
-  
-  request_parameters = {
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
-  }
 }
 
 # Integration response for v1/heartbeat
@@ -862,10 +876,6 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat"
-  
-  request_parameters = {
-    "integration.request.header.Host" = "'api-gateway-test.dev.ror.org'"
-  }
 }
 
 # Integration response for v2/heartbeat
