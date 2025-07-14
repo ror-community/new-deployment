@@ -226,7 +226,7 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
 
   condition {
     field  = "host-header"
-    values = ["gateway-test-api.dev.ror.org", "api.dev.ror.org"]
+    values = ["gateway-test-api.dev.ror.org"]
   }
 }
 
