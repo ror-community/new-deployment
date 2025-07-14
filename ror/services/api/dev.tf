@@ -117,14 +117,14 @@ resource "aws_route53_record" "split-api-dev" {
   records = [data.aws_lb.alb-dev.dns_name]
 }
 
-# Route53 record for API Gateway test service
-resource "aws_route53_record" "api_gateway_test" {
-  zone_id = data.aws_route53_zone.public.zone_id
-  name = "gateway-test-api.dev.ror.org"
-  type = "CNAME"
-  ttl = var.ttl
-  records = [data.aws_lb.alb-dev.dns_name]
-}
+# Route53 record for API Gateway test service - removed to avoid conflict with API Gateway A record
+# resource "aws_route53_record" "api_gateway_test" {
+#   zone_id = data.aws_route53_zone.public.zone_id
+#   name = "gateway-test-api.dev.ror.org"
+#   type = "CNAME"
+#   ttl = var.ttl
+#   records = [data.aws_lb.alb-dev.dns_name]
+# }
 
 resource "aws_service_discovery_service" "api-dev" {
   name = "api.dev"
@@ -199,7 +199,7 @@ resource "aws_ecs_service" "api_gateway_test" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.api_gateway_test.id
-    container_name   = "gateway-api"
+    container_name   = "api-gateway-test"
     container_port   = "80"
   }
 
@@ -251,7 +251,7 @@ resource "aws_ecs_task_definition" "api_gateway_test" {
 }
 
 resource "aws_service_discovery_service" "api_gateway_test" {
-  name = "gateway-api"
+  name = "api-gateway-test"
 
   health_check_custom_config {
     failure_threshold = 1
@@ -272,7 +272,7 @@ resource "aws_service_discovery_service" "api_gateway_test" {
 }
 
 resource "aws_cloudwatch_log_group" "api_gateway_test" {
-  name = "/ecs/gateway-api"
+  name = "/ecs/api-gateway-test"
 }
 
 # Autoscaling for API Gateway test service
@@ -285,7 +285,7 @@ resource "aws_appautoscaling_target" "api_gateway_test_autoscale_target" {
 }
 
 resource "aws_appautoscaling_policy" "api_gateway_test_autoscale_policy" {
-  name = "gateway-api-cpu"
+  name = "api-gateway-test-cpu"
   policy_type = "TargetTrackingScaling"
   resource_id = aws_appautoscaling_target.api_gateway_test_autoscale_target.resource_id
   scalable_dimension = aws_appautoscaling_target.api_gateway_test_autoscale_target.scalable_dimension
