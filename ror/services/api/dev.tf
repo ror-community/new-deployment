@@ -117,15 +117,6 @@ resource "aws_route53_record" "split-api-dev" {
   records = [data.aws_lb.alb-dev.dns_name]
 }
 
-# Route53 record for API Gateway test service - removed to avoid conflict with API Gateway A record
-# resource "aws_route53_record" "api_gateway_test" {
-#   zone_id = data.aws_route53_zone.public.zone_id
-#   name = "gateway-test-api.dev.ror.org"
-#   type = "CNAME"
-#   ttl = var.ttl
-#   records = [data.aws_lb.alb-dev.dns_name]
-# }
-
 resource "aws_service_discovery_service" "api-dev" {
   name = "api.dev"
 
@@ -268,6 +259,7 @@ resource "aws_service_discovery_service" "api_gateway_test" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [name]
   }
 }
 
@@ -282,6 +274,10 @@ resource "aws_appautoscaling_target" "api_gateway_test_autoscale_target" {
   resource_id = "service/default/api-gateway-test"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace = "ecs"
+  
+  depends_on = [
+    aws_ecs_service.api_gateway_test
+  ]
 }
 
 resource "aws_appautoscaling_policy" "api_gateway_test_autoscale_policy" {
