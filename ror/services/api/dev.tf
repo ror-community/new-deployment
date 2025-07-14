@@ -120,7 +120,7 @@ resource "aws_route53_record" "split-api-dev" {
 # Route53 record for API Gateway test service
 resource "aws_route53_record" "api_gateway_test" {
   zone_id = data.aws_route53_zone.public.zone_id
-  name = "gateway-api.dev.ror.org"
+  name = "gateway-test-api.dev.ror.org"
   type = "CNAME"
   ttl = var.ttl
   records = [data.aws_lb.alb-dev.dns_name]
@@ -223,7 +223,7 @@ resource "aws_lb_target_group" "api_gateway_test" {
   ]
 }
 
-# Listener rule for API Gateway test service - routes all traffic for gateway-api.dev.ror.org
+# Listener rule for API Gateway test service - routes all traffic for gateway-test-api.dev.ror.org
 resource "aws_lb_listener_rule" "api_gateway_test_host" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
   priority = 60
@@ -235,12 +235,9 @@ resource "aws_lb_listener_rule" "api_gateway_test_host" {
 
   condition {
     field  = "host-header"
-    values = ["gateway-api.dev.ror.org"]
+    values = ["gateway-test-api.dev.ror.org"]
   }
 }
-
-
-
 
 resource "aws_ecs_task_definition" "api_gateway_test" {
   family = "api-gateway-test"
@@ -254,7 +251,7 @@ resource "aws_ecs_task_definition" "api_gateway_test" {
 }
 
 resource "aws_service_discovery_service" "api_gateway_test" {
-  name = "api-gateway-test"
+  name = "gateway-api"
 
   health_check_custom_config {
     failure_threshold = 1
@@ -282,7 +279,7 @@ resource "aws_cloudwatch_log_group" "api_gateway_test" {
 resource "aws_appautoscaling_target" "api_gateway_test_autoscale_target" {
   max_capacity = 4
   min_capacity = 2
-  resource_id = "service/default/gateway-api"
+  resource_id = "service/default/api-gateway-test"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace = "ecs"
 }
@@ -860,7 +857,7 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
 
 # API Gateway Custom Domain Name
 resource "aws_api_gateway_domain_name" "api_gateway_test" {
-  domain_name = "gateway-api.dev.ror.org"
+  domain_name = "gateway-test-api.dev.ror.org"
   
   regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
@@ -879,7 +876,7 @@ resource "aws_api_gateway_domain_name" "api_gateway_test" {
 # Route53 record pointing directly to API Gateway
 resource "aws_route53_record" "api_gateway" {
   zone_id = data.aws_route53_zone.public.zone_id
-  name    = "gateway-api.dev.ror.org"
+  name    = "gateway-test-api.dev.ror.org"
   type    = "A"
   
   alias {
