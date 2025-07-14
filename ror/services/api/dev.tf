@@ -887,6 +887,15 @@ resource "aws_route53_record" "api_gateway" {
   }
 }
 
+# CNAME record for API Gateway to load balancer routing
+resource "aws_route53_record" "api_gateway_to_alb" {
+  zone_id = data.aws_route53_zone.public.zone_id
+  name    = "gateway-api.dev.ror.org"
+  type    = "CNAME"
+  ttl     = var.ttl
+  records = [data.aws_lb.alb-dev.dns_name]
+}
+
 
 
 # IAM role for API Gateway to write logs
