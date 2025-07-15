@@ -388,6 +388,13 @@ resource "aws_api_gateway_resource" "organizations" {
   path_part   = "organizations"
 }
 
+# organization ID resource under organizations (without version - uses default v2)
+resource "aws_api_gateway_resource" "organizations_id" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  parent_id   = aws_api_gateway_resource.organizations.id
+  path_part   = "{id}"
+}
+
 # heartbeat resource under v1
 resource "aws_api_gateway_resource" "v1_heartbeat" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
@@ -479,6 +486,26 @@ resource "aws_api_gateway_method" "organizations_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
   resource_id   = aws_api_gateway_resource.organizations.id
   http_method   = "GET"
+  authorization = "NONE"
+}
+
+# GET method for organizations/{id} (without version - uses default v2)
+resource "aws_api_gateway_method" "organizations_id_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id   = aws_api_gateway_resource.organizations_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.id" = true
+  }
+}
+
+# OPTIONS method for organizations/{id} (CORS)
+resource "aws_api_gateway_method" "organizations_id_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id   = aws_api_gateway_resource.organizations_id.id
+  http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
@@ -577,6 +604,34 @@ resource "aws_api_gateway_method_response" "v2_organizations_id_options" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
   resource_id = aws_api_gateway_resource.v2_organizations_id.id
   http_method = aws_api_gateway_method.v2_organizations_id_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for organizations/{id} (without version - uses default v2)
+resource "aws_api_gateway_method_response" "organizations_id_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_id.id
+  http_method = aws_api_gateway_method.organizations_id_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for organizations/{id} OPTIONS (without version - uses default v2)
+resource "aws_api_gateway_method_response" "organizations_id_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_id.id
+  http_method = aws_api_gateway_method.organizations_id_options.http_method
   status_code = "200"
   
   response_parameters = {
@@ -873,6 +928,69 @@ resource "aws_api_gateway_integration_response" "v2_organizations_id_options_int
   ]
 }
 
+# Integration for organizations/{id} (without version - uses default v2)
+resource "aws_api_gateway_integration" "organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_id.id
+  http_method = aws_api_gateway_method.organizations_id_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/organizations/{id}"
+  
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
+}
+
+# Integration response for organizations/{id} (without version - uses default v2)
+resource "aws_api_gateway_integration_response" "organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_id.id
+  http_method = aws_api_gateway_method.organizations_id_get.http_method
+  status_code = aws_api_gateway_method_response.organizations_id_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_id_integration
+  ]
+}
+
+# OPTIONS integration for organizations/{id} (CORS)
+resource "aws_api_gateway_integration" "organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_id.id
+  http_method = aws_api_gateway_method.organizations_id_options.http_method
+
+  type = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Integration response for organizations/{id} OPTIONS
+resource "aws_api_gateway_integration_response" "organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
+  resource_id = aws_api_gateway_resource.organizations_id.id
+  http_method = aws_api_gateway_method.organizations_id_options.http_method
+  status_code = aws_api_gateway_method_response.organizations_id_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_id_options_integration
+  ]
+}
+
 # Integration for v1/heartbeat
 resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_test.id
@@ -943,6 +1061,8 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     aws_api_gateway_integration.organizations_integration,
     aws_api_gateway_integration.v2_organizations_id_integration,
     aws_api_gateway_integration.v2_organizations_id_options_integration,
+    aws_api_gateway_integration.organizations_id_integration,
+    aws_api_gateway_integration.organizations_id_options_integration,
     aws_api_gateway_integration.v1_heartbeat_integration,
     aws_api_gateway_integration.v2_heartbeat_integration,
     aws_api_gateway_integration_response.v1_organizations_integration,
@@ -953,6 +1073,8 @@ resource "aws_api_gateway_deployment" "api_gateway_test" {
     aws_api_gateway_integration_response.organizations_integration,
     aws_api_gateway_integration_response.v2_organizations_id_integration,
     aws_api_gateway_integration_response.v2_organizations_id_options_integration,
+    aws_api_gateway_integration_response.organizations_id_integration,
+    aws_api_gateway_integration_response.organizations_id_options_integration,
     aws_api_gateway_integration_response.v1_heartbeat_integration,
     aws_api_gateway_integration_response.v2_heartbeat_integration,
   ]
