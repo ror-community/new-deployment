@@ -636,7 +636,7 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
   resource_id = aws_api_gateway_resource.v1_organizations.id
   http_method = aws_api_gateway_method.v1_organizations_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/organizations"
 }
@@ -687,7 +687,7 @@ resource "aws_api_gateway_integration" "v1_organizations_id_integration" {
   resource_id = aws_api_gateway_resource.v1_organizations_id.id
   http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/organizations/{id}"
   
@@ -742,7 +742,7 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
   resource_id = aws_api_gateway_resource.v2_organizations.id
   http_method = aws_api_gateway_method.v2_organizations_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/organizations"
 }
@@ -753,7 +753,7 @@ resource "aws_api_gateway_integration" "organizations_integration" {
   resource_id = aws_api_gateway_resource.organizations.id
   http_method = aws_api_gateway_method.organizations_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/organizations"
 }
@@ -792,7 +792,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_integration" {
   resource_id = aws_api_gateway_resource.v2_organizations_id.id
   http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/organizations/{id}"
   
@@ -847,7 +847,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_integration" {
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v1/heartbeat"
 }
@@ -873,7 +873,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_integration" {
   resource_id = aws_api_gateway_resource.v2_heartbeat.id
   http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
 
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/v2/heartbeat"
 }
