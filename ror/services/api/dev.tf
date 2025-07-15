@@ -215,7 +215,7 @@ resource "aws_lb_target_group" "api_gateway_test" {
 }
 
 # Listener rule for API Gateway test service - v1 paths
-resource "aws_lb_listener_rule" "api_gateway_test_v1" {
+resource "aws_lb_listener_rule" "api_gateway_test_host" {
   listener_arn = data.aws_lb_listener.alb-dev.arn
   priority = 50
 
@@ -225,40 +225,8 @@ resource "aws_lb_listener_rule" "api_gateway_test_v1" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/v1/*"]
-  }
-}
-
-# Listener rule for API Gateway test service - v2 paths
-resource "aws_lb_listener_rule" "api_gateway_test_v2" {
-  listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 51
-
-  action {
-    type  = "forward"
-    target_group_arn = aws_lb_target_group.api_gateway_test.arn
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/v2/*"]
-  }
-}
-
-# Listener rule for API Gateway test service - organizations path (without version)
-resource "aws_lb_listener_rule" "api_gateway_test_organizations" {
-  listener_arn = data.aws_lb_listener.alb-dev.arn
-  priority = 52
-
-  action {
-    type  = "forward"
-    target_group_arn = aws_lb_target_group.api_gateway_test.arn
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/organizations*"]
+    field  = "host-header"
+    values = ["api-gateway-test.dev.ror.org"]
   }
 }
 
@@ -324,6 +292,73 @@ resource "aws_appautoscaling_policy" "api_gateway_test_autoscale_policy" {
   }
 }
 
+# =============================================================================
+# API GATEWAY CACHING CONFIGURATION
+# =============================================================================
+
+# ElastiCache Subnet Group for API Gateway caching
+# resource "aws_elasticache_subnet_group" "api_gateway_cache" {
+#   name       = "api-gateway-cache-subnet-group"
+#   subnet_ids = var.private_subnet_ids
+#   
+#   tags = {
+#     environment = "ror-dev"
+#     purpose = "api-gateway-caching"
+#   }
+# }
+
+# ElastiCache Parameter Group for API Gateway caching
+# resource "aws_elasticache_parameter_group" "api_gateway_cache" {
+#   family = "redis7"
+#   name   = "api-gateway-cache-params"
+#   
+#   parameter {
+#     name  = "maxmemory-policy"
+#     value = "allkeys-lru"
+#   }
+#   
+#   tags = {
+#     environment = "ror-dev"
+#     purpose = "api-gateway-caching"
+#   }
+# }
+
+# ElastiCache Cluster for API Gateway caching (smallest instance)
+# resource "aws_elasticache_cluster" "api_gateway_cache" {
+#   cluster_id           = "api-gateway-cache"
+#   engine               = "redis"
+#   node_type            = "cache.t3.micro"  # Smallest available instance
+#   num_cache_nodes      = 1
+#   parameter_group_name = aws_elasticache_parameter_group.api_gateway_cache.name
+#   port                 = 6379
+#   subnet_group_name    = aws_elasticache_subnet_group.api_gateway_cache.name
+#   security_group_ids   = [var.private_security_group_id]
+#   
+#   tags = {
+#     environment = "ror-dev"
+#     purpose = "api-gateway-caching"
+#   }
+# }
+
+# API Gateway REST API with caching enabled
+# resource "aws_api_gateway_rest_api" "api_gateway_test" {
+#   name = "ror-api-test-cached"
+#   description = "ROR API Gateway for testing with caching"
+#   
+#   endpoint_configuration {
+#     types = ["REGIONAL"]
+#   }
+#   
+#   tags = {
+#     environment = "ror-dev"
+#     purpose = "testing-with-cache"
+#   }
+# }
+
+# =============================================================================
+# NON-CACHING API GATEWAY CONFIGURATION
+# =============================================================================
+
 # API Gateway REST API (supports caching)
 resource "aws_api_gateway_rest_api" "api_gateway_test" {
   name = "ror-api-test"
@@ -338,6 +373,48 @@ resource "aws_api_gateway_rest_api" "api_gateway_test" {
     purpose = "testing"
   }
 }
+
+# =============================================================================
+# API GATEWAY CACHE CONFIGURATION (COMMENTED OUT)
+# =============================================================================
+
+# API Gateway Cache for organizations endpoints
+# resource "aws_api_gateway_cache" "api_gateway_test" {
+#   name                     = "api-gateway-test-cache"
+#   rest_api_id             = aws_api_gateway_rest_api.api_gateway_test.id
+#   stage_name              = "test"
+#   description             = "Cache for ROR API Gateway test endpoints"
+#   
+#   # Cache settings
+#   ttl_in_seconds         = 300  # 5 minutes cache TTL
+#   encryption_enabled     = false
+#   
+#   tags = {
+#     environment = "ror-dev"
+#     purpose = "api-gateway-caching"
+#   }
+# }
+
+# API Gateway Usage Plan with caching
+# resource "aws_api_gateway_usage_plan" "api_gateway_test" {
+#   name = "api-gateway-test-usage-plan"
+#   description = "Usage plan for ROR API Gateway test with caching"
+#   
+#   api_stages {
+#     api_id = aws_api_gateway_rest_api.api_gateway_test.id
+#     stage  = aws_api_gateway_deployment.api_gateway_test.stage_name
+#   }
+#   
+#   throttle_settings {
+#     burst_limit = 100
+#     rate_limit  = 50
+#   }
+#   
+#   tags = {
+#     environment = "ror-dev"
+#     purpose = "api-gateway-caching"
+#   }
+# }
 
 # v1 resource
 resource "aws_api_gateway_resource" "v1" {
@@ -694,6 +771,11 @@ resource "aws_api_gateway_integration" "v1_organizations_integration" {
   type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v1/organizations"
+  
+  # CACHING CONFIGURATION (uncomment to enable)
+  # cache_key_parameters = ["method.request.path.proxy"]
+  # cache_namespace     = "v1-organizations"
+  # content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration response for v1/organizations
@@ -757,6 +839,11 @@ resource "aws_api_gateway_integration" "v1_organizations_id_integration" {
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
   }
+  
+  # CACHING CONFIGURATION (uncomment to enable)
+  # cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  # cache_namespace     = "v1-organizations-id"
+  # content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration response for v1/organizations/{id}
@@ -816,6 +903,11 @@ resource "aws_api_gateway_integration" "v2_organizations_integration" {
   type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v2/organizations"
+  
+  # CACHING CONFIGURATION (uncomment to enable)
+  # cache_key_parameters = ["method.request.path.proxy"]
+  # cache_namespace     = "v2-organizations"
+  # content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration for organizations (without version - uses default v2)
@@ -827,6 +919,11 @@ resource "aws_api_gateway_integration" "organizations_integration" {
   type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/organizations"
+  
+  # CACHING CONFIGURATION (uncomment to enable)
+  # cache_key_parameters = ["method.request.path.proxy"]
+  # cache_namespace     = "organizations"
+  # content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration response for v2/organizations
@@ -878,6 +975,11 @@ resource "aws_api_gateway_integration" "v2_organizations_id_integration" {
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
   }
+  
+  # CACHING CONFIGURATION (uncomment to enable)
+  # cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  # cache_namespace     = "v2-organizations-id"
+  # content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration response for v2/organizations/{id}
@@ -941,6 +1043,11 @@ resource "aws_api_gateway_integration" "organizations_id_integration" {
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
   }
+  
+  # CACHING CONFIGURATION (uncomment to enable)
+  # cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  # cache_namespace     = "organizations-id"
+  # content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration response for organizations/{id} (without version - uses default v2)
