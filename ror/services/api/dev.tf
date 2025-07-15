@@ -653,6 +653,10 @@ resource "aws_api_gateway_integration_response" "v1_organizations_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v1_organizations_integration
+  ]
 }
 
 # OPTIONS integration for v1/organizations (CORS)
@@ -679,6 +683,10 @@ resource "aws_api_gateway_integration_response" "v1_organizations_options_integr
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v1_organizations_options_integration
+  ]
 }
 
 # Integration for v1/organizations/{id}
@@ -708,6 +716,10 @@ resource "aws_api_gateway_integration_response" "v1_organizations_id_integration
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v1_organizations_id_integration
+  ]
 }
 
 # OPTIONS integration for v1/organizations/{id} (CORS)
@@ -734,6 +746,10 @@ resource "aws_api_gateway_integration_response" "v1_organizations_id_options_int
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v1_organizations_id_options_integration
+  ]
 }
 
 # Integration for v2/organizations
@@ -770,6 +786,10 @@ resource "aws_api_gateway_integration_response" "v2_organizations_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v2_organizations_integration
+  ]
 }
 
 # Integration response for organizations (without version - uses default v2)
@@ -784,6 +804,10 @@ resource "aws_api_gateway_integration_response" "organizations_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_integration
+  ]
 }
 
 # Integration for v2/organizations/{id}
@@ -813,6 +837,10 @@ resource "aws_api_gateway_integration_response" "v2_organizations_id_integration
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v2_organizations_id_integration
+  ]
 }
 
 # OPTIONS integration for v2/organizations/{id} (CORS)
@@ -839,6 +867,10 @@ resource "aws_api_gateway_integration_response" "v2_organizations_id_options_int
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v2_organizations_id_options_integration
+  ]
 }
 
 # Integration for v1/heartbeat
@@ -864,6 +896,10 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v1_heartbeat_integration
+  ]
 }
 
 
@@ -890,6 +926,10 @@ resource "aws_api_gateway_integration_response" "v2_heartbeat_integration" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.v2_heartbeat_integration
+  ]
 }
 
 
