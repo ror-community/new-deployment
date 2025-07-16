@@ -175,3 +175,8 @@ data "template_file" "api_gateway_test_task" {
     db_user            = var.db_username_dev
   }
 }
+
+data "aws_wafv2_web_acl" "dev-v2" {
+  name  = "waf-dev-v2"
+  scope = "REGIONAL"
+}
