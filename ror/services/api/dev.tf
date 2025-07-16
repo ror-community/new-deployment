@@ -1284,7 +1284,7 @@ resource "aws_iam_role_policy" "api_gateway_cloudwatch" {
 
 # WAF Association for API Gateway test service
 resource "aws_wafv2_web_acl_association" "api_gateway_test" {
-  resource_arn = aws_api_gateway_rest_api.api_gateway_test.arn
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway_test.arn}/stages/${aws_api_gateway_deployment.api_gateway_test.stage_name}"
   web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
   
   depends_on = [
