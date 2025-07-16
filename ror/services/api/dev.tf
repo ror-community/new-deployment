@@ -1203,7 +1203,7 @@ resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
   }
 }
 
-# API Gateway Stage with caching enabled
+# API Gateway Stage (method-level caching only)
 resource "aws_api_gateway_stage" "api_gateway_cache_test" {
   deployment_id = aws_api_gateway_deployment.api_gateway_cache_test.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
@@ -1211,7 +1211,7 @@ resource "aws_api_gateway_stage" "api_gateway_cache_test" {
   
   # Enable caching for this stage
   cache_cluster_enabled = true
-  cache_cluster_size    = "0.5"  # 0.5GB cache size (smallest available)
+  cache_cluster_size    = "0.5"  # 0.5GB cache size
   
   tags = {
     environment = "ror-dev"
