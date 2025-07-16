@@ -1670,6 +1670,55 @@ resource "aws_api_gateway_integration" "cache_organizations_id_integration" {
   content_handling    = "CONVERT_TO_TEXT"
 }
 
+# OPTIONS integrations for CORS (cache test)
+resource "aws_api_gateway_integration" "cache_v1_organizations_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_integration" "cache_v1_organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_id_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_integration" "cache_organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations_id.id
+  http_method = aws_api_gateway_method.cache_organizations_id_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_integration" "cache_v2_organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_id_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
 resource "aws_api_gateway_integration" "cache_v1_heartbeat_integration" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
   resource_id = aws_api_gateway_resource.cache_v1_heartbeat.id
@@ -1810,6 +1859,75 @@ resource "aws_api_gateway_integration_response" "cache_v1_heartbeat_integration"
   ]
 }
 
+# OPTIONS integration responses for CORS (cache test)
+resource "aws_api_gateway_integration_response" "cache_v1_organizations_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_options.http_method
+  status_code = aws_api_gateway_method_response.cache_v1_organizations_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v1_organizations_options_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v1_organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_id_options.http_method
+  status_code = aws_api_gateway_method_response.cache_v1_organizations_id_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v1_organizations_id_options_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations_id.id
+  http_method = aws_api_gateway_method.cache_organizations_id_options.http_method
+  status_code = aws_api_gateway_method_response.cache_organizations_id_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_organizations_id_options_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v2_organizations_id_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_id_options.http_method
+  status_code = aws_api_gateway_method_response.cache_v2_organizations_id_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v2_organizations_id_options_integration
+  ]
+}
+
 resource "aws_api_gateway_integration_response" "cache_v2_heartbeat_integration" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
   resource_id = aws_api_gateway_resource.cache_v2_heartbeat.id
@@ -1836,6 +1954,10 @@ resource "aws_api_gateway_deployment" "api_gateway_cache_test" {
     aws_api_gateway_integration.cache_organizations_integration,
     aws_api_gateway_integration.cache_v2_organizations_id_integration,
     aws_api_gateway_integration.cache_organizations_id_integration,
+    aws_api_gateway_integration.cache_v1_organizations_options_integration,
+    aws_api_gateway_integration.cache_v1_organizations_id_options_integration,
+    aws_api_gateway_integration.cache_organizations_id_options_integration,
+    aws_api_gateway_integration.cache_v2_organizations_id_options_integration,
     aws_api_gateway_integration.cache_v1_heartbeat_integration,
     aws_api_gateway_integration.cache_v2_heartbeat_integration,
     aws_api_gateway_integration_response.cache_v1_organizations_integration,
@@ -1844,6 +1966,10 @@ resource "aws_api_gateway_deployment" "api_gateway_cache_test" {
     aws_api_gateway_integration_response.cache_organizations_integration,
     aws_api_gateway_integration_response.cache_v2_organizations_id_integration,
     aws_api_gateway_integration_response.cache_organizations_id_integration,
+    aws_api_gateway_integration_response.cache_v1_organizations_options_integration,
+    aws_api_gateway_integration_response.cache_v1_organizations_id_options_integration,
+    aws_api_gateway_integration_response.cache_organizations_id_options_integration,
+    aws_api_gateway_integration_response.cache_v2_organizations_id_options_integration,
     aws_api_gateway_integration_response.cache_v1_heartbeat_integration,
     aws_api_gateway_integration_response.cache_v2_heartbeat_integration,
   ]
