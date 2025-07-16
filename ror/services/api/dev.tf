@@ -165,8 +165,9 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
   })
 }
 
-####################################################################################
-####################################################################################
+# =============================================================================
+# API GATEWAY NON-CACHING ENDPOINT
+# =============================================================================
 
 # API Gateway for testing - separate ECS service with same container and security settings
 resource "aws_ecs_service" "api_gateway_test" {
@@ -292,74 +293,7 @@ resource "aws_appautoscaling_policy" "api_gateway_test_autoscale_policy" {
   }
 }
 
-# =============================================================================
-# API GATEWAY CACHING CONFIGURATION
-# =============================================================================
-
-# ElastiCache Subnet Group for API Gateway caching
-# resource "aws_elasticache_subnet_group" "api_gateway_cache" {
-#   name       = "api-gateway-cache-subnet-group"
-#   subnet_ids = var.private_subnet_ids
-#   
-#   tags = {
-#     environment = "ror-dev"
-#     purpose = "api-gateway-caching"
-#   }
-# }
-
-# ElastiCache Parameter Group for API Gateway caching
-# resource "aws_elasticache_parameter_group" "api_gateway_cache" {
-#   family = "redis7"
-#   name   = "api-gateway-cache-params"
-#   
-#   parameter {
-#     name  = "maxmemory-policy"
-#     value = "allkeys-lru"
-#   }
-#   
-#   tags = {
-#     environment = "ror-dev"
-#     purpose = "api-gateway-caching"
-#   }
-# }
-
-# ElastiCache Cluster for API Gateway caching (smallest instance)
-# resource "aws_elasticache_cluster" "api_gateway_cache" {
-#   cluster_id           = "api-gateway-cache"
-#   engine               = "redis"
-#   node_type            = "cache.t3.micro"  # Smallest available instance
-#   num_cache_nodes      = 1
-#   parameter_group_name = aws_elasticache_parameter_group.api_gateway_cache.name
-#   port                 = 6379
-#   subnet_group_name    = aws_elasticache_subnet_group.api_gateway_cache.name
-#   security_group_ids   = [var.private_security_group_id]
-#   
-#   tags = {
-#     environment = "ror-dev"
-#     purpose = "api-gateway-caching"
-#   }
-# }
-
-# API Gateway REST API with caching enabled
-# resource "aws_api_gateway_rest_api" "api_gateway_test" {
-#   name = "ror-api-test-cached"
-#   description = "ROR API Gateway for testing with caching"
-#   
-#   endpoint_configuration {
-#     types = ["REGIONAL"]
-#   }
-#   
-#   tags = {
-#     environment = "ror-dev"
-#     purpose = "testing-with-cache"
-#   }
-# }
-
-# =============================================================================
-# NON-CACHING API GATEWAY CONFIGURATION
-# =============================================================================
-
-# API Gateway REST API (supports caching)
+# API Gateway REST API (non-caching)
 resource "aws_api_gateway_rest_api" "api_gateway_test" {
   name = "ror-api-test"
   description = "ROR API Gateway for testing"
@@ -373,48 +307,6 @@ resource "aws_api_gateway_rest_api" "api_gateway_test" {
     purpose = "testing"
   }
 }
-
-# =============================================================================
-# API GATEWAY CACHE CONFIGURATION (COMMENTED OUT)
-# =============================================================================
-
-# API Gateway Cache for organizations endpoints
-# resource "aws_api_gateway_cache" "api_gateway_test" {
-#   name                     = "api-gateway-test-cache"
-#   rest_api_id             = aws_api_gateway_rest_api.api_gateway_test.id
-#   stage_name              = "test"
-#   description             = "Cache for ROR API Gateway test endpoints"
-#   
-#   # Cache settings
-#   ttl_in_seconds         = 300  # 5 minutes cache TTL
-#   encryption_enabled     = false
-#   
-#   tags = {
-#     environment = "ror-dev"
-#     purpose = "api-gateway-caching"
-#   }
-# }
-
-# API Gateway Usage Plan with caching
-# resource "aws_api_gateway_usage_plan" "api_gateway_test" {
-#   name = "api-gateway-test-usage-plan"
-#   description = "Usage plan for ROR API Gateway test with caching"
-#   
-#   api_stages {
-#     api_id = aws_api_gateway_rest_api.api_gateway_test.id
-#     stage  = aws_api_gateway_deployment.api_gateway_test.stage_name
-#   }
-#   
-#   throttle_settings {
-#     burst_limit = 100
-#     rate_limit  = 50
-#   }
-#   
-#   tags = {
-#     environment = "ror-dev"
-#     purpose = "api-gateway-caching"
-#   }
-# }
 
 # v1 resource
 resource "aws_api_gateway_resource" "v1" {
@@ -1289,5 +1181,781 @@ resource "aws_wafv2_web_acl_association" "api_gateway_test" {
   
   depends_on = [
     aws_api_gateway_deployment.api_gateway_test
+  ]
+}
+
+# =============================================================================
+# API GATEWAY CACHING ENDPOINT
+# =============================================================================
+
+# ElastiCache Subnet Group for API Gateway caching
+resource "aws_elasticache_subnet_group" "api_gateway_cache" {
+  name       = "api-gateway-cache-subnet-group"
+  subnet_ids = var.private_subnet_ids
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-caching"
+  }
+}
+
+# ElastiCache Parameter Group for API Gateway caching
+resource "aws_elasticache_parameter_group" "api_gateway_cache" {
+  family = "redis7"
+  name   = "api-gateway-cache-params"
+  
+  parameter {
+    name  = "maxmemory-policy"
+    value = "allkeys-lru"
+  }
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-caching"
+  }
+}
+
+# ElastiCache Cluster for API Gateway caching (smallest instance)
+resource "aws_elasticache_cluster" "api_gateway_cache" {
+  cluster_id           = "api-gateway-cache"
+  engine               = "redis"
+  node_type            = "cache.t3.micro"  # Smallest available instance
+  num_cache_nodes      = 1
+  parameter_group_name = aws_elasticache_parameter_group.api_gateway_cache.name
+  port                 = 6379
+  subnet_group_name    = aws_elasticache_subnet_group.api_gateway_cache.name
+  security_group_ids   = [var.private_security_group_id]
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-caching"
+  }
+}
+
+# API Gateway REST API with caching enabled
+resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
+  name = "ror-api-cache-test"
+  description = "ROR API Gateway for testing with caching"
+  
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "testing-with-cache"
+  }
+}
+
+# API Gateway Cache for organizations endpoints
+resource "aws_api_gateway_cache" "api_gateway_cache_test" {
+  name                     = "api-gateway-cache-test-cache"
+  rest_api_id             = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  stage_name              = "test"
+  description             = "Cache for ROR API Gateway cache test endpoints"
+  
+  # Cache settings
+  ttl_in_seconds         = 300  # 5 minutes cache TTL
+  encryption_enabled     = false
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-caching"
+  }
+}
+
+# API Gateway Usage Plan with caching
+resource "aws_api_gateway_usage_plan" "api_gateway_cache_test" {
+  name = "api-gateway-cache-test-usage-plan"
+  description = "Usage plan for ROR API Gateway cache test with caching"
+  
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+    stage  = aws_api_gateway_deployment.api_gateway_cache_test.stage_name
+  }
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-caching"
+  }
+}
+
+# v1 resource for cache test
+resource "aws_api_gateway_resource" "cache_v1" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway_cache_test.root_resource_id
+  path_part   = "v1"
+}
+
+# v2 resource for cache test
+resource "aws_api_gateway_resource" "cache_v2" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway_cache_test.root_resource_id
+  path_part   = "v2"
+}
+
+# organizations resource under v1 for cache test
+resource "aws_api_gateway_resource" "cache_v1_organizations" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_v1.id
+  path_part   = "organizations"
+}
+
+# organization ID resource under v1/organizations for cache test
+resource "aws_api_gateway_resource" "cache_v1_organizations_id" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_v1_organizations.id
+  path_part   = "{id}"
+}
+
+# organizations resource under v2 for cache test
+resource "aws_api_gateway_resource" "cache_v2_organizations" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_v2.id
+  path_part   = "organizations"
+}
+
+# organization ID resource under v2/organizations for cache test
+resource "aws_api_gateway_resource" "cache_v2_organizations_id" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_v2_organizations.id
+  path_part   = "{id}"
+}
+
+# organizations resource (without version - uses default v2) for cache test
+resource "aws_api_gateway_resource" "cache_organizations" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway_cache_test.root_resource_id
+  path_part   = "organizations"
+}
+
+# organization ID resource under organizations (without version - uses default v2) for cache test
+resource "aws_api_gateway_resource" "cache_organizations_id" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_organizations.id
+  path_part   = "{id}"
+}
+
+# heartbeat resource under v1 for cache test
+resource "aws_api_gateway_resource" "cache_v1_heartbeat" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_v1.id
+  path_part   = "heartbeat"
+}
+
+# heartbeat resource under v2 for cache test
+resource "aws_api_gateway_resource" "cache_v2_heartbeat" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  parent_id   = aws_api_gateway_resource.cache_v2.id
+  path_part   = "heartbeat"
+}
+
+# GET method for v1/organizations (cache test)
+resource "aws_api_gateway_method" "cache_v1_organizations_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# OPTIONS method for v1/organizations (CORS) (cache test)
+resource "aws_api_gateway_method" "cache_v1_organizations_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# GET method for v1/organizations/{id} (cache test)
+resource "aws_api_gateway_method" "cache_v1_organizations_id_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.id" = true
+  }
+}
+
+# OPTIONS method for v1/organizations/{id} (CORS) (cache test)
+resource "aws_api_gateway_method" "cache_v1_organizations_id_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# GET method for v2/organizations (cache test)
+resource "aws_api_gateway_method" "cache_v2_organizations_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v2_organizations.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# GET method for organizations (without version - uses default v2) (cache test)
+resource "aws_api_gateway_method" "cache_organizations_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_organizations.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# GET method for organizations/{id} (without version - uses default v2) (cache test)
+resource "aws_api_gateway_method" "cache_organizations_id_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_organizations_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.id" = true
+  }
+}
+
+# OPTIONS method for organizations/{id} (CORS) (cache test)
+resource "aws_api_gateway_method" "cache_organizations_id_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_organizations_id.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# GET method for v2/organizations/{id} (cache test)
+resource "aws_api_gateway_method" "cache_v2_organizations_id_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.id" = true
+  }
+}
+
+# OPTIONS method for v2/organizations/{id} (CORS) (cache test)
+resource "aws_api_gateway_method" "cache_v2_organizations_id_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# GET method for v1/heartbeat (cache test)
+resource "aws_api_gateway_method" "cache_v1_heartbeat_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v1_heartbeat.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# GET method for v2/heartbeat (cache test)
+resource "aws_api_gateway_method" "cache_v2_heartbeat_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id   = aws_api_gateway_resource.cache_v2_heartbeat.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# Method responses for cache test (similar to original but with cache_ prefix)
+resource "aws_api_gateway_method_response" "cache_v1_organizations_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v1_organizations_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v1_organizations_id_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_id_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v1_organizations_id_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_id_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v2_organizations_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_organizations_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations.id
+  http_method = aws_api_gateway_method.cache_organizations_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_organizations_id_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations_id.id
+  http_method = aws_api_gateway_method.cache_organizations_id_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_organizations_id_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations_id.id
+  http_method = aws_api_gateway_method.cache_organizations_id_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v2_organizations_id_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_id_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v2_organizations_id_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_id_options.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v1_heartbeat_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_heartbeat.id
+  http_method = aws_api_gateway_method.cache_v1_heartbeat_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "cache_v2_heartbeat_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_heartbeat.id
+  http_method = aws_api_gateway_method.cache_v2_heartbeat_get.http_method
+  status_code = "200"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Integrations for cache test with caching enabled
+resource "aws_api_gateway_integration" "cache_v1_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/v1/organizations"
+  
+  # CACHING CONFIGURATION
+  cache_key_parameters = ["method.request.path.proxy"]
+  cache_namespace     = "v1-organizations"
+  content_handling    = "CONVERT_TO_TEXT"
+}
+
+resource "aws_api_gateway_integration" "cache_v1_organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_id_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/v1/organizations/{id}"
+  
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
+  
+  # CACHING CONFIGURATION
+  cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  cache_namespace     = "v1-organizations-id"
+  content_handling    = "CONVERT_TO_TEXT"
+}
+
+resource "aws_api_gateway_integration" "cache_v2_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/v2/organizations"
+  
+  # CACHING CONFIGURATION
+  cache_key_parameters = ["method.request.path.proxy"]
+  cache_namespace     = "v2-organizations"
+  content_handling    = "CONVERT_TO_TEXT"
+}
+
+resource "aws_api_gateway_integration" "cache_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations.id
+  http_method = aws_api_gateway_method.cache_organizations_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/organizations"
+  
+  # CACHING CONFIGURATION
+  cache_key_parameters = ["method.request.path.proxy"]
+  cache_namespace     = "organizations"
+  content_handling    = "CONVERT_TO_TEXT"
+}
+
+resource "aws_api_gateway_integration" "cache_v2_organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_id_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/v2/organizations/{id}"
+  
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
+  
+  # CACHING CONFIGURATION
+  cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  cache_namespace     = "v2-organizations-id"
+  content_handling    = "CONVERT_TO_TEXT"
+}
+
+resource "aws_api_gateway_integration" "cache_organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations_id.id
+  http_method = aws_api_gateway_method.cache_organizations_id_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/organizations/{id}"
+  
+  request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
+  }
+  
+  # CACHING CONFIGURATION
+  cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  cache_namespace     = "organizations-id"
+  content_handling    = "CONVERT_TO_TEXT"
+}
+
+resource "aws_api_gateway_integration" "cache_v1_heartbeat_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_heartbeat.id
+  http_method = aws_api_gateway_method.cache_v1_heartbeat_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/v1/heartbeat"
+}
+
+resource "aws_api_gateway_integration" "cache_v2_heartbeat_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_heartbeat.id
+  http_method = aws_api_gateway_method.cache_v2_heartbeat_get.http_method
+
+  type                    = "HTTP"
+  integration_http_method = "GET"
+  uri                     = "https://api.dev.ror.org/v2/heartbeat"
+}
+
+# Integration responses for cache test
+resource "aws_api_gateway_integration_response" "cache_v1_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_get.http_method
+  status_code = aws_api_gateway_method_response.cache_v1_organizations_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v1_organizations_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v1_organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v1_organizations_id_get.http_method
+  status_code = aws_api_gateway_method_response.cache_v1_organizations_id_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v1_organizations_id_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v2_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_get.http_method
+  status_code = aws_api_gateway_method_response.cache_v2_organizations_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v2_organizations_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_organizations_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations.id
+  http_method = aws_api_gateway_method.cache_organizations_get.http_method
+  status_code = aws_api_gateway_method_response.cache_organizations_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_organizations_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v2_organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_organizations_id.id
+  http_method = aws_api_gateway_method.cache_v2_organizations_id_get.http_method
+  status_code = aws_api_gateway_method_response.cache_v2_organizations_id_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v2_organizations_id_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_organizations_id_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_organizations_id.id
+  http_method = aws_api_gateway_method.cache_organizations_id_get.http_method
+  status_code = aws_api_gateway_method_response.cache_organizations_id_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_organizations_id_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v1_heartbeat_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v1_heartbeat.id
+  http_method = aws_api_gateway_method.cache_v1_heartbeat_get.http_method
+  status_code = aws_api_gateway_method_response.cache_v1_heartbeat_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v1_heartbeat_integration
+  ]
+}
+
+resource "aws_api_gateway_integration_response" "cache_v2_heartbeat_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  resource_id = aws_api_gateway_resource.cache_v2_heartbeat.id
+  http_method = aws_api_gateway_method.cache_v2_heartbeat_get.http_method
+  status_code = aws_api_gateway_method_response.cache_v2_heartbeat_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.cache_v2_heartbeat_integration
+  ]
+}
+
+# Deployment for cache test
+resource "aws_api_gateway_deployment" "api_gateway_cache_test" {
+  depends_on = [
+    aws_api_gateway_integration.cache_v1_organizations_integration,
+    aws_api_gateway_integration.cache_v1_organizations_id_integration,
+    aws_api_gateway_integration.cache_v2_organizations_integration,
+    aws_api_gateway_integration.cache_organizations_integration,
+    aws_api_gateway_integration.cache_v2_organizations_id_integration,
+    aws_api_gateway_integration.cache_organizations_id_integration,
+    aws_api_gateway_integration.cache_v1_heartbeat_integration,
+    aws_api_gateway_integration.cache_v2_heartbeat_integration,
+    aws_api_gateway_integration_response.cache_v1_organizations_integration,
+    aws_api_gateway_integration_response.cache_v1_organizations_id_integration,
+    aws_api_gateway_integration_response.cache_v2_organizations_integration,
+    aws_api_gateway_integration_response.cache_organizations_integration,
+    aws_api_gateway_integration_response.cache_v2_organizations_id_integration,
+    aws_api_gateway_integration_response.cache_organizations_id_integration,
+    aws_api_gateway_integration_response.cache_v1_heartbeat_integration,
+    aws_api_gateway_integration_response.cache_v2_heartbeat_integration,
+    aws_api_gateway_cache.api_gateway_cache_test,
+    aws_api_gateway_usage_plan.api_gateway_cache_test,
+  ]
+
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  stage_name  = "test"
+  
+  variables = {
+    deployed_at = timestamp()
+    force_update = "true"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# API Gateway Custom Domain Name for cache test
+resource "aws_api_gateway_domain_name" "api_gateway_cache_test" {
+  domain_name = "api-gateway-cache-test.dev.ror.org"
+  
+  regional_certificate_arn = data.aws_acm_certificate.ror.arn
+  
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+# Base path mapping for API Gateway cache test custom domain
+resource "aws_api_gateway_base_path_mapping" "api_gateway_cache_test" {
+  api_id      = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  stage_name  = aws_api_gateway_deployment.api_gateway_cache_test.stage_name
+  domain_name = aws_api_gateway_domain_name.api_gateway_cache_test.domain_name
+  
+  depends_on = [
+    aws_api_gateway_deployment.api_gateway_cache_test
+  ]
+}
+
+# Route53 record for API Gateway cache test custom domain
+resource "aws_route53_record" "api_gateway_cache_test" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name    = "api-gateway-cache-test.dev.ror.org"
+    type    = "A"
+    
+    alias {
+        name = aws_api_gateway_domain_name.api_gateway_cache_test.regional_domain_name
+        zone_id = aws_api_gateway_domain_name.api_gateway_cache_test.regional_zone_id
+        evaluate_target_health = false
+    }
+    
+    lifecycle {
+        create_before_destroy = true
+    }
+}
+
+# WAF Association for API Gateway cache test service
+resource "aws_wafv2_web_acl_association" "api_gateway_cache_test" {
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway_cache_test.arn}/stages/${aws_api_gateway_deployment.api_gateway_cache_test.stage_name}"
+  web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
+  
+  depends_on = [
+    aws_api_gateway_deployment.api_gateway_cache_test
   ]
 }
