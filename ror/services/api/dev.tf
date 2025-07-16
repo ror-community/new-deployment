@@ -1192,11 +1192,6 @@ resource "aws_wafv2_web_acl_association" "api_gateway_test" {
 resource "aws_elasticache_subnet_group" "api_gateway_cache" {
   name       = "api-gateway-cache-subnet-group"
   subnet_ids = var.private_subnet_ids
-  
-  tags = {
-    environment = "ror-dev"
-    purpose = "api-gateway-caching"
-  }
 }
 
 # ElastiCache Parameter Group for API Gateway caching
@@ -1207,11 +1202,6 @@ resource "aws_elasticache_parameter_group" "api_gateway_cache" {
   parameter {
     name  = "maxmemory-policy"
     value = "allkeys-lru"
-  }
-  
-  tags = {
-    environment = "ror-dev"
-    purpose = "api-gateway-caching"
   }
 }
 
@@ -1247,22 +1237,8 @@ resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
   }
 }
 
-# API Gateway Cache for organizations endpoints
-resource "aws_api_gateway_cache" "api_gateway_cache_test" {
-  name                     = "api-gateway-cache-test-cache"
-  rest_api_id             = aws_api_gateway_rest_api.api_gateway_cache_test.id
-  stage_name              = "test"
-  description             = "Cache for ROR API Gateway cache test endpoints"
-  
-  # Cache settings
-  ttl_in_seconds         = 300  # 5 minutes cache TTL
-  encryption_enabled     = false
-  
-  tags = {
-    environment = "ror-dev"
-    purpose = "api-gateway-caching"
-  }
-}
+# Note: API Gateway caching is configured at the method level via cache_key_parameters
+# and cache_namespace in the integration configurations
 
 # API Gateway Usage Plan with caching
 resource "aws_api_gateway_usage_plan" "api_gateway_cache_test" {
@@ -1894,7 +1870,6 @@ resource "aws_api_gateway_deployment" "api_gateway_cache_test" {
     aws_api_gateway_integration_response.cache_organizations_id_integration,
     aws_api_gateway_integration_response.cache_v1_heartbeat_integration,
     aws_api_gateway_integration_response.cache_v2_heartbeat_integration,
-    aws_api_gateway_cache.api_gateway_cache_test,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
