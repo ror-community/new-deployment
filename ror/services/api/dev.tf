@@ -1188,39 +1188,8 @@ resource "aws_wafv2_web_acl_association" "api_gateway_test" {
 # API GATEWAY CACHING ENDPOINT
 # =============================================================================
 
-# ElastiCache Subnet Group for API Gateway caching
-resource "aws_elasticache_subnet_group" "api_gateway_cache" {
-  name       = "api-gateway-cache-subnet-group"
-  subnet_ids = var.private_subnet_ids
-}
-
-# ElastiCache Parameter Group for API Gateway caching
-resource "aws_elasticache_parameter_group" "api_gateway_cache" {
-  family = "redis7"
-  name   = "api-gateway-cache-params"
-  
-  parameter {
-    name  = "maxmemory-policy"
-    value = "allkeys-lru"
-  }
-}
-
-# ElastiCache Cluster for API Gateway caching (smallest instance)
-resource "aws_elasticache_cluster" "api_gateway_cache" {
-  cluster_id           = "api-gateway-cache"
-  engine               = "redis"
-  node_type            = "cache.t3.micro"  # Smallest available instance
-  num_cache_nodes      = 1
-  parameter_group_name = aws_elasticache_parameter_group.api_gateway_cache.name
-  port                 = 6379
-  subnet_group_name    = aws_elasticache_subnet_group.api_gateway_cache.name
-  security_group_ids   = [var.private_security_group_id]
-  
-  tags = {
-    environment = "ror-dev"
-    purpose = "api-gateway-caching"
-  }
-}
+# Note: API Gateway has built-in caching that doesn't require ElastiCache
+# Caching is enabled at the stage level and configured in method integrations
 
 # API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
@@ -1237,8 +1206,25 @@ resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
   }
 }
 
-# Note: API Gateway caching is configured at the method level via cache_key_parameters
-# and cache_namespace in the integration configurations
+# API Gateway Stage with caching enabled
+resource "aws_api_gateway_stage" "api_gateway_cache_test" {
+  deployment_id = aws_api_gateway_deployment.api_gateway_cache_test.id
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
+  stage_name    = "test"
+  
+  # Enable caching for this stage
+  cache_cluster_enabled = true
+  cache_cluster_size    = "0.5"  # 0.5GB cache size (smallest available)
+  
+  # Cache settings
+  ttl_in_seconds         = 300  # 5 minutes cache TTL
+  encryption_enabled     = false
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-caching"
+  }
+}
 
 # API Gateway Usage Plan with caching
 resource "aws_api_gateway_usage_plan" "api_gateway_cache_test" {
@@ -1247,7 +1233,7 @@ resource "aws_api_gateway_usage_plan" "api_gateway_cache_test" {
   
   api_stages {
     api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
-    stage  = aws_api_gateway_deployment.api_gateway_cache_test.stage_name
+    stage  = aws_api_gateway_stage.api_gateway_cache_test.stage_name
   }
   
   tags = {
@@ -1873,7 +1859,6 @@ resource "aws_api_gateway_deployment" "api_gateway_cache_test" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
-  stage_name  = "test"
   
   variables = {
     deployed_at = timestamp()
@@ -1899,11 +1884,11 @@ resource "aws_api_gateway_domain_name" "api_gateway_cache_test" {
 # Base path mapping for API Gateway cache test custom domain
 resource "aws_api_gateway_base_path_mapping" "api_gateway_cache_test" {
   api_id      = aws_api_gateway_rest_api.api_gateway_cache_test.id
-  stage_name  = aws_api_gateway_deployment.api_gateway_cache_test.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_cache_test.stage_name
   domain_name = aws_api_gateway_domain_name.api_gateway_cache_test.domain_name
   
   depends_on = [
-    aws_api_gateway_deployment.api_gateway_cache_test
+    aws_api_gateway_stage.api_gateway_cache_test
   ]
 }
 
@@ -1926,10 +1911,10 @@ resource "aws_route53_record" "api_gateway_cache_test" {
 
 # WAF Association for API Gateway cache test service
 resource "aws_wafv2_web_acl_association" "api_gateway_cache_test" {
-  resource_arn = "${aws_api_gateway_rest_api.api_gateway_cache_test.arn}/stages/${aws_api_gateway_deployment.api_gateway_cache_test.stage_name}"
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway_cache_test.arn}/stages/${aws_api_gateway_stage.api_gateway_cache_test.stage_name}"
   web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
   
   depends_on = [
-    aws_api_gateway_deployment.api_gateway_cache_test
+    aws_api_gateway_stage.api_gateway_cache_test
   ]
 }
