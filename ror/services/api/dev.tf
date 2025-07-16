@@ -1311,6 +1311,11 @@ resource "aws_api_gateway_method" "cache_v1_organizations_get" {
   resource_id   = aws_api_gateway_resource.cache_v1_organizations.id
   http_method   = "GET"
   authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.querystring.query"       = false
+    "method.request.querystring.affiliation" = false
+  }
 }
 
 # OPTIONS method for v1/organizations (CORS) (cache test)
@@ -1347,6 +1352,11 @@ resource "aws_api_gateway_method" "cache_v2_organizations_get" {
   resource_id   = aws_api_gateway_resource.cache_v2_organizations.id
   http_method   = "GET"
   authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.querystring.query"       = false
+    "method.request.querystring.affiliation" = false
+  }
 }
 
 # GET method for organizations (without version - uses default v2) (cache test)
@@ -1355,6 +1365,11 @@ resource "aws_api_gateway_method" "cache_organizations_get" {
   resource_id   = aws_api_gateway_resource.cache_organizations.id
   http_method   = "GET"
   authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.querystring.query"       = false
+    "method.request.querystring.affiliation" = false
+  }
 }
 
 # GET method for organizations/{id} (without version - uses default v2) (cache test)
@@ -1580,7 +1595,8 @@ resource "aws_api_gateway_integration" "cache_v1_organizations_integration" {
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v1/organizations"
   
-  # CACHING CONFIGURATION
+  # CACHING CONFIGURATION - Path + query parameters
+  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
   cache_namespace     = "v1-organizations"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1613,7 +1629,8 @@ resource "aws_api_gateway_integration" "cache_v2_organizations_integration" {
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v2/organizations"
   
-  # CACHING CONFIGURATION
+  # CACHING CONFIGURATION - Path + query parameters
+  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
   cache_namespace     = "v2-organizations"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1627,7 +1644,8 @@ resource "aws_api_gateway_integration" "cache_organizations_integration" {
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/organizations"
   
-  # CACHING CONFIGURATION
+  # CACHING CONFIGURATION - Path + query parameters
+  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
   cache_namespace     = "organizations"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1727,6 +1745,9 @@ resource "aws_api_gateway_integration" "cache_v1_heartbeat_integration" {
   type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v1/heartbeat"
+  
+  # No caching for heartbeat endpoints (health checks)
+  content_handling    = "CONVERT_TO_TEXT"
 }
 
 resource "aws_api_gateway_integration" "cache_v2_heartbeat_integration" {
@@ -1737,6 +1758,9 @@ resource "aws_api_gateway_integration" "cache_v2_heartbeat_integration" {
   type                    = "HTTP"
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v2/heartbeat"
+  
+  # No caching for heartbeat endpoints (health checks)
+  content_handling    = "CONVERT_TO_TEXT"
 }
 
 # Integration responses for cache test
