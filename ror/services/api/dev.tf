@@ -1188,9 +1188,6 @@ resource "aws_wafv2_web_acl_association" "api_gateway_test" {
 # API GATEWAY CACHING ENDPOINT
 # =============================================================================
 
-# Note: API Gateway has built-in caching that doesn't require ElastiCache
-# Caching is enabled at the stage level and configured in method integrations
-
 # API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
   name = "ror-api-cache-test"
@@ -1215,10 +1212,6 @@ resource "aws_api_gateway_stage" "api_gateway_cache_test" {
   # Enable caching for this stage
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size (smallest available)
-  
-  # Cache settings
-  ttl_in_seconds         = 300  # 5 minutes cache TTL
-  encryption_enabled     = false
   
   tags = {
     environment = "ror-dev"
