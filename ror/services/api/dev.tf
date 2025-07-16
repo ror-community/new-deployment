@@ -1895,7 +1895,6 @@ resource "aws_api_gateway_deployment" "api_gateway_cache_test" {
     aws_api_gateway_integration_response.cache_v1_heartbeat_integration,
     aws_api_gateway_integration_response.cache_v2_heartbeat_integration,
     aws_api_gateway_cache.api_gateway_cache_test,
-    aws_api_gateway_usage_plan.api_gateway_cache_test,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
