@@ -1203,15 +1203,13 @@ resource "aws_api_gateway_rest_api" "api_gateway_cache_test" {
   }
 }
 
-# API Gateway Stage with caching enabled
+# API Gateway Stage (method-level caching only)
 resource "aws_api_gateway_stage" "api_gateway_cache_test" {
   deployment_id = aws_api_gateway_deployment.api_gateway_cache_test.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_cache_test.id
   stage_name    = "test"
   
-  # Enable caching for this stage
-  cache_cluster_enabled = true
-  cache_cluster_size    = "0.5"  # 0.5GB cache size (smallest available)
+  # No stage-level caching - using method-level caching only
   
   tags = {
     environment = "ror-dev"
@@ -1316,6 +1314,9 @@ resource "aws_api_gateway_method" "cache_v1_organizations_get" {
     "method.request.querystring.query"       = false
     "method.request.querystring.affiliation" = false
   }
+  
+  # Method-level caching configuration
+  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
 }
 
 # OPTIONS method for v1/organizations (CORS) (cache test)
@@ -1336,6 +1337,9 @@ resource "aws_api_gateway_method" "cache_v1_organizations_id_get" {
   request_parameters = {
     "method.request.path.id" = true
   }
+  
+  # Method-level caching configuration
+  cache_key_parameters = ["method.request.path.id"]
 }
 
 # OPTIONS method for v1/organizations/{id} (CORS) (cache test)
@@ -1357,6 +1361,9 @@ resource "aws_api_gateway_method" "cache_v2_organizations_get" {
     "method.request.querystring.query"       = false
     "method.request.querystring.affiliation" = false
   }
+  
+  # Method-level caching configuration
+  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
 }
 
 # GET method for organizations (without version - uses default v2) (cache test)
@@ -1370,6 +1377,9 @@ resource "aws_api_gateway_method" "cache_organizations_get" {
     "method.request.querystring.query"       = false
     "method.request.querystring.affiliation" = false
   }
+  
+  # Method-level caching configuration
+  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
 }
 
 # GET method for organizations/{id} (without version - uses default v2) (cache test)
@@ -1382,6 +1392,9 @@ resource "aws_api_gateway_method" "cache_organizations_id_get" {
   request_parameters = {
     "method.request.path.id" = true
   }
+  
+  # Method-level caching configuration
+  cache_key_parameters = ["method.request.path.id"]
 }
 
 # OPTIONS method for organizations/{id} (CORS) (cache test)
@@ -1402,6 +1415,9 @@ resource "aws_api_gateway_method" "cache_v2_organizations_id_get" {
   request_parameters = {
     "method.request.path.id" = true
   }
+  
+  # Method-level caching configuration
+  cache_key_parameters = ["method.request.path.id"]
 }
 
 # OPTIONS method for v2/organizations/{id} (CORS) (cache test)
@@ -1595,9 +1611,7 @@ resource "aws_api_gateway_integration" "cache_v1_organizations_integration" {
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v1/organizations"
   
-  # CACHING CONFIGURATION - Path + query parameters
-  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
-  cache_namespace     = "v1-organizations"
+  # Method-level caching is configured in the method resource
   content_handling    = "CONVERT_TO_TEXT"
 }
 
@@ -1614,9 +1628,7 @@ resource "aws_api_gateway_integration" "cache_v1_organizations_id_integration" {
     "integration.request.path.id" = "method.request.path.id"
   }
   
-  # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.id"]
-  cache_namespace     = "v1-organizations-id"
+  # Method-level caching is configured in the method resource
   content_handling    = "CONVERT_TO_TEXT"
 }
 
@@ -1629,9 +1641,7 @@ resource "aws_api_gateway_integration" "cache_v2_organizations_integration" {
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/v2/organizations"
   
-  # CACHING CONFIGURATION - Path + query parameters
-  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
-  cache_namespace     = "v2-organizations"
+  # Method-level caching is configured in the method resource
   content_handling    = "CONVERT_TO_TEXT"
 }
 
@@ -1644,9 +1654,7 @@ resource "aws_api_gateway_integration" "cache_organizations_integration" {
   integration_http_method = "GET"
   uri                     = "https://api.dev.ror.org/organizations"
   
-  # CACHING CONFIGURATION - Path + query parameters
-  cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
-  cache_namespace     = "organizations"
+  # Method-level caching is configured in the method resource
   content_handling    = "CONVERT_TO_TEXT"
 }
 
@@ -1663,9 +1671,7 @@ resource "aws_api_gateway_integration" "cache_v2_organizations_id_integration" {
     "integration.request.path.id" = "method.request.path.id"
   }
   
-  # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.id"]
-  cache_namespace     = "v2-organizations-id"
+  # Method-level caching is configured in the method resource
   content_handling    = "CONVERT_TO_TEXT"
 }
 
@@ -1682,9 +1688,7 @@ resource "aws_api_gateway_integration" "cache_organizations_id_integration" {
     "integration.request.path.id" = "method.request.path.id"
   }
   
-  # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.id"]
-  cache_namespace     = "organizations-id"
+  # Method-level caching is configured in the method resource
   content_handling    = "CONVERT_TO_TEXT"
 }
 
