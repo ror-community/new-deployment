@@ -1232,18 +1232,6 @@ resource "aws_api_gateway_method_settings" "api_gateway_cache_test" {
   }
 }
 
-# API Gateway Method Settings for heartbeats (no caching)
-resource "aws_api_gateway_method_settings" "api_gateway_cache_test_heartbeats" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_cache_test.id
-  stage_name  = aws_api_gateway_stage.api_gateway_cache_test.stage_name
-  method_path = "*/heartbeat/*"  # Apply to all heartbeat methods
-
-  settings {
-    # Explicitly disable caching for heartbeats
-    caching_enabled        = false
-  }
-}
-
 # API Gateway Usage Plan with caching
 resource "aws_api_gateway_usage_plan" "api_gateway_cache_test" {
   name = "api-gateway-cache-test-usage-plan"
