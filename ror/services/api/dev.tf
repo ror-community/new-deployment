@@ -1581,7 +1581,6 @@ resource "aws_api_gateway_integration" "cache_v1_organizations_integration" {
   uri                     = "https://api.dev.ror.org/v1/organizations"
   
   # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.proxy"]
   cache_namespace     = "v1-organizations"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1600,7 +1599,7 @@ resource "aws_api_gateway_integration" "cache_v1_organizations_id_integration" {
   }
   
   # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  cache_key_parameters = ["method.request.path.id"]
   cache_namespace     = "v1-organizations-id"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1615,7 +1614,6 @@ resource "aws_api_gateway_integration" "cache_v2_organizations_integration" {
   uri                     = "https://api.dev.ror.org/v2/organizations"
   
   # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.proxy"]
   cache_namespace     = "v2-organizations"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1630,7 +1628,6 @@ resource "aws_api_gateway_integration" "cache_organizations_integration" {
   uri                     = "https://api.dev.ror.org/organizations"
   
   # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.proxy"]
   cache_namespace     = "organizations"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1649,7 +1646,7 @@ resource "aws_api_gateway_integration" "cache_v2_organizations_id_integration" {
   }
   
   # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  cache_key_parameters = ["method.request.path.id"]
   cache_namespace     = "v2-organizations-id"
   content_handling    = "CONVERT_TO_TEXT"
 }
@@ -1668,7 +1665,7 @@ resource "aws_api_gateway_integration" "cache_organizations_id_integration" {
   }
   
   # CACHING CONFIGURATION
-  cache_key_parameters = ["method.request.path.proxy", "method.request.path.id"]
+  cache_key_parameters = ["method.request.path.id"]
   cache_namespace     = "organizations-id"
   content_handling    = "CONVERT_TO_TEXT"
 }
