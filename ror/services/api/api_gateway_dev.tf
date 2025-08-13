@@ -100,10 +100,4 @@ resource "aws_api_gateway_integration" "proxy" {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "'api.dev.ror.org'"
   }
-  
-  # Add cache key parameters to differentiate requests
-  cache_key_parameters = [
-    "method.request.path.proxy"
-  ]
-  cache_namespace = "proxy"
 } 
