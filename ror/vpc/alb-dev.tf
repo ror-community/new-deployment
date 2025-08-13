@@ -34,7 +34,7 @@ resource "aws_lb_listener" "alb-dev" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = data.aws_acm_certificate.ror.arn
+  certificate_arn   = data.aws_acm_certificate.api_gateway_multi.arn
 
   default_action {
     target_group_arn = data.aws_lb_target_group.api-dev.id

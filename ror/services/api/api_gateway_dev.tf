@@ -72,7 +72,7 @@ resource "aws_api_gateway_method" "proxy" {
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
   authorization = "NONE"
-
+  
   request_parameters = {
     "method.request.path.proxy" = true
   }
@@ -92,10 +92,10 @@ resource "aws_api_gateway_integration" "proxy" {
 
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/{proxy}"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/{proxy}"
   passthrough_behavior    = "WHEN_NO_MATCH"
   content_handling        = "CONVERT_TO_TEXT"
-
+  
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "'api.dev.ror.org'"
