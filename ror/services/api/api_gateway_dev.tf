@@ -23,24 +23,12 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   stage_name    = "dev"
   
   # Enable caching for this stage
-  cache_cluster_enabled = true
-  cache_cluster_size    = "0.5"  # 0.5GB cache size
+  # cache_cluster_enabled = true
+  # cache_cluster_size    = "0.5"  # 0.5GB cache size
   
   tags = {
     environment = "ror-dev"
     purpose = "api-gateway-caching"
-  }
-}
-
-# API Gateway Method Settings for caching
-# Disable caching for proxy method (doesn't work well with {proxy+})
-resource "aws_api_gateway_method_settings" "api_gateway_proxy_no_cache" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "*/*"  # Apply to all methods
-
-  settings {
-    caching_enabled = false
   }
 }
 
