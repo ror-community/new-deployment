@@ -33,15 +33,14 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
 }
 
 # API Gateway Method Settings for caching
-resource "aws_api_gateway_method_settings" "api_gateway" {
+# Disable caching for proxy method (doesn't work well with {proxy+})
+resource "aws_api_gateway_method_settings" "api_gateway_proxy_no_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "*/*"  # Apply to all methods
 
   settings {
-    # Caching settings - enabled for all methods (heartbeats will be handled by separate method settings)
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    caching_enabled = false
   }
 }
 
