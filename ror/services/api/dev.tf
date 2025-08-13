@@ -169,6 +169,19 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 # API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT
 # =============================================================================
 
+resource "aws_api_gateway_deployment" "api_gateway_dev" {
+
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_dev.id
+  
+  variables = {
+    deployed_at = timestamp()
+    force_update = "true"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 
 # Base path mapping for API Gateway development custom domain
