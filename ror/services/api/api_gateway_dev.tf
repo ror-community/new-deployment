@@ -99,5 +99,6 @@ resource "aws_api_gateway_integration" "proxy" {
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 }
