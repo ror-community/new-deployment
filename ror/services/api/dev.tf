@@ -169,9 +169,9 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 # API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT
 # =============================================================================
 
-resource "aws_api_gateway_deployment" "api_gateway_dev" {
+resource "aws_api_gateway_deployment" "api_gateway" {
 
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_dev.id
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   
   variables = {
     deployed_at = timestamp()
@@ -183,38 +183,9 @@ resource "aws_api_gateway_deployment" "api_gateway_dev" {
   }
 }
 
-
-# Base path mapping for API Gateway development custom domain
-#resource "aws_api_gateway_base_path_mapping" "api_gateway_dev" {
-#  api_id      = aws_api_gateway_rest_api.api_gateway_dev.id
-#  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-#  domain_name = aws_api_gateway_domain_name.api_gateway_dev.domain_name
-#  
-#  depends_on = [
-#    aws_api_gateway_stage.api_gateway_dev
-#  ]
-#}
-
-# Route53 record for API Gateway development custom domain
-#resource "aws_route53_record" "api_gateway_dev" {
-#    zone_id = data.aws_route53_zone.public.zone_id
-#    name    = "api.dev.ror.org"
-#    type    = "A"
-#    
-#    alias {
-#        name = aws_api_gateway_domain_name.api_gateway_dev.regional_domain_name
-#        zone_id = aws_api_gateway_domain_name.api_gateway_dev.regional_zone_id
-#        evaluate_target_health = false
-#    }
-#    
-#    lifecycle {
-#        create_before_destroy = true
-#    }
-#}
-
 # WAF Association for API Gateway development service
- resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
-  resource_arn = "${aws_api_gateway_rest_api.api_gateway_dev.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
+resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
   web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
   
   depends_on = [
