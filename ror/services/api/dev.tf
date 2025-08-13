@@ -169,34 +169,7 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 # API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT
 # =============================================================================
 
-# Deployment for development
 resource "aws_api_gateway_deployment" "api_gateway_dev" {
-  depends_on = [
-    aws_api_gateway_integration.dev_v1_organizations_integration,
-    aws_api_gateway_integration.dev_v1_organizations_id_integration,
-    aws_api_gateway_integration.dev_v2_organizations_integration,
-    aws_api_gateway_integration.dev_organizations_integration,
-    aws_api_gateway_integration.dev_v2_organizations_id_integration,
-    aws_api_gateway_integration.dev_organizations_id_integration,
-    aws_api_gateway_integration.dev_v1_organizations_options_integration,
-    aws_api_gateway_integration.dev_v1_organizations_id_options_integration,
-    aws_api_gateway_integration.dev_organizations_id_options_integration,
-    aws_api_gateway_integration.dev_v2_organizations_id_options_integration,
-    aws_api_gateway_integration.dev_v1_heartbeat_integration,
-    aws_api_gateway_integration.dev_v2_heartbeat_integration,
-    aws_api_gateway_integration_response.dev_v1_organizations_integration,
-    aws_api_gateway_integration_response.dev_v1_organizations_id_integration,
-    aws_api_gateway_integration_response.dev_v2_organizations_integration,
-    aws_api_gateway_integration_response.dev_organizations_integration,
-    aws_api_gateway_integration_response.dev_v2_organizations_id_integration,
-    aws_api_gateway_integration_response.dev_organizations_id_integration,
-    aws_api_gateway_integration_response.dev_v1_organizations_options_integration,
-    aws_api_gateway_integration_response.dev_v1_organizations_id_options_integration,
-    aws_api_gateway_integration_response.dev_organizations_id_options_integration,
-    aws_api_gateway_integration_response.dev_v2_organizations_id_options_integration,
-    aws_api_gateway_integration_response.dev_v1_heartbeat_integration,
-    aws_api_gateway_integration_response.dev_v2_heartbeat_integration,
-  ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway_dev.id
   
@@ -209,17 +182,6 @@ resource "aws_api_gateway_deployment" "api_gateway_dev" {
     create_before_destroy = true
   }
 }
-
-# API Gateway Custom Domain Name for development
-#resource "aws_api_gateway_domain_name" "api_gateway_dev" {
-#  domain_name = "api.dev.ror.org"
-#  
-#  regional_certificate_arn = data.aws_acm_certificate.ror.arn
-#  
-#  endpoint_configuration {
-#    types = ["REGIONAL"]
-#  }
-#}
 
 # Base path mapping for API Gateway development custom domain
 #resource "aws_api_gateway_base_path_mapping" "api_gateway_dev" {
