@@ -213,11 +213,11 @@ resource "aws_api_gateway_deployment" "api_gateway_dev" {
 #}
 
 # WAF Association for API Gateway development service
-# resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
-#  resource_arn = "${aws_api_gateway_rest_api.api_gateway_dev.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
-#  web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
-#  
-#  depends_on = [
-#    aws_api_gateway_stage.api_gateway_dev
-#  ]
-#} 
+ resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway_dev.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
+  web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
+  
+  depends_on = [
+    aws_api_gateway_stage.api_gateway_dev
+  ]
+} 
