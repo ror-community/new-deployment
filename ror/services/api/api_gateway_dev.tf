@@ -466,7 +466,7 @@ resource "aws_api_gateway_integration" "dev_v2_organizations_integration" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "https://api.dev.ror.org/v2/organizations"
+  uri                     = "https://${data.aws_lb.alb-dev.dns_name}/v2/organizations"
   
   # CACHING CONFIGURATION - Path + query parameters
   cache_key_parameters = ["method.request.querystring.query", "method.request.querystring.affiliation"]
