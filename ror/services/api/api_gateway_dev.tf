@@ -33,28 +33,30 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
 }
 
   # Method settings for organizations caching - only cache GET requests
-resource "aws_api_gateway_method_settings" "organizations_cache" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "*/organizations/GET"
-
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-  }
-}
+# Temporarily commented out to avoid dependency cycle during proxy removal
+# resource "aws_api_gateway_method_settings" "organizations_cache" {
+#   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+#   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+#   method_path = "*/organizations/GET"
+#
+#   settings {
+#     caching_enabled        = true
+#     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+#     cache_data_encrypted   = false
+#   }
+# }
 
 # No caching for heartbeat endpoints
-resource "aws_api_gateway_method_settings" "heartbeat_no_cache" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "*/heartbeat/GET"
-
-  settings {
-    caching_enabled = false
-  }
-}
+# Temporarily commented out to avoid dependency cycle during proxy removal  
+# resource "aws_api_gateway_method_settings" "heartbeat_no_cache" {
+#   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+#   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+#   method_path = "*/heartbeat/GET"
+#
+#   settings {
+#     caching_enabled = false
+#   }
+# }
 
 # API Gateway Usage Plan with caching
 resource "aws_api_gateway_usage_plan" "api_gateway" {
