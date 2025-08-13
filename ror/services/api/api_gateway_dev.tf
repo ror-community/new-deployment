@@ -91,7 +91,7 @@ resource "aws_api_gateway_integration" "proxy" {
   http_method = "ANY"
 
   integration_http_method = "ANY"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://${data.aws_lb.alb-dev.dns_name}/{proxy}"
   passthrough_behavior    = "WHEN_NO_MATCH"
   content_handling        = "CONVERT_TO_TEXT"
@@ -100,4 +100,10 @@ resource "aws_api_gateway_integration" "proxy" {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "'api.dev.ror.org'"
   }
+  
+  # Add cache key parameters to differentiate requests
+  cache_key_parameters = [
+    "method.request.path.proxy"
+  ]
+  cache_namespace = "proxy"
 } 
