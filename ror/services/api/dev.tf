@@ -66,25 +66,26 @@ resource "aws_lb_target_group" "api-dev" {
   ]
 }
 
-resource "aws_lb_listener_rule" "redirect-api-dev" {
-  listener_arn = data.aws_lb_listener.alb-http.arn
 
-  action {
-    type = "redirect"
-
-    redirect {
-      host        = "api.dev.ror.org"
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_302"
-    }
-  }
-
-  condition {
-    field  = "host-header"
-    values = ["api.dev.ror.org"]
-  }
-}
+# resource "aws_lb_listener_rule" "redirect-api-dev" {
+#   listener_arn = data.aws_lb_listener.alb-http.arn
+#
+#   action {
+#     type = "redirect"
+#
+#     redirect {
+#       host        = "api.dev.ror.org"
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_302"
+#     }
+#   }
+#
+#   condition {
+#     field  = "host-header"
+#     values = ["api.dev.ror.org"]
+#   }
+# }
 
 resource "aws_cloudwatch_log_group" "api-dev" {
   name = "/ecs/api-dev"
