@@ -53,12 +53,6 @@ data "aws_acm_certificate" "ror" {
   most_recent = true
 }
 
-data "aws_acm_certificate" "api_gateway_multi" {
-  domain = "api.dev.ror.org"
-  statuses = ["ISSUED"]
-  most_recent = true
-}
-
 data "aws_acm_certificate" "ror-staging" {
   domain = "*.staging.ror.org"
   statuses = ["ISSUED"]

@@ -196,59 +196,15 @@ resource "aws_api_gateway_deployment" "api_gateway" {
   }
 }
 
-# Multi-domain certificate for API Gateway and Load Balancer communication
-resource "aws_acm_certificate" "api_gateway_multi" {
-  domain_name       = "api.dev.ror.org"
-  subject_alternative_names = [
-    data.aws_lb.alb-dev.dns_name
-  ]
-  validation_method = "DNS"
-  
-  tags = {
-    Name = "api-gateway-multi-domain-dev"
-    environment = "ror-dev"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# Certificate validation
-resource "aws_acm_certificate_validation" "api_gateway_multi" {
-  certificate_arn         = aws_acm_certificate.api_gateway_multi.arn
-  validation_record_fqdns = [for record in aws_route53_record.api_gateway_multi_validation : record.fqdn]
-}
-
-# DNS validation records
-resource "aws_route53_record" "api_gateway_multi_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.api_gateway_multi.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.public.zone_id
-}
-
 # API Gateway Custom Domain Name for development
 resource "aws_api_gateway_domain_name" "api_gateway_dev" {
   domain_name = "api.dev.ror.org"
   
-  regional_certificate_arn = aws_acm_certificate_validation.api_gateway_multi.certificate_arn
+  regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
   endpoint_configuration {
     types = ["REGIONAL"]
   }
-  
-  depends_on = [aws_acm_certificate_validation.api_gateway_multi]
 }
 
 # Base path mapping for API Gateway development custom domain
