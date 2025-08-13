@@ -104,33 +104,17 @@ resource "aws_ecs_task_definition" "api-dev" {
 resource "aws_route53_record" "api-dev" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "api.dev.ror.org"
-    type = "A"
-    
-    alias {
-        name = aws_api_gateway_domain_name.api_gateway_dev.regional_domain_name
-        zone_id = aws_api_gateway_domain_name.api_gateway_dev.regional_zone_id
-        evaluate_target_health = false
-    }
-    
-    lifecycle {
-        create_before_destroy = true
-    }
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name = "api.dev.ror.org"
-  type = "A"
-  
-  alias {
-    name = aws_api_gateway_domain_name.api_gateway_dev.regional_domain_name
-    zone_id = aws_api_gateway_domain_name.api_gateway_dev.regional_zone_id
-    evaluate_target_health = false
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_service_discovery_service" "api-dev" {
