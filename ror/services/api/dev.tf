@@ -169,19 +169,7 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 # API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT
 # =============================================================================
 
-resource "aws_api_gateway_deployment" "api_gateway_dev" {
 
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_dev.id
-  
-  variables = {
-    deployed_at = timestamp()
-    force_update = "true"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 # Base path mapping for API Gateway development custom domain
 #resource "aws_api_gateway_base_path_mapping" "api_gateway_dev" {
@@ -212,11 +200,11 @@ resource "aws_api_gateway_deployment" "api_gateway_dev" {
 #}
 
 # WAF Association for API Gateway development service
-resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
-  resource_arn = "${aws_api_gateway_rest_api.api_gateway_dev.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
-  web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
-  
-  depends_on = [
-    aws_api_gateway_stage.api_gateway_dev
-  ]
-} 
+# resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
+#  resource_arn = "${aws_api_gateway_rest_api.api_gateway_dev.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
+#  web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
+#  
+#  depends_on = [
+#    aws_api_gateway_stage.api_gateway_dev
+#  ]
+#} 
