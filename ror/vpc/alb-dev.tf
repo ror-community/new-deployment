@@ -71,3 +71,20 @@ resource "aws_route53_record" "www-dev" {
     ttl = var.ttl
     records = [data.aws_lb.alb-dev.dns_name]
 }
+
+# HTTP listener rule to handle API Gateway requests (higher priority than default redirect)
+resource "aws_lb_listener_rule" "api-dev-http-forward" {
+  listener_arn = aws_lb_listener.alb-http-dev.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-dev.arn
+  }
+
+  condition {
+    host_header {
+      values = ["api.dev.ror.org"]
+    }
+  }
+}
