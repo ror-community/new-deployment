@@ -170,6 +170,10 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 # =============================================================================
 
 resource "aws_api_gateway_deployment" "api_gateway" {
+  depends_on = [
+    aws_api_gateway_integration.proxy,
+    aws_api_gateway_method_response.proxy
+  ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   
