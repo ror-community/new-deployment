@@ -105,25 +105,17 @@ resource "aws_ecs_task_definition" "api-dev" {
 resource "aws_route53_record" "api-dev" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "api.dev.ror.org"
-    type = "A"
-    
-    alias {
-        name = aws_api_gateway_domain_name.api_gateway_dev.regional_domain_name
-        zone_id = aws_api_gateway_domain_name.api_gateway_dev.regional_zone_id
-        evaluate_target_health = false
-    }
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_route53_record" "split-api-dev" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name = "api.dev.ror.org"
-  type = "A"
-  
-  alias {
-    name = aws_api_gateway_domain_name.api_gateway_dev.regional_domain_name
-    zone_id = aws_api_gateway_domain_name.api_gateway_dev.regional_zone_id
-    evaluate_target_health = false
-  }
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb-dev.dns_name]
 }
 
 resource "aws_service_discovery_service" "api-dev" {
@@ -175,56 +167,56 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 }
 
 # =============================================================================
-# API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT
+# API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT - TEMPORARILY COMMENTED OUT
 # =============================================================================
 
-resource "aws_api_gateway_deployment" "api_gateway" {
-  # Temporarily removed dependencies to break cycle during proxy cleanup
-  # depends_on = [
-  #   aws_api_gateway_integration.v2_organizations_id_get,
-  #   aws_api_gateway_method_response.v2_organizations_id_get
-  # ]
-
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  
-  variables = {
-    deployed_at = timestamp()
-    force_update = "true"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# API Gateway Custom Domain Name for development
-resource "aws_api_gateway_domain_name" "api_gateway_dev" {
-  domain_name = "api.dev.ror.org"
-  
-  regional_certificate_arn = data.aws_acm_certificate.ror.arn
-  
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
-}
-
-# Base path mapping for API Gateway development custom domain
-resource "aws_api_gateway_base_path_mapping" "api_gateway_dev" {
-  api_id      = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  domain_name = aws_api_gateway_domain_name.api_gateway_dev.domain_name
-  
-  depends_on = [
-    aws_api_gateway_stage.api_gateway_dev
-  ]
-}
-
-# WAF Association for API Gateway development service
-resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
-  resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
-  web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
-  
-  depends_on = [
-    aws_api_gateway_stage.api_gateway_dev
-  ]
-} 
+# resource "aws_api_gateway_deployment" "api_gateway" {
+#   # Temporarily removed dependencies to break cycle during proxy cleanup
+#   # depends_on = [
+#   #   aws_api_gateway_integration.v2_organizations_id_get,
+#   #   aws_api_gateway_method_response.v2_organizations_id_get
+#   # ]
+#
+#   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+#   
+#   variables = {
+#     deployed_at = timestamp()
+#     force_update = "true"
+#   }
+#   
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
+#
+# # API Gateway Custom Domain Name for development
+# resource "aws_api_gateway_domain_name" "api_gateway_dev" {
+#   domain_name = "api.dev.ror.org"
+#   
+#   regional_certificate_arn = data.aws_acm_certificate.ror.arn
+#   
+#   endpoint_configuration {
+#     types = ["REGIONAL"]
+#   }
+# }
+#
+# # Base path mapping for API Gateway development custom domain
+# resource "aws_api_gateway_base_path_mapping" "api_gateway_dev" {
+#   api_id      = aws_api_gateway_rest_api.api_gateway.id
+#   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+#   domain_name = aws_api_gateway_domain_name.api_gateway_dev.domain_name
+#   
+#   depends_on = [
+#     aws_api_gateway_stage.api_gateway_dev
+#   ]
+# }
+#
+# # WAF Association for API Gateway development service
+# resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
+#   resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_dev.stage_name}"
+#   web_acl_arn  = data.aws_wafv2_web_acl.dev-v2.arn
+#   
+#   depends_on = [
+#     aws_api_gateway_stage.api_gateway_dev
+#   ]
+# } 
