@@ -2,7 +2,7 @@
 # API GATEWAY CACHING ENDPOINT - DEVELOPMENT
 # =============================================================================
 
-# API Gateway REST API with caching enabled - completely reset
+# API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name = "ror-api"
   description = "ROR API Gateway with caching - individual endpoints"
@@ -15,6 +15,10 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
     environment = "api-gateway"
   }
 }
+
+# Data sources for access logging ARN construction
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 # API Gateway Stage (method-level caching only)
 resource "aws_api_gateway_stage" "api_gateway_dev" {
