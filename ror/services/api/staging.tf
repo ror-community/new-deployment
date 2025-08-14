@@ -196,58 +196,14 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_staging" {
   })
 }
 
-# API Gateway Deployment - Staging
-resource "aws_api_gateway_deployment" "api_gateway_staging" {
-  depends_on = [
-    # v1 endpoints
-    aws_api_gateway_integration.v1_organizations_get_staging,
-    aws_api_gateway_method_response.v1_organizations_get_staging,
-    aws_api_gateway_integration_response.v1_organizations_get_staging,
-    aws_api_gateway_integration.v1_organizations_id_get_staging,
-    aws_api_gateway_method_response.v1_organizations_id_get_staging,
-    aws_api_gateway_integration_response.v1_organizations_id_get_staging,
-    aws_api_gateway_integration.v1_heartbeat_get_staging,
-    aws_api_gateway_method_response.v1_heartbeat_get_staging,
-    aws_api_gateway_integration_response.v1_heartbeat_get_staging,
-    
-    # v2 endpoints
-    aws_api_gateway_integration.v2_organizations_get_staging,
-    aws_api_gateway_method_response.v2_organizations_get_staging,
-    aws_api_gateway_integration_response.v2_organizations_get_staging,
-    aws_api_gateway_integration.v2_organizations_id_get_staging,
-    aws_api_gateway_method_response.v2_organizations_id_get_staging,
-    aws_api_gateway_integration_response.v2_organizations_id_get_staging,
-    aws_api_gateway_integration.v2_heartbeat_get_staging,
-    aws_api_gateway_method_response.v2_heartbeat_get_staging,
-    aws_api_gateway_integration_response.v2_heartbeat_get_staging,
-    
-    # No version endpoints
-    aws_api_gateway_integration.organizations_get_staging,
-    aws_api_gateway_method_response.organizations_get_staging,
-    aws_api_gateway_integration_response.organizations_get_staging,
-    aws_api_gateway_integration.organizations_id_get_staging,
-    aws_api_gateway_method_response.organizations_id_get_staging,
-    aws_api_gateway_integration_response.organizations_id_get_staging,
-    
-    # Root path
-    aws_api_gateway_integration.root_get_staging,
-    aws_api_gateway_method_response.root_get_staging,
-    aws_api_gateway_integration_response.root_get_staging,
-    
-    # Catch-all proxy
-    aws_api_gateway_integration.proxy_staging,
-    aws_api_gateway_method_response.proxy_staging,
-    aws_api_gateway_integration_response.proxy_staging
-  ]
 
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+
+# WAF Association for API Gateway staging service
+resource "aws_wafv2_web_acl_association" "api_gateway_staging" {
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_staging.stage_name}"
+  web_acl_arn  = data.aws_wafv2_web_acl.staging-v2.arn
   
-  variables = {
-    deployed_at = timestamp()
-    force_update = "true"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
+  depends_on = [
+    aws_api_gateway_stage.api_gateway_staging
+  ]
 } 
