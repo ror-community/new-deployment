@@ -208,7 +208,17 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
     aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_integration_response.organizations_id_get
+    aws_api_gateway_integration_response.organizations_id_get,
+    
+    # Method settings for caching
+    aws_api_gateway_method_settings.v1_organizations_cache,
+    aws_api_gateway_method_settings.v2_organizations_cache,
+    aws_api_gateway_method_settings.organizations_cache,
+    aws_api_gateway_method_settings.v1_organizations_id_cache,
+    aws_api_gateway_method_settings.v2_organizations_id_cache,
+    aws_api_gateway_method_settings.organizations_id_cache,
+    aws_api_gateway_method_settings.v1_heartbeat_no_cache,
+    aws_api_gateway_method_settings.v2_heartbeat_no_cache
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
