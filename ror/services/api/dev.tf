@@ -239,63 +239,8 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 }
 
 # =============================================================================
-# API GATEWAY DEPLOYMENT & DOMAIN - DEVELOPMENT
+# API GATEWAY DEPLOYMENT & DOMAIN - DEV
 # =============================================================================
-
-resource "aws_api_gateway_deployment" "api_gateway" {
-  depends_on = [
-    # v1 endpoints
-    aws_api_gateway_integration.v1_organizations_get,
-    aws_api_gateway_method_response.v1_organizations_get,
-    aws_api_gateway_integration_response.v1_organizations_get,
-    aws_api_gateway_integration.v1_organizations_id_get,
-    aws_api_gateway_method_response.v1_organizations_id_get,
-    aws_api_gateway_integration_response.v1_organizations_id_get,
-    aws_api_gateway_integration.v1_heartbeat_get,
-    aws_api_gateway_method_response.v1_heartbeat_get,
-    aws_api_gateway_integration_response.v1_heartbeat_get,
-    
-    # v2 endpoints
-    aws_api_gateway_integration.v2_organizations_get,
-    aws_api_gateway_method_response.v2_organizations_get,
-    aws_api_gateway_integration_response.v2_organizations_get,
-    aws_api_gateway_integration.v2_organizations_id_get,
-    aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_integration_response.v2_organizations_id_get,
-    aws_api_gateway_integration.v2_heartbeat_get,
-    aws_api_gateway_method_response.v2_heartbeat_get,
-    aws_api_gateway_integration_response.v2_heartbeat_get,
-    
-    # No version endpoints
-    aws_api_gateway_integration.organizations_get,
-    aws_api_gateway_method_response.organizations_get,
-    aws_api_gateway_integration_response.organizations_get,
-    aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_integration_response.organizations_id_get,
-    
-    # Root path
-    aws_api_gateway_integration.root_get,
-    aws_api_gateway_method_response.root_get,
-    aws_api_gateway_integration_response.root_get,
-    
-    # Catch-all proxy
-    aws_api_gateway_integration.proxy,
-    aws_api_gateway_method_response.proxy,
-    aws_api_gateway_integration_response.proxy
-  ]
-
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  
-  variables = {
-    deployed_at = timestamp()
-    force_update = "true"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 # API Gateway Custom Domain Name for development
 resource "aws_api_gateway_domain_name" "api_gateway_dev" {
@@ -327,4 +272,4 @@ resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
   depends_on = [
     aws_api_gateway_stage.api_gateway_dev
   ]
-} 
+}
