@@ -3,8 +3,8 @@
 # =============================================================================
 
 # API Gateway REST API with caching enabled - completely reset
-resource "aws_api_gateway_rest_api" "api_gateway_v2" {
-  name = "ror-api-v2"
+resource "aws_api_gateway_rest_api" "api_gateway" {
+  name = "ror-api"
   description = "ROR API Gateway with caching - individual endpoints"
   
   endpoint_configuration {
