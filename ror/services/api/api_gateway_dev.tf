@@ -304,6 +304,61 @@ resource "aws_api_gateway_resource" "organizations_id" {
   path_part   = "{id}"
 }
 
+# Root path resource for base URL
+resource "aws_api_gateway_method" "root_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# Root path method response
+resource "aws_api_gateway_method_response" "root_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.root_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Content-Type" = true
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+# Root path integration (mock integration to return static JSON)
+resource "aws_api_gateway_integration" "root_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.root_get.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Root path integration response
+resource "aws_api_gateway_integration_response" "root_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.root_get.http_method
+  status_code = aws_api_gateway_method_response.root_get.status_code
+
+  response_parameters = {
+    "method.response.header.Content-Type" = "'application/json'"
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+
+  response_templates = {
+    "application/json" = "{\"organizations\":\"https://api.dev.ror.org/v2/organizations\"}"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.root_get
+  ]
+}
+
 # Catch-all proxy resource for all other endpoints
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
