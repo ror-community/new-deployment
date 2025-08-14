@@ -102,12 +102,6 @@ resource "aws_cloudwatch_log_group" "api_gateway_access_logs" {
   }
 }
 
-# Create a single log stream for all access logs
-resource "aws_cloudwatch_log_stream" "api_gateway_access_logs" {
-  name           = "access-logs"
-  log_group_name = aws_cloudwatch_log_group.api_gateway_access_logs.name
-}
-
 # Resource policy to allow API Gateway to write to the log group
 resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs" {
   policy_name = "api-gateway-logs-policy"
