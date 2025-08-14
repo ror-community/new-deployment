@@ -55,9 +55,7 @@ resource "aws_api_gateway_method_settings" "v2_organizations_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v2/organizations/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.v1_organizations_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = true
@@ -74,9 +72,7 @@ resource "aws_api_gateway_method_settings" "organizations_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "organizations/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.v2_organizations_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = true
@@ -93,9 +89,7 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v1/organizations/*/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.organizations_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = true
@@ -112,9 +106,7 @@ resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v2/organizations/*/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.v1_organizations_id_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = true
@@ -131,9 +123,7 @@ resource "aws_api_gateway_method_settings" "organizations_id_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "organizations/*/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.v2_organizations_id_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = true
@@ -150,9 +140,7 @@ resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v1/heartbeat/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.organizations_id_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = false
@@ -169,9 +157,7 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache_staging" {
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v2/heartbeat/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.v1_heartbeat_no_cache_staging
-  ]
+
 
   settings {
     caching_enabled        = false
@@ -189,7 +175,6 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
   method_path = "*/*"  # Apply to all methods
 
   depends_on = [
-    aws_api_gateway_method_settings.v2_heartbeat_no_cache_staging,
     aws_api_gateway_account.api_gateway_account
   ]
 
