@@ -180,9 +180,35 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 
 resource "aws_api_gateway_deployment" "api_gateway" {
   depends_on = [
+    # v1 endpoints
+    aws_api_gateway_integration.v1_organizations_get,
+    aws_api_gateway_method_response.v1_organizations_get,
+    aws_api_gateway_integration_response.v1_organizations_get,
+    aws_api_gateway_integration.v1_organizations_id_get,
+    aws_api_gateway_method_response.v1_organizations_id_get,
+    aws_api_gateway_integration_response.v1_organizations_id_get,
+    aws_api_gateway_integration.v1_heartbeat_get,
+    aws_api_gateway_method_response.v1_heartbeat_get,
+    aws_api_gateway_integration_response.v1_heartbeat_get,
+    
+    # v2 endpoints
+    aws_api_gateway_integration.v2_organizations_get,
+    aws_api_gateway_method_response.v2_organizations_get,
+    aws_api_gateway_integration_response.v2_organizations_get,
     aws_api_gateway_integration.v2_organizations_id_get,
     aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_integration_response.v2_organizations_id_get
+    aws_api_gateway_integration_response.v2_organizations_id_get,
+    aws_api_gateway_integration.v2_heartbeat_get,
+    aws_api_gateway_method_response.v2_heartbeat_get,
+    aws_api_gateway_integration_response.v2_heartbeat_get,
+    
+    # No version endpoints
+    aws_api_gateway_integration.organizations_get,
+    aws_api_gateway_method_response.organizations_get,
+    aws_api_gateway_integration_response.organizations_get,
+    aws_api_gateway_integration.organizations_id_get,
+    aws_api_gateway_method_response.organizations_id_get,
+    aws_api_gateway_integration_response.organizations_id_get
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
