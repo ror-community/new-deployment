@@ -327,4 +327,4 @@ resource "aws_wafv2_web_acl_association" "api_gateway_dev" {
   depends_on = [
     aws_api_gateway_stage.api_gateway_dev
   ]
-} 
+}

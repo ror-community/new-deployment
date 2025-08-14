@@ -155,3 +155,99 @@ resource "aws_s3_bucket_policy" "public-staging-bucket-policy" {
     bucket_name = "public.staging.ror.org"
   })
 }
+
+
+# =============================================================================
+# API GATEWAY STAGING RESOURCES
+# =============================================================================
+
+# CloudWatch Log Group for API Gateway Access Logs - Staging
+resource "aws_cloudwatch_log_group" "api_gateway_access_logs_staging" {
+  name              = "/aws/apigateway/ror-api-staging"
+  retention_in_days = 30
+  
+  tags = {
+    environment = "ror-staging"
+    purpose = "api-gateway-cache-analytics"
+  }
+}
+
+# Resource policy to allow API Gateway to write to the staging log group
+resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_staging" {
+  policy_name = "api-gateway-logs-policy-staging"
+  
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "${aws_cloudwatch_log_group.api_gateway_access_logs_staging.arn}:*"
+      }
+    ]
+  })
+}
+
+# API Gateway Deployment - Staging
+resource "aws_api_gateway_deployment" "api_gateway_staging" {
+  depends_on = [
+    # v1 endpoints
+    aws_api_gateway_integration.v1_organizations_get_staging,
+    aws_api_gateway_method_response.v1_organizations_get_staging,
+    aws_api_gateway_integration_response.v1_organizations_get_staging,
+    aws_api_gateway_integration.v1_organizations_id_get_staging,
+    aws_api_gateway_method_response.v1_organizations_id_get_staging,
+    aws_api_gateway_integration_response.v1_organizations_id_get_staging,
+    aws_api_gateway_integration.v1_heartbeat_get_staging,
+    aws_api_gateway_method_response.v1_heartbeat_get_staging,
+    aws_api_gateway_integration_response.v1_heartbeat_get_staging,
+    
+    # v2 endpoints
+    aws_api_gateway_integration.v2_organizations_get_staging,
+    aws_api_gateway_method_response.v2_organizations_get_staging,
+    aws_api_gateway_integration_response.v2_organizations_get_staging,
+    aws_api_gateway_integration.v2_organizations_id_get_staging,
+    aws_api_gateway_method_response.v2_organizations_id_get_staging,
+    aws_api_gateway_integration_response.v2_organizations_id_get_staging,
+    aws_api_gateway_integration.v2_heartbeat_get_staging,
+    aws_api_gateway_method_response.v2_heartbeat_get_staging,
+    aws_api_gateway_integration_response.v2_heartbeat_get_staging,
+    
+    # No version endpoints
+    aws_api_gateway_integration.organizations_get_staging,
+    aws_api_gateway_method_response.organizations_get_staging,
+    aws_api_gateway_integration_response.organizations_get_staging,
+    aws_api_gateway_integration.organizations_id_get_staging,
+    aws_api_gateway_method_response.organizations_id_get_staging,
+    aws_api_gateway_integration_response.organizations_id_get_staging,
+    
+    # Root path
+    aws_api_gateway_integration.root_get_staging,
+    aws_api_gateway_method_response.root_get_staging,
+    aws_api_gateway_integration_response.root_get_staging,
+    
+    # Catch-all proxy
+    aws_api_gateway_integration.proxy_staging,
+    aws_api_gateway_method_response.proxy_staging,
+    aws_api_gateway_integration_response.proxy_staging
+  ]
+
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  
+  variables = {
+    deployed_at = timestamp()
+    force_update = "true"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+} 
