@@ -32,31 +32,109 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   }
 }
 
-  # Method settings for organizations caching - only cache GET requests
-# Temporarily commented out to avoid dependency cycle during proxy removal
-# resource "aws_api_gateway_method_settings" "organizations_cache" {
-#   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-#   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-#   method_path = "*/organizations/GET"
-#
-#   settings {
-#     caching_enabled        = true
-#     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-#     cache_data_encrypted   = false
-#   }
-# }
+# =============================================================================
+# METHOD SETTINGS FOR CACHING
+# =============================================================================
 
-# No caching for heartbeat endpoints
-# Temporarily commented out to avoid dependency cycle during proxy removal  
-# resource "aws_api_gateway_method_settings" "heartbeat_no_cache" {
-#   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-#   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-#   method_path = "*/heartbeat/GET"
-#
-#   settings {
-#     caching_enabled = false
-#   }
-# }
+# Enable caching for v1/organizations endpoint
+resource "aws_api_gateway_method_settings" "v1_organizations_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v1/organizations/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+  }
+}
+
+# Enable caching for v2/organizations endpoint
+resource "aws_api_gateway_method_settings" "v2_organizations_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v2/organizations/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+  }
+}
+
+# Enable caching for organizations endpoint (no version)
+resource "aws_api_gateway_method_settings" "organizations_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "organizations/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+  }
+}
+
+# Enable caching for v1/organizations/{id} endpoint
+resource "aws_api_gateway_method_settings" "v1_organizations_id_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v1/organizations/*/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+  }
+}
+
+# Enable caching for v2/organizations/{id} endpoint
+resource "aws_api_gateway_method_settings" "v2_organizations_id_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v2/organizations/*/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+  }
+}
+
+# Enable caching for organizations/{id} endpoint (no version)
+resource "aws_api_gateway_method_settings" "organizations_id_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "organizations/*/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+  }
+}
+
+# Disable caching for v1/heartbeat endpoint
+resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v1/heartbeat/GET"
+
+  settings {
+    caching_enabled = false
+  }
+}
+
+# Disable caching for v2/heartbeat endpoint
+resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v2/heartbeat/GET"
+
+  settings {
+    caching_enabled = false
+  }
+}
 
 # API Gateway Usage Plan with caching
 resource "aws_api_gateway_usage_plan" "api_gateway" {
