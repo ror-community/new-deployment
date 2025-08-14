@@ -400,7 +400,7 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/v1/organizations"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
 
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
@@ -426,7 +426,7 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/v2/organizations"
+  uri                     = "http://$${stageVariables.backend_host}/v2/organizations"
 
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
@@ -452,7 +452,7 @@ resource "aws_api_gateway_integration" "v1_organizations_id_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/v1/organizations/{id}"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{id}"
 
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -472,7 +472,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_get" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://\${stageVariables.backend_host}/v2/organizations/{id}"
+  uri                     = "http://$${stageVariables.backend_host}/v2/organizations/{id}"
 
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -492,7 +492,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/v1/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -509,7 +509,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/v2/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -526,7 +526,7 @@ resource "aws_api_gateway_integration" "organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/organizations"
+  uri                     = "http://$${stageVariables.backend_host}/organizations"
 
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
@@ -552,7 +552,7 @@ resource "aws_api_gateway_integration" "organizations_id_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://\${stageVariables.backend_host}/organizations/{id}"
+  uri                     = "http://$${stageVariables.backend_host}/organizations/{id}"
 
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -572,7 +572,7 @@ resource "aws_api_gateway_integration" "proxy" {
 
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://\${stageVariables.backend_host}/{proxy}"
+  uri                     = "http://$${stageVariables.backend_host}/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -597,7 +597,7 @@ resource "aws_api_gateway_integration_response" "root_get" {
   }
 
   response_templates = {
-    "application/json" = "{\"organizations\":\"https://\${stageVariables.api_host}/v2/organizations\"}"
+    "application/json" = "{\"organizations\":\"https://$${stageVariables.api_host}/v2/organizations\"}"
   }
 
   depends_on = [
