@@ -33,7 +33,7 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   # Access logging configuration
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn
-    format = "$context.requestId $context.requestTime $context.httpMethod $context.path $context.resourcePath $context.status $context.responseLatency $context.cacheStatus $context.status $context.integration.status $context.integrationLatency"
+    format = "$context.requestId $context.requestTime $context.httpMethod $context.path $context.resourcePath $context.status $context.responseLatency $context.integrationLatency"
   }
   
   tags = {
