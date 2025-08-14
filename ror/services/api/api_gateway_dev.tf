@@ -46,6 +46,8 @@ resource "aws_api_gateway_method_settings" "v1_organizations_cache" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -55,10 +57,16 @@ resource "aws_api_gateway_method_settings" "v2_organizations_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "v2/organizations/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.v1_organizations_cache
+  ]
+
   settings {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -68,10 +76,16 @@ resource "aws_api_gateway_method_settings" "organizations_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "organizations/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.v2_organizations_cache
+  ]
+
   settings {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -81,10 +95,16 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "v1/organizations/*/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.organizations_cache
+  ]
+
   settings {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -94,10 +114,16 @@ resource "aws_api_gateway_method_settings" "v2_organizations_id_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "v2/organizations/*/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.v1_organizations_id_cache
+  ]
+
   settings {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -107,10 +133,16 @@ resource "aws_api_gateway_method_settings" "organizations_id_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "organizations/*/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.v2_organizations_id_cache
+  ]
+
   settings {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -120,8 +152,16 @@ resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "v1/heartbeat/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.organizations_id_cache
+  ]
+
   settings {
-    caching_enabled = false
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
@@ -131,8 +171,16 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "v2/heartbeat/GET"
 
+  depends_on = [
+    aws_api_gateway_method_settings.v1_heartbeat_no_cache
+  ]
+
   settings {
-    caching_enabled = false
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
