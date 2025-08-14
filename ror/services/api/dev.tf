@@ -94,7 +94,7 @@ resource "aws_cloudwatch_log_group" "api-dev" {
 # CloudWatch Log Group for API Gateway Access Logs
 resource "aws_cloudwatch_log_group" "api_gateway_access_logs" {
   name              = "/aws/apigateway/ror-api-dev"
-  retention_in_days = 31
+  retention_in_days = 30
   
   tags = {
     environment = "ror-dev"
