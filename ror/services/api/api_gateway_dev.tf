@@ -2,7 +2,7 @@
 # API GATEWAY CACHING ENDPOINT - DEVELOPMENT
 # =============================================================================
 
-# API Gateway REST API with caching enabled - completely reset
+# API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name = "ror-api"
   description = "ROR API Gateway with caching - individual endpoints"
@@ -16,6 +16,10 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
   }
 }
 
+# Data sources for access logging ARN construction
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 # API Gateway Stage (method-level caching only)
 resource "aws_api_gateway_stage" "api_gateway_dev" {
   deployment_id = aws_api_gateway_deployment.api_gateway.id
@@ -25,6 +29,10 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   # Enable caching for this stage
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size
+  
+  depends_on = [
+    aws_api_gateway_account.api_gateway_account
+  ]
   
   tags = {
     environment = "ror-dev"
@@ -181,6 +189,26 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
     cache_data_encrypted   = false
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
+  }
+}
+
+# Access logging configuration for cache analytics
+resource "aws_api_gateway_method_settings" "access_logging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "*/*"  # Apply to all methods
+
+  depends_on = [
+    aws_api_gateway_method_settings.v2_heartbeat_no_cache,
+    aws_api_gateway_account.api_gateway_account
+  ]
+
+  settings {
+    logging_level                = "INFO"
+    data_trace_enabled          = true
+    metrics_enabled             = true
+    throttling_rate_limit       = 10000
+    throttling_burst_limit      = 5000
   }
 }
 

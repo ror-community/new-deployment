@@ -91,6 +91,46 @@ resource "aws_cloudwatch_log_group" "api-dev" {
   name = "/ecs/api-dev"
 }
 
+# CloudWatch Log Group for API Gateway Access Logs
+resource "aws_cloudwatch_log_group" "api_gateway_access_logs" {
+  name              = "/aws/apigateway/ror-api-dev"
+  retention_in_days = 31
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-cache-analytics"
+  }
+}
+
+# IAM role for API Gateway CloudWatch logging
+resource "aws_iam_role" "api_gateway_cloudwatch_role" {
+  name = "api-gateway-cloudwatch-role-dev"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM role policy attachment for API Gateway CloudWatch logging
+resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch_logs" {
+  role       = aws_iam_role.api_gateway_cloudwatch_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
+# API Gateway account configuration for logging
+resource "aws_api_gateway_account" "api_gateway_account" {
+  cloudwatch_role_arn = aws_iam_role.api_gateway_cloudwatch_role.arn
+}
+
 resource "aws_ecs_task_definition" "api-dev" {
   family = "api-dev"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn
