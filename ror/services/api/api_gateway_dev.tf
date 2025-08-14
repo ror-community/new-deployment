@@ -30,10 +30,6 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size
   
-  depends_on = [
-    aws_api_gateway_account.api_gateway_account
-  ]
-  
   tags = {
     environment = "ror-dev"
     purpose = "api-gateway-caching"
@@ -192,8 +188,8 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
   }
 }
 
-# Access logging configuration for cache analytics
-resource "aws_api_gateway_method_settings" "access_logging" {
+# Enable CloudWatch metrics and execution logging for all methods
+resource "aws_api_gateway_method_settings" "metrics_and_logging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
   method_path = "*/*"  # Apply to all methods
@@ -204,9 +200,9 @@ resource "aws_api_gateway_method_settings" "access_logging" {
   ]
 
   settings {
-    logging_level                = "INFO"
-    data_trace_enabled          = true
     metrics_enabled             = true
+    logging_level               = "INFO"
+    data_trace_enabled         = true
     throttling_rate_limit       = 10000
     throttling_burst_limit      = 5000
   }
