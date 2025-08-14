@@ -274,6 +274,13 @@ resource "aws_api_gateway_resource" "organizations_id" {
   path_part   = "{id}"
 }
 
+# Catch-all proxy resource for all other endpoints
+resource "aws_api_gateway_resource" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "{proxy+}"
+}
+
 # =============================================================================
 # METHODS
 # =============================================================================
@@ -430,6 +437,18 @@ resource "aws_api_gateway_method" "organizations_id_get" {
   }
 }
 
+# Catch-all proxy method for all HTTP methods
+resource "aws_api_gateway_method" "proxy" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.proxy.id
+  http_method   = "ANY"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
+}
+
 # =============================================================================
 # API GATEWAY METHOD RESPONSES FOR ALL ENDPOINTS
 # =============================================================================
@@ -523,6 +542,20 @@ resource "aws_api_gateway_method_response" "organizations_id_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.organizations_id.id
   http_method = aws_api_gateway_method.organizations_id_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for catch-all proxy
+resource "aws_api_gateway_method_response" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.proxy.id
+  http_method = aws_api_gateway_method.proxy.http_method
   status_code = "200"
 
   response_parameters = {
@@ -688,6 +721,22 @@ resource "aws_api_gateway_integration" "organizations_id_get" {
   cache_namespace     = "organizations-id"
 }
 
+# Catch-all HTTP_PROXY integration - passes through all headers and methods
+resource "aws_api_gateway_integration" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.proxy.id
+  http_method = aws_api_gateway_method.proxy.http_method
+
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://${data.aws_lb.alb-dev.dns_name}/{proxy}"
+
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "'api.dev.ror.org'"
+  }
+}
+
 # =============================================================================
 # INTEGRATION RESPONSES FOR ALL ENDPOINTS
 # =============================================================================
@@ -833,5 +882,23 @@ resource "aws_api_gateway_integration_response" "organizations_id_get" {
 
   depends_on = [
     aws_api_gateway_integration.organizations_id_get
+  ]
+}
+
+# Integration response for catch-all proxy
+resource "aws_api_gateway_integration_response" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.proxy.id
+  http_method = aws_api_gateway_method.proxy.http_method
+  status_code = aws_api_gateway_method_response.proxy.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Client-Id'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.proxy
   ]
 } 
