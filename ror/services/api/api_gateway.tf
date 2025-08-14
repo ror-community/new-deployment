@@ -17,47 +17,20 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
   }
 }
 
+# Shared deployment - depends on shared resources only
 resource "aws_api_gateway_deployment" "api_gateway" {
   depends_on = [
-    # v1 endpoints - dev integrations
-    aws_api_gateway_integration.v1_organizations_get_dev,
+    # Shared method responses only
     aws_api_gateway_method_response.v1_organizations_get,
-    aws_api_gateway_integration_response.v1_organizations_get_dev,
-    aws_api_gateway_integration.v1_organizations_id_get_dev,
-    aws_api_gateway_method_response.v1_organizations_id_get,
-    aws_api_gateway_integration_response.v1_organizations_id_get_dev,
-    aws_api_gateway_integration.v1_heartbeat_get_dev,
-    aws_api_gateway_method_response.v1_heartbeat_get,
-    aws_api_gateway_integration_response.v1_heartbeat_get_dev,
-    
-    # v2 endpoints - dev integrations
-    aws_api_gateway_integration.v2_organizations_get_dev,
     aws_api_gateway_method_response.v2_organizations_get,
-    aws_api_gateway_integration_response.v2_organizations_get_dev,
-    aws_api_gateway_integration.v2_organizations_id_get_dev,
+    aws_api_gateway_method_response.v1_organizations_id_get,
     aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_integration_response.v2_organizations_id_get_dev,
-    aws_api_gateway_integration.v2_heartbeat_get_dev,
+    aws_api_gateway_method_response.v1_heartbeat_get,
     aws_api_gateway_method_response.v2_heartbeat_get,
-    aws_api_gateway_integration_response.v2_heartbeat_get_dev,
-    
-    # No version endpoints - dev integrations
-    aws_api_gateway_integration.organizations_get_dev,
     aws_api_gateway_method_response.organizations_get,
-    aws_api_gateway_integration_response.organizations_get_dev,
-    aws_api_gateway_integration.organizations_id_get_dev,
     aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_integration_response.organizations_id_get_dev,
-    
-    # Root path - dev integrations
-    aws_api_gateway_integration.root_get_dev,
     aws_api_gateway_method_response.root_get,
-    aws_api_gateway_integration_response.root_get_dev,
-    
-    # Catch-all proxy - dev integrations
-    aws_api_gateway_integration.proxy_dev,
-    aws_api_gateway_method_response.proxy,
-    aws_api_gateway_integration_response.proxy_dev
+    aws_api_gateway_method_response.proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id

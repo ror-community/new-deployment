@@ -8,6 +8,30 @@ resource "aws_api_gateway_stage" "api_gateway_staging" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   stage_name    = "staging"
   
+  depends_on = [
+    # Staging integrations
+    aws_api_gateway_integration.v1_organizations_get_staging,
+    aws_api_gateway_integration_response.v1_organizations_get_staging,
+    aws_api_gateway_integration.v1_organizations_id_get_staging,
+    aws_api_gateway_integration_response.v1_organizations_id_get_staging,
+    aws_api_gateway_integration.v1_heartbeat_get_staging,
+    aws_api_gateway_integration_response.v1_heartbeat_get_staging,
+    aws_api_gateway_integration.v2_organizations_get_staging,
+    aws_api_gateway_integration_response.v2_organizations_get_staging,
+    aws_api_gateway_integration.v2_organizations_id_get_staging,
+    aws_api_gateway_integration_response.v2_organizations_id_get_staging,
+    aws_api_gateway_integration.v2_heartbeat_get_staging,
+    aws_api_gateway_integration_response.v2_heartbeat_get_staging,
+    aws_api_gateway_integration.organizations_get_staging,
+    aws_api_gateway_integration_response.organizations_get_staging,
+    aws_api_gateway_integration.organizations_id_get_staging,
+    aws_api_gateway_integration_response.organizations_id_get_staging,
+    aws_api_gateway_integration.root_get_staging,
+    aws_api_gateway_integration_response.root_get_staging,
+    aws_api_gateway_integration.proxy_staging,
+    aws_api_gateway_integration_response.proxy_staging
+  ]
+  
   # Enable caching for this stage
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size
