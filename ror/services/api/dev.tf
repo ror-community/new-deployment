@@ -102,6 +102,30 @@ resource "aws_cloudwatch_log_group" "api_gateway_access_logs" {
   }
 }
 
+# Resource policy to allow API Gateway to write to the log group
+resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs" {
+  policy_name = "api-gateway-logs-policy"
+  
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "${aws_cloudwatch_log_group.api_gateway_access_logs.arn}:*"
+      }
+    ]
+  })
+}
+
 # IAM role for API Gateway CloudWatch logging
 resource "aws_iam_role" "api_gateway_cloudwatch_role" {
   name = "api-gateway-cloudwatch-role-dev"
