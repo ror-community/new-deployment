@@ -208,7 +208,12 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
     aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_integration_response.organizations_id_get
+    aws_api_gateway_integration_response.organizations_id_get,
+    
+    # Catch-all proxy
+    aws_api_gateway_integration.proxy,
+    aws_api_gateway_method_response.proxy,
+    aws_api_gateway_integration_response.proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
