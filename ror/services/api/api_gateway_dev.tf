@@ -8,29 +8,8 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   stage_name    = "dev"
   
-  depends_on = [
-    # Dev integrations
-    aws_api_gateway_integration.v1_organizations_get_dev,
-    aws_api_gateway_integration_response.v1_organizations_get_dev,
-    aws_api_gateway_integration.v1_organizations_id_get_dev,
-    aws_api_gateway_integration_response.v1_organizations_id_get_dev,
-    aws_api_gateway_integration.v1_heartbeat_get_dev,
-    aws_api_gateway_integration_response.v1_heartbeat_get_dev,
-    aws_api_gateway_integration.v2_organizations_get_dev,
-    aws_api_gateway_integration_response.v2_organizations_get_dev,
-    aws_api_gateway_integration.v2_organizations_id_get_dev,
-    aws_api_gateway_integration_response.v2_organizations_id_get_dev,
-    aws_api_gateway_integration.v2_heartbeat_get_dev,
-    aws_api_gateway_integration_response.v2_heartbeat_get_dev,
-    aws_api_gateway_integration.organizations_get_dev,
-    aws_api_gateway_integration_response.organizations_get_dev,
-    aws_api_gateway_integration.organizations_id_get_dev,
-    aws_api_gateway_integration_response.organizations_id_get_dev,
-    aws_api_gateway_integration.root_get_dev,
-    aws_api_gateway_integration_response.root_get_dev,
-    aws_api_gateway_integration.proxy_dev,
-    aws_api_gateway_integration_response.proxy_dev
-  ]
+  # Temporarily remove explicit dependencies to break cycle
+  # Terraform will handle implicit dependencies through resource references
   
   # Enable caching for this stage
   cache_cluster_enabled = true
@@ -51,6 +30,10 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   tags = {
     environment = "ror-dev"
     purpose = "api-gateway-caching"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
