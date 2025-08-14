@@ -2,6 +2,10 @@
 # API GATEWAY CACHING ENDPOINT - DEVELOPMENT
 # =============================================================================
 
+# Data sources for access logging ARN construction
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 # API Gateway REST API with caching enabled - completely reset
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name = "ror-api"
@@ -25,6 +29,25 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   # Enable caching for this stage
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size
+  
+  # Access logging configuration for cache analytics
+  access_log_destination_arn = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/apigateway/ror-api-dev:*"
+  access_log_format = jsonencode({
+    requestId = "$context.requestId"
+    requestTime = "$context.requestTime"
+    httpMethod = "$context.httpMethod"
+    path = "$context.path"
+    status = "$context.status"
+    responseTime = "$context.responseTime"
+    cacheStatus = "$context.responseType"
+    integrationLatency = "$context.integrationLatency"
+    responseLength = "$context.responseLength"
+    sourceIp = "$context.identity.sourceIp"
+    userAgent = "$context.identity.userAgent"
+    queryString = "$context.requestQueryString"
+    errorMessage = "$context.error.message"
+    errorMessageString = "$context.error.messageString"
+  })
   
   tags = {
     environment = "ror-dev"

@@ -91,6 +91,17 @@ resource "aws_cloudwatch_log_group" "api-dev" {
   name = "/ecs/api-dev"
 }
 
+# CloudWatch Log Group for API Gateway Access Logs
+resource "aws_cloudwatch_log_group" "api_gateway_access_logs" {
+  name              = "/aws/apigateway/ror-api-dev"
+  retention_in_days = 31
+  
+  tags = {
+    environment = "ror-dev"
+    purpose = "api-gateway-cache-analytics"
+  }
+}
+
 resource "aws_ecs_task_definition" "api-dev" {
   family = "api-dev"
   execution_role_arn = data.aws_iam_role.ecs_tasks_execution_role.arn

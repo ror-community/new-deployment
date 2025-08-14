@@ -153,3 +153,7 @@ data "aws_wafv2_web_acl" "dev-v2" {
   name  = "waf-dev-v2"
   scope = "REGIONAL"
 }
+
+# Data sources for access logging ARN construction
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
