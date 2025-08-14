@@ -220,6 +220,11 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
   request_parameters = {
     "method.request.querystring.page" = false
     "method.request.querystring.query" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
   }
 }
 
@@ -233,6 +238,11 @@ resource "aws_api_gateway_method" "v2_organizations_get" {
   request_parameters = {
     "method.request.querystring.page" = false
     "method.request.querystring.query" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
   }
 }
 
@@ -274,6 +284,11 @@ resource "aws_api_gateway_method" "organizations_get" {
   request_parameters = {
     "method.request.querystring.page" = false
     "method.request.querystring.query" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
   }
 }
 
@@ -408,11 +423,16 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
     "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 
-  # Caching configuration
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query"]
+  # Caching configuration - include affiliation and filter for better cache differentiation
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
   cache_namespace     = "v1-organizations"
 }
 
@@ -429,11 +449,16 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
     "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 
-  # Caching configuration
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query"]
+  # Caching configuration - include affiliation and filter for better cache differentiation
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
   cache_namespace     = "v2-organizations"
 }
 
@@ -504,11 +529,16 @@ resource "aws_api_gateway_integration" "organizations_get" {
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
     "integration.request.header.Host" = "'api.dev.ror.org'"
   }
 
   # Caching configuration
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
   cache_namespace     = "organizations"
 }
 
