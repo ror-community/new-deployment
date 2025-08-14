@@ -17,61 +17,6 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
   }
 }
 
-resource "aws_api_gateway_deployment" "api_gateway" {
-  depends_on = [
-    # v1 endpoints
-    aws_api_gateway_integration.v1_organizations_get,
-    aws_api_gateway_method_response.v1_organizations_get,
-    aws_api_gateway_integration_response.v1_organizations_get,
-    aws_api_gateway_integration.v1_organizations_id_get,
-    aws_api_gateway_method_response.v1_organizations_id_get,
-    aws_api_gateway_integration_response.v1_organizations_id_get,
-    aws_api_gateway_integration.v1_heartbeat_get,
-    aws_api_gateway_method_response.v1_heartbeat_get,
-    aws_api_gateway_integration_response.v1_heartbeat_get,
-    
-    # v2 endpoints
-    aws_api_gateway_integration.v2_organizations_get,
-    aws_api_gateway_method_response.v2_organizations_get,
-    aws_api_gateway_integration_response.v2_organizations_get,
-    aws_api_gateway_integration.v2_organizations_id_get,
-    aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_integration_response.v2_organizations_id_get,
-    aws_api_gateway_integration.v2_heartbeat_get,
-    aws_api_gateway_method_response.v2_heartbeat_get,
-    aws_api_gateway_integration_response.v2_heartbeat_get,
-    
-    # No version endpoints
-    aws_api_gateway_integration.organizations_get,
-    aws_api_gateway_method_response.organizations_get,
-    aws_api_gateway_integration_response.organizations_get,
-    aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_integration_response.organizations_id_get,
-    
-    # Root path
-    aws_api_gateway_integration.root_get,
-    aws_api_gateway_method_response.root_get,
-    aws_api_gateway_integration_response.root_get,
-    
-    # Catch-all proxy
-    aws_api_gateway_integration.proxy,
-    aws_api_gateway_method_response.proxy,
-    aws_api_gateway_integration_response.proxy
-  ]
-
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  
-  variables = {
-    deployed_at = timestamp()
-    force_update = "true"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 # Data sources for access logging ARN construction
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
@@ -455,7 +400,7 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/v1/organizations"
+  uri                     = "http://\${stageVariables.backend_host}/v1/organizations"
 
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
@@ -481,7 +426,7 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/v2/organizations"
+  uri                     = "http://\${stageVariables.backend_host}/v2/organizations"
 
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
@@ -507,7 +452,7 @@ resource "aws_api_gateway_integration" "v1_organizations_id_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/v1/organizations/{id}"
+  uri                     = "http://\${stageVariables.backend_host}/v1/organizations/{id}"
 
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -527,7 +472,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_get" {
 
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "http://${stageVariables.backend_host}/v2/organizations/{id}"
+  uri                     = "http://\${stageVariables.backend_host}/v2/organizations/{id}"
 
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -547,7 +492,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/v1/heartbeat"
+  uri                     = "http://\${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -564,7 +509,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/v2/heartbeat"
+  uri                     = "http://\${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -581,7 +526,7 @@ resource "aws_api_gateway_integration" "organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/organizations"
+  uri                     = "http://\${stageVariables.backend_host}/organizations"
 
   request_parameters = {
     "integration.request.querystring.page" = "method.request.querystring.page"
@@ -607,7 +552,7 @@ resource "aws_api_gateway_integration" "organizations_id_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://${stageVariables.backend_host}/organizations/{id}"
+  uri                     = "http://\${stageVariables.backend_host}/organizations/{id}"
 
   request_parameters = {
     "integration.request.path.id" = "method.request.path.id"
@@ -627,7 +572,7 @@ resource "aws_api_gateway_integration" "proxy" {
 
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://${stageVariables.backend_host}/{proxy}"
+  uri                     = "http://\${stageVariables.backend_host}/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -652,7 +597,7 @@ resource "aws_api_gateway_integration_response" "root_get" {
   }
 
   response_templates = {
-    "application/json" = "{\"organizations\":\"https://${stageVariables.api_host}/v2/organizations\"}"
+    "application/json" = "{\"organizations\":\"https://\${stageVariables.api_host}/v2/organizations\"}"
   }
 
   depends_on = [

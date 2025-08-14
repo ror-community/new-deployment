@@ -203,5 +203,7 @@ resource "aws_wafv2_web_acl_association" "api_gateway_staging" {
   resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_staging.stage_name}"
   web_acl_arn  = data.aws_wafv2_web_acl.staging-v2.arn
   
-
+  depends_on = [
+    aws_api_gateway_stage.api_gateway_staging
+  ]
 } 
