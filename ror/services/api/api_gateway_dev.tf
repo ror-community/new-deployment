@@ -30,6 +30,12 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size
   
+  # Access logging configuration
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn
+    format = "$context.requestId $context.requestTime $context.httpMethod $context.resourcePath $context.status $context.responseTime $context.responseType $context.integrationLatency"
+  }
+  
   tags = {
     environment = "ror-dev"
     purpose = "api-gateway-caching"
