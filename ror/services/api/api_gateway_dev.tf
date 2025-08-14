@@ -30,24 +30,6 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"  # 0.5GB cache size
   
-  # Access logging configuration for cache analytics
-  access_log_destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn
-  access_log_format = jsonencode({
-    requestId = "$context.requestId"
-    requestTime = "$context.requestTime"
-    httpMethod = "$context.httpMethod"
-    path = "$context.path"
-    status = "$context.status"
-    responseTime = "$context.responseTime"
-    cacheStatus = "$context.responseType"
-    integrationLatency = "$context.integrationLatency"
-    responseLength = "$context.responseLength"
-    sourceIp = "$context.identity.sourceIp"
-    userAgent = "$context.identity.userAgent"
-    errorMessage = "$context.error.message"
-    errorMessageString = "$context.error.messageString"
-  })
-  
   depends_on = [
     aws_api_gateway_account.api_gateway_account
   ]
@@ -207,6 +189,26 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
     cache_data_encrypted   = false
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
+  }
+}
+
+# Access logging configuration for cache analytics
+resource "aws_api_gateway_method_settings" "access_logging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "*/*"  # Apply to all methods
+
+  depends_on = [
+    aws_api_gateway_method_settings.v2_heartbeat_no_cache,
+    aws_api_gateway_account.api_gateway_account
+  ]
+
+  settings {
+    logging_level                = "INFO"
+    data_trace_enabled          = true
+    metrics_enabled             = true
+    throttling_rate_limit       = 10000
+    throttling_burst_limit      = 5000
   }
 }
 
