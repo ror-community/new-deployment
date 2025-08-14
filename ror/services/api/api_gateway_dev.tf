@@ -31,7 +31,7 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   cache_cluster_size    = "0.5"  # 0.5GB cache size
   
   # Access logging configuration for cache analytics
-  access_log_destination_arn = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/apigateway/ror-api-dev:*"
+  access_log_destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn
   access_log_format = jsonencode({
     requestId = "$context.requestId"
     requestTime = "$context.requestTime"
@@ -47,6 +47,10 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
     errorMessage = "$context.error.message"
     errorMessageString = "$context.error.messageString"
   })
+  
+  depends_on = [
+    aws_api_gateway_account.api_gateway_account
+  ]
   
   tags = {
     environment = "ror-dev"
