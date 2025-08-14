@@ -2,10 +2,6 @@
 # API GATEWAY CACHING ENDPOINT - DEVELOPMENT
 # =============================================================================
 
-# Data sources for access logging ARN construction
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
-
 # API Gateway REST API with caching enabled - completely reset
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name = "ror-api"
@@ -44,7 +40,6 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
     responseLength = "$context.responseLength"
     sourceIp = "$context.identity.sourceIp"
     userAgent = "$context.identity.userAgent"
-    queryString = "$context.requestQueryString"
     errorMessage = "$context.error.message"
     errorMessageString = "$context.error.messageString"
   })
