@@ -1,5 +1,5 @@
 # =============================================================================
-# API GATEWAY STAGING-SPECIFIC CONFIGURATION
+# API GATEWAY STAGING STAGE
 # =============================================================================
 
 # API Gateway Stage (staging)
@@ -195,6 +195,7 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
 
   settings {
     metrics_enabled             = true
+    retention_in_days          = 30
     logging_level               = "INFO"
     data_trace_enabled         = true
     throttling_rate_limit       = 10000
