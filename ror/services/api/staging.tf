@@ -155,3 +155,52 @@ resource "aws_s3_bucket_policy" "public-staging-bucket-policy" {
     bucket_name = "public.staging.ror.org"
   })
 }
+
+# =============================================================================
+# API GATEWAY STAGING RESOURCES
+# =============================================================================
+
+# CloudWatch Log Group for API Gateway Access Logs - Staging
+resource "aws_cloudwatch_log_group" "api_gateway_access_logs_staging" {
+  name              = "/aws/apigateway/ror-api-staging"
+  retention_in_days = 30
+  
+  tags = {
+    environment = "ror-staging"
+    purpose = "api-gateway-access-logs"
+  }
+}
+
+# CloudWatch Log Resource Policy for API Gateway - Staging
+resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_staging" {
+  policy_name = "api-gateway-logs-policy-staging"
+  
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "${aws_cloudwatch_log_group.api_gateway_access_logs_staging.arn}:*"
+      }
+    ]
+  })
+}
+
+# WAF Association for API Gateway staging service
+resource "aws_wafv2_web_acl_association" "api_gateway_staging" {
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_staging.stage_name}"
+  web_acl_arn  = data.aws_wafv2_web_acl.staging-v2.arn
+  
+  depends_on = [
+    aws_api_gateway_stage.api_gateway_staging
+  ]
+}

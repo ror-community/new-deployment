@@ -599,10 +599,6 @@ resource "aws_api_gateway_integration_response" "root_get" {
   response_templates = {
     "application/json" = "{\"organizations\":\"https://$${stageVariables.api_host}/v2/organizations\"}"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.root_get
-  ]
 }
 
 # Integration response for v1/organizations
@@ -617,10 +613,6 @@ resource "aws_api_gateway_integration_response" "v1_organizations_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.v1_organizations_get
-  ]
 }
 
 # Integration response for v2/organizations
@@ -635,10 +627,6 @@ resource "aws_api_gateway_integration_response" "v2_organizations_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.v2_organizations_get
-  ]
 }
 
 # Integration response for v1/organizations/{id}
@@ -653,10 +641,6 @@ resource "aws_api_gateway_integration_response" "v1_organizations_id_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.v1_organizations_id_get
-  ]
 }
 
 # Integration response for v2/organizations/{id}
@@ -671,10 +655,6 @@ resource "aws_api_gateway_integration_response" "v2_organizations_id_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.v2_organizations_id_get
-  ]
 }
 
 # Integration response for v1/heartbeat
@@ -689,10 +669,6 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.v1_heartbeat_get
-  ]
 }
 
 # Integration response for v2/heartbeat
@@ -707,10 +683,6 @@ resource "aws_api_gateway_integration_response" "v2_heartbeat_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.v2_heartbeat_get
-  ]
 }
 
 # Integration response for organizations (no version)
@@ -725,10 +697,6 @@ resource "aws_api_gateway_integration_response" "organizations_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.organizations_get
-  ]
 }
 
 # Integration response for organizations/{id} (no version)
@@ -743,10 +711,6 @@ resource "aws_api_gateway_integration_response" "organizations_id_get" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.organizations_id_get
-  ]
 }
 
 # Integration response for catch-all proxy
@@ -761,10 +725,6 @@ resource "aws_api_gateway_integration_response" "proxy" {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Client-Id'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
   }
-
-  depends_on = [
-    aws_api_gateway_integration.proxy
-  ]
 }
 
 # =============================================================================
