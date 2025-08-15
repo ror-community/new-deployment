@@ -28,8 +28,8 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
       path              = "$context.path"
       requestUri        = "$context.requestUri"
       resourcePath      = "$context.resourcePath"
-      status            = $context.status
-      responseLatency   = $context.responseLatency
+      status            = "$context.status"
+      responseLatency   = "$context.responseLatency"
       integrationLatency = "$context.integrationLatency"
       cacheStatus       = "$context.cacheStatus"
       stage             = "$context.stage"
