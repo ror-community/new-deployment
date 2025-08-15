@@ -480,7 +480,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_get" {
   }
 
   # Caching configuration
-  cache_key_parameters = ["method.request.path.id"]
+  cache_key_parameters = ["method.request.path"]
   cache_namespace     = "v2-organizations-id"
 }
 
