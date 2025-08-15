@@ -44,6 +44,11 @@ resource "aws_api_gateway_method_settings" "v1_organizations_cache_prod" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "Succeed"
+    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -63,6 +68,11 @@ resource "aws_api_gateway_method_settings" "v2_organizations_cache_prod" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "Succeed"
+    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -82,6 +92,11 @@ resource "aws_api_gateway_method_settings" "organizations_cache_prod" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "Succeed"
+    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -101,6 +116,11 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "Succeed"
+    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -120,6 +140,11 @@ resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_prod" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "Succeed"
+    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -139,6 +164,11 @@ resource "aws_api_gateway_method_settings" "organizations_id_cache_prod" {
     caching_enabled        = true
     cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
     cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "Succeed"
+    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
