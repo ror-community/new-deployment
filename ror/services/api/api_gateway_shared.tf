@@ -403,6 +403,7 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
   uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
 
   request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
     "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
@@ -429,6 +430,7 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
   uri                     = "http://$${stageVariables.backend_host}/v2/organizations"
 
   request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
     "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
@@ -495,6 +497,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
   uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -512,6 +515,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
   uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -529,6 +533,7 @@ resource "aws_api_gateway_integration" "organizations_get" {
   uri                     = "http://$${stageVariables.backend_host}/organizations"
 
   request_parameters = {
+    "integration.request.path.id" = "method.request.path.id"
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
     "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
