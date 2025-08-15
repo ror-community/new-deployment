@@ -153,3 +153,52 @@ resource "aws_s3_bucket_policy" "public-prod-bucket-policy" {
     bucket_name = "public.ror.org"
   })
 }
+
+# =============================================================================
+# API GATEWAY PROD RESOURCES
+# =============================================================================
+
+# CloudWatch Log Group for API Gateway Access Logs - Production
+resource "aws_cloudwatch_log_group" "api_gateway_access_logs_prod" {
+  name              = "/aws/apigateway/ror-api-prod"
+  retention_in_days = 30
+  
+  tags = {
+    environment = "ror-prod"
+    purpose = "api-gateway-access-logs"
+  }
+}
+
+# CloudWatch Log Resource Policy for API Gateway - Production
+resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_prod" {
+  policy_name = "api-gateway-logs-policy-prod"
+  
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "${aws_cloudwatch_log_group.api_gateway_access_logs_prod.arn}:*"
+      }
+    ]
+  })
+}
+
+# WAF Association for API Gateway production service
+resource "aws_wafv2_web_acl_association" "api_gateway_prod" {
+  resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_prod.stage_name}"
+  web_acl_arn  = data.aws_wafv2_web_acl.prod-v2.arn
+  
+  depends_on = [
+    aws_api_gateway_stage.api_gateway_prod
+  ]
+}

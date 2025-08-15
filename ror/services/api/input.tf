@@ -158,3 +158,8 @@ data "aws_wafv2_web_acl" "staging-v2" {
   name  = "waf-staging-v2"
   scope = "REGIONAL"
 }
+
+data "aws_wafv2_web_acl" "prod-v2" {
+  name  = "waf-prod-v2"
+  scope = "REGIONAL"
+}
