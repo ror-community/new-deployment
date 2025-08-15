@@ -132,7 +132,7 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache" {
 resource "aws_api_gateway_method_settings" "v2_organizations_id_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "v2/organizations/*/GET"
+  method_path = "v2/organizations/{id}/GET"
 
   settings {
     caching_enabled        = true
