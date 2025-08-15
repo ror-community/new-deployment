@@ -106,7 +106,7 @@ resource "aws_api_gateway_method_settings" "organizations_cache_prod" {
 resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "v1/organizations/*/GET"
+  method_path = "v1/organizations/{id}/GET"
 
   depends_on = [
     aws_api_gateway_method_settings.organizations_cache_prod
@@ -130,7 +130,7 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
 resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "v2/organizations/*/GET"
+  method_path = "v2/organizations/{id}/GET"
 
   depends_on = [
     aws_api_gateway_method_settings.v1_organizations_id_cache_prod
@@ -154,7 +154,7 @@ resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_prod" {
 resource "aws_api_gateway_method_settings" "organizations_id_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "organizations/*/GET"
+  method_path = "organizations/{id}/GET"
 
   depends_on = [
     aws_api_gateway_method_settings.v2_organizations_id_cache_prod
@@ -229,21 +229,5 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_prod" {
     data_trace_enabled         = false
     throttling_rate_limit       = 10000
     throttling_burst_limit      = 5000
-  }
-}
-
-# API Gateway Usage Plan with caching - PROD
-resource "aws_api_gateway_usage_plan" "api_gateway_prod" {
-  name = "api-gateway-usage-plan-prod"
-  description = "Usage plan for ROR API Gateway with caching - prod stage"
-  
-  api_stages {
-    api_id = aws_api_gateway_rest_api.api_gateway.id
-    stage  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  }
-  
-  tags = {
-    environment = "ror-prod"
-    purpose = "api-gateway-caching"
   }
 }
