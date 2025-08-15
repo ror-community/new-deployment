@@ -21,7 +21,23 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   # Access logging configuration
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn
-    format = "$context.requestId $context.requestTime $context.httpMethod $context.path $context.resourcePath $context.status $context.responseLatency $context.integrationLatency"
+    format = jsonencode({
+      requestId         = "$context.requestId"
+      requestTime       = "$context.requestTime"
+      httpMethod        = "$context.httpMethod"
+      path              = "$context.path"
+      requestUri        = "$context.requestUri"
+      resourcePath      = "$context.resourcePath"
+      status            = $context.status
+      responseLatency   = $context.responseLatency
+      integrationLatency = "$context.integrationLatency"
+      cacheStatus       = "$context.cacheStatus"
+      stage             = "$context.stage"
+      sourceIp          = "$context.identity.sourceIp"
+      userAgent         = "$context.identity.userAgent"
+      error             = "$context.error.message"
+      responseLength    = "$context.responseLength"
+    })
   }
   
   tags = {
@@ -192,8 +208,8 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging" {
 
   settings {
     metrics_enabled             = true
-    logging_level               = "INFO"
-    data_trace_enabled         = true
+    logging_level               = "ERROR"
+    data_trace_enabled         = false
     throttling_rate_limit       = 10000
     throttling_burst_limit      = 5000
   }
