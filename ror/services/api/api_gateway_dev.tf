@@ -69,10 +69,10 @@ resource "aws_api_gateway_method_settings" "v1_organizations_cache" {
 }
 
 # Enable caching for v2/organizations endpoint
-resource "aws_api_gateway_method_settings" "v2_organizations_cache" {
+resource "aws_api_gateway_method_settings" "v2_organizations_proxy_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "v2/organizations/GET"
+  method_path = "v2/organizations/*/ANY"
 
   settings {
     caching_enabled        = true
@@ -128,25 +128,7 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache" {
   }
 }
 
-# Enable caching for v2/organizations/{id} endpoint
-resource "aws_api_gateway_method_settings" "v2_organizations_id_cache" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "v2/organizations/*/GET"
 
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
 
 # Enable caching for organizations/{id} endpoint (no version)
 resource "aws_api_gateway_method_settings" "organizations_id_cache" {

@@ -60,11 +60,11 @@ resource "aws_api_gateway_resource" "v1_organizations_id" {
   path_part   = "{id}"
 }
 
-# v2/organizations/{id} resource
-resource "aws_api_gateway_resource" "v2_organizations_id" {
+# v2/organizations/{proxy+} resource for both list and ID requests
+resource "aws_api_gateway_resource" "v2_organizations_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_resource.v2_organizations.id
-  path_part   = "{id}"
+  path_part   = "{proxy+}"
 }
 
 # v1/heartbeat resource
@@ -132,24 +132,6 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
   }
 }
 
-# v2/organizations GET method
-resource "aws_api_gateway_method" "v2_organizations_get" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v2_organizations.id
-  http_method   = "GET"
-  authorization = "NONE"
-
-  request_parameters = {
-    "method.request.querystring.page" = false
-    "method.request.querystring.query" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-  }
-}
-
 # v1/organizations/{id} GET method
 resource "aws_api_gateway_method" "v1_organizations_id_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
@@ -163,14 +145,22 @@ resource "aws_api_gateway_method" "v1_organizations_id_get" {
 }
 
 # GET method for v2/organizations/{id}
-resource "aws_api_gateway_method" "v2_organizations_id_get" {
+# v2/organizations/{proxy+} ANY method for both list and ID requests  
+resource "aws_api_gateway_method" "v2_organizations_proxy" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v2_organizations_id.id
-  http_method   = "GET"
+  resource_id   = aws_api_gateway_resource.v2_organizations_proxy.id
+  http_method   = "ANY"
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.path.id" = true
+    "method.request.path.proxy" = true
+    "method.request.querystring.page" = false
+    "method.request.querystring.query" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
   }
 }
 
@@ -263,19 +253,7 @@ resource "aws_api_gateway_method_response" "v1_organizations_get" {
   }
 }
 
-# Method response for v2/organizations
-resource "aws_api_gateway_method_response" "v2_organizations_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations.id
-  http_method = aws_api_gateway_method.v2_organizations_get.http_method
-  status_code = "200"
 
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
 
 # Method response for v1/organizations/{id}
 resource "aws_api_gateway_method_response" "v1_organizations_id_get" {
@@ -292,10 +270,10 @@ resource "aws_api_gateway_method_response" "v1_organizations_id_get" {
 }
 
 # Method response for v2/organizations/{id}
-resource "aws_api_gateway_method_response" "v2_organizations_id_get" {
+resource "aws_api_gateway_method_response" "v2_organizations_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
+  resource_id = aws_api_gateway_resource.v2_organizations_proxy.id
+  http_method = aws_api_gateway_method.v2_organizations_proxy.http_method
   status_code = "200"
 
   response_parameters = {
@@ -403,7 +381,6 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
   uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
 
   request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
     "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
@@ -419,32 +396,7 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
   cache_namespace     = "v1-organizations"
 }
 
-# Integration for v2/organizations
-resource "aws_api_gateway_integration" "v2_organizations_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations.id
-  http_method = aws_api_gateway_method.v2_organizations_get.http_method
 
-  integration_http_method = "GET"
-  type                    = "HTTP"
-  uri                     = "http://$${stageVariables.backend_host}/v2/organizations"
-
-  request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
-    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.header.Host" = "stageVariables.api_host"
-  }
-
-  # Caching configuration - include affiliation and filter for better cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
-  cache_namespace     = "v2-organizations"
-}
 
 # Integration for v1/organizations/{id}
 resource "aws_api_gateway_integration" "v1_organizations_id_get" {
@@ -467,23 +419,23 @@ resource "aws_api_gateway_integration" "v1_organizations_id_get" {
 }
 
 # Integration for v2/organizations/{id}
-resource "aws_api_gateway_integration" "v2_organizations_id_get" {
+resource "aws_api_gateway_integration" "v2_organizations_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
+  resource_id = aws_api_gateway_resource.v2_organizations_proxy.id
+  http_method = aws_api_gateway_method.v2_organizations_proxy.http_method
 
-  type                    = "HTTP"
-  integration_http_method = "GET"
-  uri                     = "http://$${stageVariables.backend_host}/v2/organizations/{id}"
+  type                    = "HTTP_PROXY"
+  integration_http_method = "ANY"
+  uri                     = "http://$${stageVariables.backend_host}/v2/organizations{proxy}"
 
   request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
+    "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration
-  cache_key_parameters = ["method.request.path.id"]
-  cache_namespace     = "v2-organizations-id"
+  # Caching configuration - cache based on the proxy path and query parameters
+  cache_key_parameters = ["method.request.path.proxy"]
+  cache_namespace     = "v2-organizations-proxy"
 }
 
 # Integration for v1/heartbeat
@@ -497,7 +449,6 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
   uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -515,7 +466,6 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
   uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -533,7 +483,6 @@ resource "aws_api_gateway_integration" "organizations_get" {
   uri                     = "http://$${stageVariables.backend_host}/organizations"
 
   request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
     "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
@@ -620,20 +569,6 @@ resource "aws_api_gateway_integration_response" "v1_organizations_get" {
   }
 }
 
-# Integration response for v2/organizations
-resource "aws_api_gateway_integration_response" "v2_organizations_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations.id
-  http_method = aws_api_gateway_method.v2_organizations_get.http_method
-  status_code = aws_api_gateway_method_response.v2_organizations_get.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
-  }
-}
-
 # Integration response for v1/organizations/{id}
 resource "aws_api_gateway_integration_response" "v1_organizations_id_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -649,11 +584,11 @@ resource "aws_api_gateway_integration_response" "v1_organizations_id_get" {
 }
 
 # Integration response for v2/organizations/{id}
-resource "aws_api_gateway_integration_response" "v2_organizations_id_get" {
+resource "aws_api_gateway_integration_response" "v2_organizations_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
-  status_code = aws_api_gateway_method_response.v2_organizations_id_get.status_code
+  resource_id = aws_api_gateway_resource.v2_organizations_proxy.id
+  http_method = aws_api_gateway_method.v2_organizations_proxy.http_method
+  status_code = aws_api_gateway_method_response.v2_organizations_proxy.status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
@@ -751,12 +686,9 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.v1_heartbeat_get,
     
     # v2 endpoints
-    aws_api_gateway_integration.v2_organizations_get,
-    aws_api_gateway_method_response.v2_organizations_get,
-    aws_api_gateway_integration_response.v2_organizations_get,
-    aws_api_gateway_integration.v2_organizations_id_get,
-    aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_integration_response.v2_organizations_id_get,
+    aws_api_gateway_integration.v2_organizations_proxy,
+    aws_api_gateway_method_response.v2_organizations_proxy,
+    aws_api_gateway_integration_response.v2_organizations_proxy,
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_method_response.v2_heartbeat_get,
     aws_api_gateway_integration_response.v2_heartbeat_get,
