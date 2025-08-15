@@ -1,5 +1,5 @@
 # =============================================================================
-# API GATEWAY STAGING-SPECIFIC CONFIGURATION
+# API GATEWAY STAGING STAGE
 # =============================================================================
 
 # API Gateway Stage (staging)
