@@ -1,12 +1,12 @@
 # =============================================================================
-# API GATEWAY DEV STAGE
+# API GATEWAY STAGING-SPECIFIC CONFIGURATION
 # =============================================================================
 
-# API Gateway Stage (method-level caching only)
-resource "aws_api_gateway_stage" "api_gateway_dev" {
+# API Gateway Stage (staging)
+resource "aws_api_gateway_stage" "api_gateway_staging" {
   deployment_id = aws_api_gateway_deployment.api_gateway.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  stage_name    = "dev"
+  stage_name    = "staging"
   
   # Enable caching for this stage
   cache_cluster_enabled = true
@@ -14,30 +14,30 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
   
   # Stage variables for backend routing
   variables = {
-    backend_host = data.aws_lb.alb-dev.dns_name
-    api_host = "api.dev.ror.org"
+    backend_host = data.aws_lb.alb-staging.dns_name
+    api_host = "api.staging.ror.org"
   }
   
   # Access logging configuration
   access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn
+    destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs_staging.arn
     format = "$context.requestId $context.requestTime $context.httpMethod $context.path $context.resourcePath $context.status $context.responseLatency $context.integrationLatency"
   }
   
   tags = {
-    environment = "ror-dev"
+    environment = "ror-staging"
     purpose = "api-gateway-caching"
   }
 }
 
 # =============================================================================
-# METHOD SETTINGS FOR CACHING
+# METHOD SETTINGS FOR CACHING - STAGING STAGE
 # =============================================================================
 
 # Enable caching for v1/organizations endpoint
-resource "aws_api_gateway_method_settings" "v1_organizations_cache" {
+resource "aws_api_gateway_method_settings" "v1_organizations_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v1/organizations/GET"
 
   settings {
@@ -50,9 +50,9 @@ resource "aws_api_gateway_method_settings" "v1_organizations_cache" {
 }
 
 # Enable caching for v2/organizations endpoint
-resource "aws_api_gateway_method_settings" "v2_organizations_cache" {
+resource "aws_api_gateway_method_settings" "v2_organizations_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v2/organizations/GET"
 
   settings {
@@ -65,9 +65,9 @@ resource "aws_api_gateway_method_settings" "v2_organizations_cache" {
 }
 
 # Enable caching for organizations endpoint (no version)
-resource "aws_api_gateway_method_settings" "organizations_cache" {
+resource "aws_api_gateway_method_settings" "organizations_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "organizations/GET"
 
   settings {
@@ -80,9 +80,9 @@ resource "aws_api_gateway_method_settings" "organizations_cache" {
 }
 
 # Enable caching for v1/organizations/{id} endpoint
-resource "aws_api_gateway_method_settings" "v1_organizations_id_cache" {
+resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v1/organizations/*/GET"
 
   settings {
@@ -95,9 +95,9 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache" {
 }
 
 # Enable caching for v2/organizations/{id} endpoint
-resource "aws_api_gateway_method_settings" "v2_organizations_id_cache" {
+resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v2/organizations/*/GET"
 
   settings {
@@ -110,9 +110,9 @@ resource "aws_api_gateway_method_settings" "v2_organizations_id_cache" {
 }
 
 # Enable caching for organizations/{id} endpoint (no version)
-resource "aws_api_gateway_method_settings" "organizations_id_cache" {
+resource "aws_api_gateway_method_settings" "organizations_id_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "organizations/*/GET"
 
   settings {
@@ -125,9 +125,9 @@ resource "aws_api_gateway_method_settings" "organizations_id_cache" {
 }
 
 # Disable caching for v1/heartbeat endpoint
-resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache" {
+resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v1/heartbeat/GET"
 
   settings {
@@ -140,9 +140,9 @@ resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache" {
 }
 
 # Disable caching for v2/heartbeat endpoint
-resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
+resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "v2/heartbeat/GET"
 
   settings {
@@ -155,16 +155,32 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache" {
 }
 
 # Enable CloudWatch metrics and execution logging for all methods
-resource "aws_api_gateway_method_settings" "metrics_and_logging" {
+resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
   method_path = "*/*"  # Apply to all methods
 
   settings {
-    metrics_enabled             = false
+    metrics_enabled             = true
     logging_level               = "INFO"
-    data_trace_enabled         = false
+    data_trace_enabled         = true
     throttling_rate_limit       = 10000
     throttling_burst_limit      = 5000
+  }
+}
+
+# API Gateway Usage Plan with caching - STAGING
+resource "aws_api_gateway_usage_plan" "api_gateway_staging" {
+  name = "api-gateway-usage-plan-staging"
+  description = "Usage plan for ROR API Gateway with caching - staging stage"
+  
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api_gateway.id
+    stage  = aws_api_gateway_stage.api_gateway_staging.stage_name
+  }
+  
+  tags = {
+    environment = "ror-staging"
+    purpose = "api-gateway-caching"
   }
 }
