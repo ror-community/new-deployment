@@ -232,6 +232,30 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
   }
 }
 
+# Enable caching for catch-all proxy endpoint
+resource "aws_api_gateway_method_settings" "proxy_cache_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
+  method_path = "{proxy+}/ANY"
+
+  depends_on = [
+    aws_api_gateway_method_settings.metrics_and_logging_staging
+  ]
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
 # API Gateway Usage Plan with caching - STAGING
 resource "aws_api_gateway_usage_plan" "api_gateway_staging" {
   name = "api-gateway-usage-plan-staging"

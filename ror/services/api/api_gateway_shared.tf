@@ -578,6 +578,10 @@ resource "aws_api_gateway_integration" "proxy" {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
+
+  # Add caching for proxy requests
+  cache_key_parameters = ["method.request.path.proxy"]
+  cache_namespace     = "proxy"
 }
 
 # =============================================================================
