@@ -196,6 +196,16 @@ resource "aws_api_gateway_method" "organizations_get" {
   resource_id   = aws_api_gateway_resource.organizations.id
   http_method   = "GET"
   authorization = "NONE"
+
+  request_parameters = {
+    "method.request.querystring.page" = false
+    "method.request.querystring.query" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
+  }
 }
 
 # organizations/{id} GET method (no version)
@@ -516,14 +526,21 @@ resource "aws_api_gateway_integration" "organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://$${stageVariables.backend_host}/organizations{proxy}"
+  uri                     = "http://$${stageVariables.backend_host}/organizations"
 
   request_parameters = {
+    "integration.request.querystring.page" = "method.request.querystring.page"
+    "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - cache based on full request path
-  cache_key_parameters = []
+  # Caching configuration
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
   cache_namespace     = "organizations"
 }
 
