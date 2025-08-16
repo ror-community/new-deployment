@@ -515,8 +515,8 @@ resource "aws_api_gateway_integration" "organizations_get" {
   http_method = aws_api_gateway_method.organizations_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/organizations"
+  type                    = "HTTP"
+  uri                     = "http://$${stageVariables.backend_host}/organizations{proxy}"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
