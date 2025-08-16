@@ -480,7 +480,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_get" {
   }
 
   # Caching configuration
-  cache_key_parameters = ["method.request.path.id","integration.request.path.id"]
+  cache_key_parameters = ["method.request.path.id"]
   cache_namespace     = "v2-organizations-id"
 }
 
@@ -526,9 +526,10 @@ resource "aws_api_gateway_integration" "organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://$${stageVariables.backend_host}/organizations"
+  uri                     = "http://$${stageVariables.backend_host}/organizations{proxy}"
 
   request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.querystring.page" = "method.request.querystring.page"
     "integration.request.querystring.query" = "method.request.querystring.query"
     "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
