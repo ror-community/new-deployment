@@ -20,12 +20,6 @@ data "aws_acm_certificate" "ror" {
   most_recent = true
 }
 
-data "aws_acm_certificate" "ror-staging" {
-  domain = "*.staging.ror.org"
-  statuses = ["ISSUED"]
-  most_recent = true
-}
-
 data "aws_ecs_cluster" "default" {
   cluster_name = "default"
 }
