@@ -421,8 +421,8 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - include affiliation and filter for better cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
+  # Caching configuration - include all query parameters for proper cache differentiation
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
   cache_namespace     = "v1-organizations"
 }
 
@@ -449,8 +449,8 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - include affiliation and filter for better cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
+  # Caching configuration - include all query parameters for proper cache differentiation
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
   cache_namespace     = "v2-organizations"
 }
 
@@ -551,8 +551,8 @@ resource "aws_api_gateway_integration" "organizations_get" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
+  # Caching configuration - include all query parameters for proper cache differentiation
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
   cache_namespace     = "organizations"
 }
 
