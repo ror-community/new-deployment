@@ -406,18 +406,9 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations#set($hasParams = false)#if($input.params('page'))#if(!$hasParams)?#set($hasParams = true)#else&#end#page=$util.urlEncode($input.params('page'))#end#if($input.params('query'))#if(!$hasParams)?#set($hasParams = true)#else&#end#query=$util.urlEncode($input.params('query'))#end#if($input.params('affiliation'))#if(!$hasParams)?#set($hasParams = true)#else&#end#affiliation=$util.urlEncode($input.params('affiliation'))#end#if($input.params('filter'))#if(!$hasParams)?#set($hasParams = true)#else&#end#filter=$util.urlEncode($input.params('filter'))#end#if($input.params('format'))#if(!$hasParams)?#set($hasParams = true)#else&#end#format=$util.urlEncode($input.params('format'))#end#if($input.params('query.name'))#if(!$hasParams)?#set($hasParams = true)#else&#end#query.name=$util.urlEncode($input.params('query.name'))#end#if($input.params('query.names'))#if(!$hasParams)?#set($hasParams = true)#else&#end#query.names=$util.urlEncode($input.params('query.names'))#end#if($input.params('query.advanced'))#if(!$hasParams)?#set($hasParams = true)#else&#end#query.advanced=$util.urlEncode($input.params('query.advanced'))#end#if($input.params('all_status'))#if(!$hasParams)?#set($hasParams = true)#else&#end#all_status=#if($input.params('all_status') == '')true#else$util.urlEncode($input.params('all_status'))#end#end"
 
   request_parameters = {
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
-    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
