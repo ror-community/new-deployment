@@ -68,7 +68,7 @@ resource "aws_lb_target_group" "api-dev" {
 
 
 resource "aws_lb_listener_rule" "redirect-api-dev" {
-  listener_arn = data.aws_lb_listener.alb-http.arn
+  listener_arn = data.aws_lb_listener.alb-http-dev.arn
 
   action {
     type = "redirect"
