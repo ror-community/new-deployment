@@ -509,20 +509,96 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
   http_method = aws_api_gateway_method.v2_organizations_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v2/organizations"
 
   request_parameters = {
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
-    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
     "integration.request.header.Host" = "stageVariables.api_host"
+  }
+
+  # Handle all_status parameter transformation using request template
+  request_templates = {
+    "application/json" = <<EOF
+#set($params = "")
+#set($hasParams = false)
+#if($input.params('page'))
+#if(!$hasParams)
+#set($params = "$params?page=$util.urlEncode($input.params('page'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page=$util.urlEncode($input.params('page'))")
+#end
+#end
+#if($input.params('query'))
+#if(!$hasParams)
+#set($params = "$params?query=$util.urlEncode($input.params('query'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query=$util.urlEncode($input.params('query'))")
+#end
+#end
+#if($input.params('affiliation'))
+#if(!$hasParams)
+#set($params = "$params?affiliation=$util.urlEncode($input.params('affiliation'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&affiliation=$util.urlEncode($input.params('affiliation'))")
+#end
+#end
+#if($input.params('filter'))
+#if(!$hasParams)
+#set($params = "$params?filter=$util.urlEncode($input.params('filter'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&filter=$util.urlEncode($input.params('filter'))")
+#end
+#end
+#if($input.params('format'))
+#if(!$hasParams)
+#set($params = "$params?format=$util.urlEncode($input.params('format'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&format=$util.urlEncode($input.params('format'))")
+#end
+#end
+#if($input.params('query.name'))
+#if(!$hasParams)
+#set($params = "$params?query.name=$util.urlEncode($input.params('query.name'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.name=$util.urlEncode($input.params('query.name'))")
+#end
+#end
+#if($input.params('query.names'))
+#if(!$hasParams)
+#set($params = "$params?query.names=$util.urlEncode($input.params('query.names'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.names=$util.urlEncode($input.params('query.names'))")
+#end
+#end
+#if($input.params('query.advanced'))
+#if(!$hasParams)
+#set($params = "$params?query.advanced=$util.urlEncode($input.params('query.advanced'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.advanced=$util.urlEncode($input.params('query.advanced'))")
+#end
+#end
+#if($input.params('all_status'))
+#set($allStatusValue = $input.params('all_status'))
+#if($allStatusValue == "")
+#set($allStatusValue = "true")
+#end
+#if(!$hasParams)
+#set($params = "$params?all_status=$util.urlEncode($allStatusValue)")
+#set($hasParams = true)
+#else
+#set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
+#end
+#end
+#set($context.requestOverride.path.resourcePath = "/v2/organizations$params")
+EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
@@ -611,20 +687,96 @@ resource "aws_api_gateway_integration" "organizations_get" {
   http_method = aws_api_gateway_method.organizations_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/organizations"
 
   request_parameters = {
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
-    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
     "integration.request.header.Host" = "stageVariables.api_host"
+  }
+
+  # Handle all_status parameter transformation using request template
+  request_templates = {
+    "application/json" = <<EOF
+#set($params = "")
+#set($hasParams = false)
+#if($input.params('page'))
+#if(!$hasParams)
+#set($params = "$params?page=$util.urlEncode($input.params('page'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page=$util.urlEncode($input.params('page'))")
+#end
+#end
+#if($input.params('query'))
+#if(!$hasParams)
+#set($params = "$params?query=$util.urlEncode($input.params('query'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query=$util.urlEncode($input.params('query'))")
+#end
+#end
+#if($input.params('affiliation'))
+#if(!$hasParams)
+#set($params = "$params?affiliation=$util.urlEncode($input.params('affiliation'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&affiliation=$util.urlEncode($input.params('affiliation'))")
+#end
+#end
+#if($input.params('filter'))
+#if(!$hasParams)
+#set($params = "$params?filter=$util.urlEncode($input.params('filter'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&filter=$util.urlEncode($input.params('filter'))")
+#end
+#end
+#if($input.params('format'))
+#if(!$hasParams)
+#set($params = "$params?format=$util.urlEncode($input.params('format'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&format=$util.urlEncode($input.params('format'))")
+#end
+#end
+#if($input.params('query.name'))
+#if(!$hasParams)
+#set($params = "$params?query.name=$util.urlEncode($input.params('query.name'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.name=$util.urlEncode($input.params('query.name'))")
+#end
+#end
+#if($input.params('query.names'))
+#if(!$hasParams)
+#set($params = "$params?query.names=$util.urlEncode($input.params('query.names'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.names=$util.urlEncode($input.params('query.names'))")
+#end
+#end
+#if($input.params('query.advanced'))
+#if(!$hasParams)
+#set($params = "$params?query.advanced=$util.urlEncode($input.params('query.advanced'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.advanced=$util.urlEncode($input.params('query.advanced'))")
+#end
+#end
+#if($input.params('all_status'))
+#set($allStatusValue = $input.params('all_status'))
+#if($allStatusValue == "")
+#set($allStatusValue = "true")
+#end
+#if(!$hasParams)
+#set($params = "$params?all_status=$util.urlEncode($allStatusValue)")
+#set($hasParams = true)
+#else
+#set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
+#end
+#end
+#set($context.requestOverride.path.resourcePath = "/organizations$params")
+EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
