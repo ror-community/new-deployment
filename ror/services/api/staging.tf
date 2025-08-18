@@ -96,17 +96,25 @@ resource "aws_ecs_task_definition" "api-staging" {
 resource "aws_route53_record" "api-staging" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "api.staging.ror.org"
-    type = "CNAME"
-    ttl = var.ttl
-    records = [data.aws_lb.alb-staging.dns_name]
+    type = "A"
+    
+    alias {
+        name = aws_api_gateway_domain_name.api_gateway_staging.regional_domain_name
+        zone_id = aws_api_gateway_domain_name.api_gateway_staging.regional_zone_id
+        evaluate_target_health = false
+    }
 }
 
 resource "aws_route53_record" "split-api-staging" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name = "api.staging.ror.org"
-  type = "CNAME"
-  ttl = var.ttl
-  records = [data.aws_lb.alb-staging.dns_name]
+  type = "A"
+  
+  alias {
+    name = aws_api_gateway_domain_name.api_gateway_staging.regional_domain_name
+    zone_id = aws_api_gateway_domain_name.api_gateway_staging.regional_zone_id
+    evaluate_target_health = false
+  }
 }
 
 resource "aws_service_discovery_service" "api-staging" {
@@ -193,6 +201,32 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_staging" {
       }
     ]
   })
+}
+
+# =============================================================================
+# API GATEWAY STAGING DOMAIN & MAPPING
+# =============================================================================
+
+# API Gateway Custom Domain Name for staging
+resource "aws_api_gateway_domain_name" "api_gateway_staging" {
+  domain_name = "api.staging.ror.org"
+  
+  regional_certificate_arn = data.aws_acm_certificate.ror-staging.arn
+  
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+# Base path mapping for API Gateway staging custom domain
+resource "aws_api_gateway_base_path_mapping" "api_gateway_staging" {
+  api_id      = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
+  domain_name = aws_api_gateway_domain_name.api_gateway_staging.domain_name
+  
+  depends_on = [
+    aws_api_gateway_stage.api_gateway_staging
+  ]
 }
 
 # WAF Association for API Gateway staging service
