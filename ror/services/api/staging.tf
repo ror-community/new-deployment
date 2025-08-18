@@ -211,7 +211,7 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_staging" {
 resource "aws_api_gateway_domain_name" "api_gateway_staging" {
   domain_name = "api.staging.ror.org"
   
-  regional_certificate_arn = data.aws_acm_certificate.ror.arn
+  regional_certificate_arn = data.aws_acm_certificate.ror-staging.arn
   
   endpoint_configuration {
     types = ["REGIONAL"]
