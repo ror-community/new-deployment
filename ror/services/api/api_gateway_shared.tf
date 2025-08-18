@@ -416,8 +416,8 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
     "integration.request.querystring.format" = "method.request.querystring.format"
     "integration.request.querystring.query.name" = "method.request.querystring.query.name"
     "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
     "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status != null ? (method.request.querystring.all_status == '' ? 'true' : method.request.querystring.all_status) : null"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -444,8 +444,8 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
     "integration.request.querystring.format" = "method.request.querystring.format"
     "integration.request.querystring.query.name" = "method.request.querystring.query.name"
     "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
     "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status != null ? (method.request.querystring.all_status == '' ? 'true' : method.request.querystring.all_status) : null"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -546,8 +546,8 @@ resource "aws_api_gateway_integration" "organizations_get" {
     "integration.request.querystring.format" = "method.request.querystring.format"
     "integration.request.querystring.query.name" = "method.request.querystring.query.name"
     "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
     "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status != null ? (method.request.querystring.all_status == '' ? 'true' : method.request.querystring.all_status) : null"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
