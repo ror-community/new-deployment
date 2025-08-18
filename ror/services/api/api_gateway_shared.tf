@@ -129,6 +129,8 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
     "method.request.querystring.format" = false
     "method.request.querystring.query.name" = false
     "method.request.querystring.query.names" = false
+    "method.request.querystring.all_status" = false
+    "method.request.querystring.query.advanced" = false
   }
 }
 
@@ -147,6 +149,8 @@ resource "aws_api_gateway_method" "v2_organizations_get" {
     "method.request.querystring.format" = false
     "method.request.querystring.query.name" = false
     "method.request.querystring.query.names" = false
+    "method.request.querystring.all_status" = false
+    "method.request.querystring.query.advanced" = false
   }
 }
 
@@ -205,6 +209,8 @@ resource "aws_api_gateway_method" "organizations_get" {
     "method.request.querystring.format" = false
     "method.request.querystring.query.name" = false
     "method.request.querystring.query.names" = false
+    "method.request.querystring.all_status" = false
+    "method.request.querystring.query.advanced" = false
   }
 }
 
@@ -410,11 +416,13 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
     "integration.request.querystring.format" = "method.request.querystring.format"
     "integration.request.querystring.query.name" = "method.request.querystring.query.name"
     "integration.request.querystring.query.names" = "method.request.querystring.query.names"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
   # Caching configuration - include affiliation and filter for better cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
   cache_namespace     = "v1-organizations"
 }
 
@@ -436,11 +444,13 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
     "integration.request.querystring.format" = "method.request.querystring.format"
     "integration.request.querystring.query.name" = "method.request.querystring.query.name"
     "integration.request.querystring.query.names" = "method.request.querystring.query.names"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
   # Caching configuration - include affiliation and filter for better cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
   cache_namespace     = "v2-organizations"
 }
 
@@ -536,11 +546,13 @@ resource "aws_api_gateway_integration" "organizations_get" {
     "integration.request.querystring.format" = "method.request.querystring.format"
     "integration.request.querystring.query.name" = "method.request.querystring.query.name"
     "integration.request.querystring.query.names" = "method.request.querystring.query.names"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
   # Caching configuration
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
   cache_namespace     = "organizations"
 }
 
