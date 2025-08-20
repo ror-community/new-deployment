@@ -868,66 +868,6 @@ resource "aws_api_gateway_integration_response" "root_get" {
   }
 }
 
-
-
-
-
-# Integration response for v2/organizations/{id}
-resource "aws_api_gateway_integration_response" "v2_organizations_id_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
-  status_code = aws_api_gateway_method_response.v2_organizations_id_get.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
-  }
-}
-
-# Integration response for v1/heartbeat
-resource "aws_api_gateway_integration_response" "v1_heartbeat_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_heartbeat.id
-  http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
-  status_code = aws_api_gateway_method_response.v1_heartbeat_get.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
-  }
-}
-
-# Integration response for v2/heartbeat
-resource "aws_api_gateway_integration_response" "v2_heartbeat_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_heartbeat.id
-  http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
-  status_code = aws_api_gateway_method_response.v2_heartbeat_get.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
-  }
-}
-
-# Integration response for organizations/{id} (no version)
-resource "aws_api_gateway_integration_response" "organizations_id_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.organizations_id.id
-  http_method = aws_api_gateway_method.organizations_id_get.http_method
-  status_code = aws_api_gateway_method_response.organizations_id_get.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
-  }
-}
-
 # Integration response for catch-all proxy
 resource "aws_api_gateway_integration_response" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
