@@ -300,96 +300,12 @@ resource "aws_api_gateway_method_response" "v1_organizations_id_get" {
   }
 }
 
-# Method response for v1/organizations/{id} - 404
-resource "aws_api_gateway_method_response" "v1_organizations_id_get_404" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
-  status_code = "404"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v1/organizations/{id} - 400
-resource "aws_api_gateway_method_response" "v1_organizations_id_get_400" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
-  status_code = "400"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v1/organizations/{id} - 500
-resource "aws_api_gateway_method_response" "v1_organizations_id_get_500" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
-  status_code = "500"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
 # Method response for v2/organizations/{id}
 resource "aws_api_gateway_method_response" "v2_organizations_id_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v2_organizations_id.id
   http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
   status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v2/organizations/{id} - 404
-resource "aws_api_gateway_method_response" "v2_organizations_id_get_404" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
-  status_code = "404"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v2/organizations/{id} - 400
-resource "aws_api_gateway_method_response" "v2_organizations_id_get_400" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
-  status_code = "400"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v2/organizations/{id} - 500
-resource "aws_api_gateway_method_response" "v2_organizations_id_get_500" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_organizations_id.id
-  http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
-  status_code = "500"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -426,11 +342,11 @@ resource "aws_api_gateway_method_response" "v2_heartbeat_get" {
   }
 }
 
-# Method response for organizations/{id} (no version)
-resource "aws_api_gateway_method_response" "organizations_id_get" {
+# Method response for organizations (no version)
+resource "aws_api_gateway_method_response" "organizations_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.organizations_id.id
-  http_method = aws_api_gateway_method.organizations_id_get.http_method
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_get.http_method
   status_code = "200"
 
   response_parameters = {
@@ -440,53 +356,11 @@ resource "aws_api_gateway_method_response" "organizations_id_get" {
   }
 }
 
-# Method response for organizations/{id} (no version) - 404
-resource "aws_api_gateway_method_response" "organizations_id_get_404" {
+# Method response for organizations/{id} (no version)
+resource "aws_api_gateway_method_response" "organizations_id_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.organizations_id.id
   http_method = aws_api_gateway_method.organizations_id_get.http_method
-  status_code = "404"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for organizations/{id} (no version) - 400
-resource "aws_api_gateway_method_response" "organizations_id_get_400" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.organizations_id.id
-  http_method = aws_api_gateway_method.organizations_id_get.http_method
-  status_code = "400"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for organizations/{id} (no version) - 500
-resource "aws_api_gateway_method_response" "organizations_id_get_500" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.organizations_id.id
-  http_method = aws_api_gateway_method.organizations_id_get.http_method
-  status_code = "500"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for organizations (no version)
-resource "aws_api_gateway_method_response" "organizations_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.organizations.id
-  http_method = aws_api_gateway_method.organizations_get.http_method
   status_code = "200"
 
   response_parameters = {
@@ -1018,33 +892,32 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     # v1 endpoints
     aws_api_gateway_integration.v1_organizations_get,
     aws_api_gateway_method_response.v1_organizations_get,
+
     aws_api_gateway_integration.v1_organizations_id_get,
     aws_api_gateway_method_response.v1_organizations_id_get,
-    aws_api_gateway_method_response.v1_organizations_id_get_404,
-    aws_api_gateway_method_response.v1_organizations_id_get_400,
-    aws_api_gateway_method_response.v1_organizations_id_get_500,
+
     aws_api_gateway_integration.v1_heartbeat_get,
     aws_api_gateway_method_response.v1_heartbeat_get,
+
     
     # v2 endpoints
     aws_api_gateway_integration.v2_organizations_get,
     aws_api_gateway_method_response.v2_organizations_get,
+
     aws_api_gateway_integration.v2_organizations_id_get,
     aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_method_response.v2_organizations_id_get_404,
-    aws_api_gateway_method_response.v2_organizations_id_get_400,
-    aws_api_gateway_method_response.v2_organizations_id_get_500,
+
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_method_response.v2_heartbeat_get,
+
     
     # No version endpoints
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_method_response.organizations_get,
+
     aws_api_gateway_integration.organizations_id_get,
     aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_method_response.organizations_id_get_404,
-    aws_api_gateway_method_response.organizations_id_get_400,
-    aws_api_gateway_method_response.organizations_id_get_500,
+
     
     # Root path
     aws_api_gateway_integration.root_get,
