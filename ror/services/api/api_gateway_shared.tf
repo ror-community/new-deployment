@@ -131,6 +131,7 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
     "method.request.querystring.query.names" = false
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
+    "method.request.querystring.page_size" = false
   }
 }
 
@@ -151,6 +152,7 @@ resource "aws_api_gateway_method" "v2_organizations_get" {
     "method.request.querystring.query.names" = false
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
+    "method.request.querystring.page_size" = false
   }
 }
 
@@ -211,6 +213,7 @@ resource "aws_api_gateway_method" "organizations_get" {
     "method.request.querystring.query.names" = false
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
+    "method.request.querystring.page_size" = false
   }
 }
 
@@ -493,12 +496,20 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 #set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
 #end
 #end
+#if($input.params('page_size'))
+#if(!$hasParams)
+#set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
+#end
+#end
 #set($context.requestOverride.path.resourcePath = "/v1/organizations$params")
 EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
   cache_namespace     = "v1-organizations"
 }
 
@@ -597,12 +608,20 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
 #set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
 #end
 #end
+#if($input.params('page_size'))
+#if(!$hasParams)
+#set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
+#end
+#end
 #set($context.requestOverride.path.resourcePath = "/v2/organizations$params")
 EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
   cache_namespace     = "v2-organizations"
 }
 
@@ -775,12 +794,20 @@ resource "aws_api_gateway_integration" "organizations_get" {
 #set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
 #end
 #end
+#if($input.params('page_size'))
+#if(!$hasParams)
+#set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
+#end
+#end
 #set($context.requestOverride.path.resourcePath = "/organizations$params")
 EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
   cache_namespace     = "organizations"
 }
 
