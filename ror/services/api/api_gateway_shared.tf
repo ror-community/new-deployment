@@ -632,7 +632,7 @@ resource "aws_api_gateway_integration" "v1_organizations_id_get" {
   http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{id}"
 
   request_parameters = {
@@ -651,7 +651,7 @@ resource "aws_api_gateway_integration" "v2_organizations_id_get" {
   resource_id = aws_api_gateway_resource.v2_organizations_id.id
   http_method = aws_api_gateway_method.v2_organizations_id_get.http_method
 
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   integration_http_method = "GET"
   uri                     = "http://$${stageVariables.backend_host}/v2/organizations/{id}"
 
@@ -672,7 +672,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
@@ -689,7 +689,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
   http_method = aws_api_gateway_method.v2_heartbeat_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
@@ -818,7 +818,7 @@ resource "aws_api_gateway_integration" "organizations_id_get" {
   http_method = aws_api_gateway_method.organizations_id_get.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/organizations/{id}"
 
   request_parameters = {
