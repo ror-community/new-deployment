@@ -868,6 +868,8 @@ resource "aws_api_gateway_integration_response" "root_get" {
   }
 }
 
+
+
 # Integration response for v1/organizations/{id}
 resource "aws_api_gateway_integration_response" "v1_organizations_id_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -924,7 +926,6 @@ resource "aws_api_gateway_integration_response" "v2_heartbeat_get" {
   }
 }
 
-
 # Integration response for organizations/{id} (no version)
 resource "aws_api_gateway_integration_response" "organizations_id_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -966,10 +967,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
 
     aws_api_gateway_integration.v1_organizations_id_get,
     aws_api_gateway_method_response.v1_organizations_id_get,
-    aws_api_gateway_integration_response.v1_organizations_id_get,
     aws_api_gateway_integration.v1_heartbeat_get,
     aws_api_gateway_method_response.v1_heartbeat_get,
-    aws_api_gateway_integration_response.v1_heartbeat_get,
     
     # v2 endpoints
     aws_api_gateway_integration.v2_organizations_get,
@@ -977,10 +976,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
 
     aws_api_gateway_integration.v2_organizations_id_get,
     aws_api_gateway_method_response.v2_organizations_id_get,
-    aws_api_gateway_integration_response.v2_organizations_id_get,
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_method_response.v2_heartbeat_get,
-    aws_api_gateway_integration_response.v2_heartbeat_get,
     
     # No version endpoints
     aws_api_gateway_integration.organizations_get,
@@ -988,7 +985,6 @@ resource "aws_api_gateway_deployment" "api_gateway" {
 
     aws_api_gateway_integration.organizations_id_get,
     aws_api_gateway_method_response.organizations_id_get,
-    aws_api_gateway_integration_response.organizations_id_get,
     
     # Root path
     aws_api_gateway_integration.root_get,
