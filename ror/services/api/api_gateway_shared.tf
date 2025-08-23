@@ -333,8 +333,6 @@ resource "aws_api_gateway_integration" "root_get" {
 }
 
 
-
-
 # Integration for v2/organizations
 resource "aws_api_gateway_integration" "v2_organizations_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
