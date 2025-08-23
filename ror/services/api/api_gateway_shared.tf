@@ -191,16 +191,12 @@ resource "aws_api_gateway_method" "organizations_id_get" {
   }
 }
 
-# v1/organizations ANY method (simplified - catches all query params)
+# v1/organizations ANY method (catches all query params)
 resource "aws_api_gateway_method" "v1_organizations_proxy_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.v1_organizations.id
   http_method   = "ANY"
   authorization = "NONE"
-
-  request_parameters = {
-    "method.request.path.params" = false
-  }
 }
 
 # v1/organizations/{id} ANY method (simple proxy for ID lookups)
@@ -674,34 +670,16 @@ resource "aws_api_gateway_integration" "v1_organizations_proxy_get" {
   resource_id = aws_api_gateway_resource.v1_organizations.id
   http_method = aws_api_gateway_method.v1_organizations_proxy_get.http_method
 
-  integration_http_method = "GET"
-  type                    = "HTTP"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations{params}"
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
 
   request_parameters = {
-    "integration.request.path.params" = "method.request.path.params"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  request_templates = {
-    "application/json" = <<EOF
-#set($params = "")
-#set($hasParams = false)
-#foreach($paramName in $input.params().keySet())
-  #set($paramValue = $input.params($paramName))
-  #if(!$hasParams)
-    #set($params = "$params?$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
-  #end
-#end
-#set($context.requestOverride.path.params = $params)
-EOF
-  }
-
-  # Caching configuration - use constructed params as cache key
-  cache_key_parameters = ["method.request.path.params"]
+  # Caching configuration - cache by request URI (includes all query parameters)
+  cache_key_parameters = ["method.request.uri"]
   cache_namespace      = "v1-organizations-proxy"
 }
 
@@ -743,20 +721,6 @@ resource "aws_api_gateway_integration_response" "root_get" {
 
   response_templates = {
     "application/json" = "{\"organizations\":\"https://$${stageVariables.api_host}/v2/organizations\"}"
-  }
-}
-
-# v1/organizations proxy integration response
-resource "aws_api_gateway_integration_response" "v1_organizations_proxy_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_proxy_get.http_method
-  status_code = aws_api_gateway_method_response.v1_organizations_proxy_get.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Client-Id'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
   }
 }
 
