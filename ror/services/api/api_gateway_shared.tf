@@ -132,7 +132,6 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
-    "method.request.querystring._invalid_params" = false
   }
 }
 
@@ -416,67 +415,101 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Handle all_status parameter transformation and invalid parameter detection
+  # Handle all_status parameter transformation using request template
   request_templates = {
     "application/json" = <<EOF
 #set($params = "")
 #set($hasParams = false)
-#set($invalidParams = "")
-
-## Define approved parameter list for validation
-#set($approvedParams = ["page", "query", "affiliation", "filter", "format", "query.name", "query.names", "query.advanced", "all_status", "page_size"])
-
-## Process all query parameters
-#foreach($paramName in $input.params().querystring.keySet())
-  #set($paramValue = $input.params().querystring.get($paramName))
-  #set($isApproved = false)
-  
-  ## Check if parameter is in approved list
-  #foreach($approved in $approvedParams)
-    #if($paramName == $approved)
-      #set($isApproved = true)
-      #break
-    #end
-  #end
-  
-  ## If approved, add to main params
-  #if($isApproved)
-    ## Handle special transformation for all_status
-    #if($paramName == "all_status" && $paramValue == "")
-      #set($paramValue = "true")
-    #end
-    
-    #if(!$hasParams)
-      #set($params = "$params?$paramName=$util.urlEncode($paramValue)")
-      #set($hasParams = true)
-    #else
-      #set($params = "$params&$paramName=$util.urlEncode($paramValue)")
-    #end
-  #else
-    ## If not approved, add to invalid params string for cache differentiation
-    #if($invalidParams == "")
-      #set($invalidParams = "$paramName=$util.urlEncode($paramValue)")
-    #else
-      #set($invalidParams = "$invalidParams&$paramName=$util.urlEncode($paramValue)")
-    #end
-  #end
+#if($input.params('page'))
+#if(!$hasParams)
+#set($params = "$params?page=$util.urlEncode($input.params('page'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page=$util.urlEncode($input.params('page'))")
 #end
-
-## Add invalid params as a special parameter if any exist
-#if($invalidParams != "")
-  #if(!$hasParams)
-    #set($params = "$params?_invalid_params=$util.urlEncode($invalidParams)")
-  #else
-    #set($params = "$params&_invalid_params=$util.urlEncode($invalidParams)")
-  #end
 #end
-
+#if($input.params('query'))
+#if(!$hasParams)
+#set($params = "$params?query=$util.urlEncode($input.params('query'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query=$util.urlEncode($input.params('query'))")
+#end
+#end
+#if($input.params('affiliation'))
+#if(!$hasParams)
+#set($params = "$params?affiliation=$util.urlEncode($input.params('affiliation'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&affiliation=$util.urlEncode($input.params('affiliation'))")
+#end
+#end
+#if($input.params('filter'))
+#if(!$hasParams)
+#set($params = "$params?filter=$util.urlEncode($input.params('filter'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&filter=$util.urlEncode($input.params('filter'))")
+#end
+#end
+#if($input.params('format'))
+#if(!$hasParams)
+#set($params = "$params?format=$util.urlEncode($input.params('format'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&format=$util.urlEncode($input.params('format'))")
+#end
+#end
+#if($input.params('query.name'))
+#if(!$hasParams)
+#set($params = "$params?query.name=$util.urlEncode($input.params('query.name'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.name=$util.urlEncode($input.params('query.name'))")
+#end
+#end
+#if($input.params('query.names'))
+#if(!$hasParams)
+#set($params = "$params?query.names=$util.urlEncode($input.params('query.names'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.names=$util.urlEncode($input.params('query.names'))")
+#end
+#end
+#if($input.params('query.advanced'))
+#if(!$hasParams)
+#set($params = "$params?query.advanced=$util.urlEncode($input.params('query.advanced'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&query.advanced=$util.urlEncode($input.params('query.advanced'))")
+#end
+#end
+#if($input.params('all_status'))
+#set($allStatusValue = $input.params('all_status'))
+#if($allStatusValue == "")
+#set($allStatusValue = "true")
+#end
+#if(!$hasParams)
+#set($params = "$params?all_status=$util.urlEncode($allStatusValue)")
+#set($hasParams = true)
+#else
+#set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
+#end
+#end
+#if($input.params('page_size'))
+#if(!$hasParams)
+#set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
+#set($hasParams = true)
+#else
+#set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
+#end
+#end
 #set($context.requestOverride.path.resourcePath = "/v1/organizations$params")
 EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size", "method.request.querystring._invalid_params"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
   cache_namespace     = "v1-organizations"
 }
 
@@ -857,9 +890,6 @@ resource "aws_api_gateway_integration_response" "proxy" {
 resource "aws_api_gateway_deployment" "api_gateway" {
   depends_on = [
     # v1 endpoints
-    aws_api_gateway_integration.v1_organizations_get,
-    aws_api_gateway_method_response.v1_organizations_get,
-
     aws_api_gateway_integration.v1_organizations_id_get,
     aws_api_gateway_method_response.v1_organizations_id_get,
     aws_api_gateway_integration.v1_heartbeat_get,
