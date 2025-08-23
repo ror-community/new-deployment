@@ -509,7 +509,8 @@ EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
+  # Using request.querystring to include ALL parameters (including invalid ones) in cache key
+  cache_key_parameters = ["method.request.querystring"]
   cache_namespace     = "v1-organizations"
 }
 
@@ -621,7 +622,8 @@ EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
+  # Using request.querystring to include ALL parameters (including invalid ones) in cache key
+  cache_key_parameters = ["method.request.querystring"]
   cache_namespace     = "v2-organizations"
 }
 
@@ -807,7 +809,8 @@ EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
+  # Using request.querystring to include ALL parameters (including invalid ones) in cache key
+  cache_key_parameters = ["method.request.querystring"]
   cache_namespace     = "organizations"
 }
 
