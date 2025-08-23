@@ -132,6 +132,7 @@ resource "aws_api_gateway_method" "v1_organizations_get" {
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
+    "method.request.querystring._invalid_param" = false
   }
 }
 
@@ -531,8 +532,8 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 EOF
   }
 
-  # Cache on the override path - includes transformed parameters and invalid param handling
-  cache_key_parameters = ["integration.request.path"]
+  # Caching configuration - include all query parameters including _invalid_param for proper cache differentiation
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size", "method.request.querystring._invalid_param"]
   cache_namespace      = "v1-organizations"
 }
 
