@@ -420,6 +420,9 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
     "application/json" = <<EOF
 #set($params = "")
 #set($hasParams = false)
+#set($validParams = ["page", "query", "affiliation", "filter", "format", "query.name", "query.names", "query.advanced", "all_status", "page_size"])
+
+## Process valid parameters first
 #if($input.params('page'))
 #if(!$hasParams)
 #set($params = "$params?page=$util.urlEncode($input.params('page'))")
@@ -504,12 +507,32 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 #set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
 #end
 #end
+
+## Process invalid parameters - transform them to _invalid_param=original_param_name
+#foreach($paramName in $input.params().keySet())
+#set($isValid = false)
+#foreach($validParam in $validParams)
+#if($paramName == $validParam)
+#set($isValid = true)
+#break
+#end
+#end
+#if(!$isValid)
+#if(!$hasParams)
+#set($params = "$params?_invalid_param=$util.urlEncode($paramName)")
+#set($hasParams = true)
+#else
+#set($params = "$params&_invalid_param=$util.urlEncode($paramName)")
+#end
+#end
+#end
+
 #set($context.requestOverride.path.resourcePath = "/v1/organizations$params")
 EOF
   }
 
   # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size"]
+  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size", "method.request.querystring._invalid_param"]
   cache_namespace     = "v1-organizations"
 }
 
