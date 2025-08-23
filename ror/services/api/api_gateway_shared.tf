@@ -46,11 +46,11 @@ resource "aws_api_gateway_resource" "v1_organizations" {
   path_part   = "organizations"
 }
 
-# v1/organizations/{proxy+} resource - catches all subpaths under v1/organizations
-resource "aws_api_gateway_resource" "v1_organizations_proxy" {
+# v1/organizations/{id} resource - simple proxy for ID lookups
+resource "aws_api_gateway_resource" "v1_organizations_id" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_resource.v1_organizations.id
-  path_part   = "{proxy+}"
+  path_part   = "{id}"
 }
 
 # v2/organizations resource
@@ -218,15 +218,15 @@ resource "aws_api_gateway_method" "v1_organizations_proxy_get" {
   authorization = "NONE"
 }
 
-# v1/organizations/{proxy+} ANY method (catches all subpaths and query params)
-resource "aws_api_gateway_method" "v1_organizations_proxy_any" {
+# v1/organizations/{id} ANY method (simple proxy for ID lookups)
+resource "aws_api_gateway_method" "v1_organizations_id_any" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v1_organizations_proxy.id
+  resource_id   = aws_api_gateway_resource.v1_organizations_id.id
   http_method   = "ANY"
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.path.proxy" = true
+    "method.request.path.id" = true
   }
 }
 
@@ -363,11 +363,11 @@ resource "aws_api_gateway_method_response" "v1_organizations_proxy_get" {
   }
 }
 
-# Method response for v1/organizations/{proxy+} (subpaths)
-resource "aws_api_gateway_method_response" "v1_organizations_proxy_any" {
+# Method response for v1/organizations/{id} (ID lookups)
+resource "aws_api_gateway_method_response" "v1_organizations_id_any" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_proxy.id
-  http_method = aws_api_gateway_method.v1_organizations_proxy_any.http_method
+  resource_id = aws_api_gateway_resource.v1_organizations_id.id
+  http_method = aws_api_gateway_method.v1_organizations_id_any.http_method
   status_code = "200"
 
   response_parameters = {
@@ -728,18 +728,18 @@ resource "aws_api_gateway_integration" "v1_organizations_proxy_get" {
   }
 }
 
-# v1/organizations/{proxy+} integration (subpaths) - passes through all query params
-resource "aws_api_gateway_integration" "v1_organizations_proxy_any" {
+# v1/organizations/{id} integration (ID lookups) - passes through all query params
+resource "aws_api_gateway_integration" "v1_organizations_id_any" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_proxy.id
-  http_method = aws_api_gateway_method.v1_organizations_proxy_any.http_method
+  resource_id = aws_api_gateway_resource.v1_organizations_id.id
+  http_method = aws_api_gateway_method.v1_organizations_id_any.http_method
 
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{proxy}"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{id}"
 
   request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.path.id" = "method.request.path.id"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 }
