@@ -425,115 +425,133 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 
 ## Process valid parameters first
 #if($input.params('page'))
-#if(!$hasParams)
-#set($params = "$params?page=$util.urlEncode($input.params('page'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&page=$util.urlEncode($input.params('page'))")
+  #if(!$hasParams)
+    #set($params = "$params?page=$util.urlEncode($input.params('page'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&page=$util.urlEncode($input.params('page'))")
+  #end
 #end
-#end
+
 #if($input.params('query'))
-#if(!$hasParams)
-#set($params = "$params?query=$util.urlEncode($input.params('query'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&query=$util.urlEncode($input.params('query'))")
+  #if(!$hasParams)
+    #set($params = "$params?query=$util.urlEncode($input.params('query'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&query=$util.urlEncode($input.params('query'))")
+  #end
 #end
-#end
+
 #if($input.params('affiliation'))
-#if(!$hasParams)
-#set($params = "$params?affiliation=$util.urlEncode($input.params('affiliation'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&affiliation=$util.urlEncode($input.params('affiliation'))")
+  #if(!$hasParams)
+    #set($params = "$params?affiliation=$util.urlEncode($input.params('affiliation'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&affiliation=$util.urlEncode($input.params('affiliation'))")
+  #end
 #end
-#end
+
 #if($input.params('filter'))
-#if(!$hasParams)
-#set($params = "$params?filter=$util.urlEncode($input.params('filter'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&filter=$util.urlEncode($input.params('filter'))")
+  #if(!$hasParams)
+    #set($params = "$params?filter=$util.urlEncode($input.params('filter'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&filter=$util.urlEncode($input.params('filter'))")
+  #end
 #end
-#end
+
 #if($input.params('format'))
-#if(!$hasParams)
-#set($params = "$params?format=$util.urlEncode($input.params('format'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&format=$util.urlEncode($input.params('format'))")
+  #if(!$hasParams)
+    #set($params = "$params?format=$util.urlEncode($input.params('format'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&format=$util.urlEncode($input.params('format'))")
+  #end
 #end
-#end
+
 #if($input.params('query.name'))
-#if(!$hasParams)
-#set($params = "$params?query.name=$util.urlEncode($input.params('query.name'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&query.name=$util.urlEncode($input.params('query.name'))")
+  #if(!$hasParams)
+    #set($params = "$params?query.name=$util.urlEncode($input.params('query.name'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&query.name=$util.urlEncode($input.params('query.name'))")
+  #end
 #end
-#end
+
 #if($input.params('query.names'))
-#if(!$hasParams)
-#set($params = "$params?query.names=$util.urlEncode($input.params('query.names'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&query.names=$util.urlEncode($input.params('query.names'))")
+  #if(!$hasParams)
+    #set($params = "$params?query.names=$util.urlEncode($input.params('query.names'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&query.names=$util.urlEncode($input.params('query.names'))")
+  #end
 #end
-#end
+
 #if($input.params('query.advanced'))
-#if(!$hasParams)
-#set($params = "$params?query.advanced=$util.urlEncode($input.params('query.advanced'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&query.advanced=$util.urlEncode($input.params('query.advanced'))")
+  #if(!$hasParams)
+    #set($params = "$params?query.advanced=$util.urlEncode($input.params('query.advanced'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&query.advanced=$util.urlEncode($input.params('query.advanced'))")
+  #end
 #end
-#end
+
 #if($input.params('all_status'))
-#set($allStatusValue = $input.params('all_status'))
-#if($allStatusValue == "")
-#set($allStatusValue = "true")
+  #set($allStatusValue = $input.params('all_status'))
+  #if($allStatusValue == "")
+    #set($allStatusValue = "true")
+  #end
+  #if(!$hasParams)
+    #set($params = "$params?all_status=$util.urlEncode($allStatusValue)")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
+  #end
 #end
-#if(!$hasParams)
-#set($params = "$params?all_status=$util.urlEncode($allStatusValue)")
-#set($hasParams = true)
-#else
-#set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
-#end
-#end
+
 #if($input.params('page_size'))
-#if(!$hasParams)
-#set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
-#set($hasParams = true)
-#else
-#set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
-#end
+  #if(!$hasParams)
+    #set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
+    #set($hasParams = true)
+  #else
+    #set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
+  #end
 #end
 
-## Process invalid parameters - transform them to _invalid_param=original_param_name
-#set($hasInvalidParams = false)
+## Set all querystring values in context override for proper cache key handling (before loop)
+#set($context.requestOverride.querystring.page = $input.params('page'))
+#set($context.requestOverride.querystring.query = $input.params('query'))
+#set($context.requestOverride.querystring.affiliation = $input.params('affiliation'))
+#set($context.requestOverride.querystring.filter = $input.params('filter'))
+#set($context.requestOverride.querystring.format = $input.params('format'))
+#set($context.requestOverride.querystring.query.name = $input.params('query.name'))
+#set($context.requestOverride.querystring.query.names = $input.params('query.names'))
+#set($context.requestOverride.querystring.query.advanced = $input.params('query.advanced'))
+#set($context.requestOverride.querystring.page_size = $input.params('page_size'))
+
+## Initialize _invalid_param to false
+#set($context.requestOverride.querystring._invalid_param = "false")
+
+## Process invalid parameters - pass them through to backend but track for caching
 #foreach($paramName in $input.params().keySet())
-#set($isValid = false)
-#foreach($validParam in $validParams)
-#if($paramName == $validParam)
-#set($isValid = true)
-#break
-#end
-#end
-#if(!$isValid)
-#set($hasInvalidParams = true)
-#set($paramValue = $input.params($paramName))
-#if(!$hasParams)
-#set($params = "$params?$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
-#set($hasParams = true)
-#else
-#set($params = "$params&$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
-#end
-#end
-#end
-
-## Set _invalid_param for cache differentiation if invalid params were found
-#if($hasInvalidParams)
-#set($context.requestOverride.querystring._invalid_param = "true")
+  #set($isValid = false)
+  #foreach($validParam in $validParams)
+    #if($paramName == $validParam)
+      #set($isValid = true)
+      #break
+    #end
+  #end
+  #if(!$isValid)
+    ## Set _invalid_param to true immediately when we find an invalid param
+    #set($context.requestOverride.querystring._invalid_param = "true")
+    #set($paramValue = $input.params($paramName))
+    #if(!$hasParams)
+      #set($params = "$params?$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
+      #set($hasParams = true)
+    #else
+      #set($params = "$params&$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
+    #end
+  #end
 #end
 
 #set($context.requestOverride.path.resourcePath = "/v1/organizations$params")
