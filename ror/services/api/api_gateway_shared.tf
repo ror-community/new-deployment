@@ -531,9 +531,9 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 EOF
   }
 
-  # Caching configuration - include all query parameters for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size", "method.request.querystring._invalid_param"]
-  cache_namespace     = "v1-organizations"
+  # Cache on the override path - includes transformed parameters and invalid param handling
+  cache_key_parameters = ["integration.request.path"]
+  cache_namespace      = "v1-organizations"
 }
 
 # Integration for v2/organizations
