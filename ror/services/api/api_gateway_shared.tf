@@ -890,6 +890,9 @@ resource "aws_api_gateway_integration_response" "proxy" {
 resource "aws_api_gateway_deployment" "api_gateway" {
   depends_on = [
     # v1 endpoints
+    aws_api_gateway_integration.v1_organizations_get,
+    aws_api_gateway_method_response.v1_organizations_get,
+
     aws_api_gateway_integration.v1_organizations_id_get,
     aws_api_gateway_method_response.v1_organizations_id_get,
     aws_api_gateway_integration.v1_heartbeat_get,
