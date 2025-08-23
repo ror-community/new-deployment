@@ -726,6 +726,10 @@ resource "aws_api_gateway_integration" "v1_organizations_proxy_get" {
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
+
+  # Caching configuration - use entire query string as cache key
+  cache_key_parameters = ["method.request.multivaluequerystring"]
+  cache_namespace      = "v1-organizations-proxy"
 }
 
 # v1/organizations/{id} integration (ID lookups) - passes through all query params
@@ -742,6 +746,10 @@ resource "aws_api_gateway_integration" "v1_organizations_id_any" {
     "integration.request.path.id" = "method.request.path.id"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
+
+  # Caching configuration - cache by ID and any query parameters
+  cache_key_parameters = ["method.request.path.id"]
+  cache_namespace      = "v1-organizations-id-proxy"
 }
 
 # =============================================================================
