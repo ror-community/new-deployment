@@ -510,6 +510,7 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 #end
 
 ## Process invalid parameters - transform them to _invalid_param=original_param_name
+#set($hasInvalidParams = false)
 #foreach($paramName in $input.params().keySet())
 #set($isValid = false)
 #foreach($validParam in $validParams)
@@ -519,13 +520,20 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 #end
 #end
 #if(!$isValid)
+#set($hasInvalidParams = true)
+#set($paramValue = $input.params($paramName))
 #if(!$hasParams)
-#set($params = "$params?_invalid_param=$util.urlEncode($paramName)")
+#set($params = "$params?$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
 #set($hasParams = true)
 #else
-#set($params = "$params&_invalid_param=$util.urlEncode($paramName)")
+#set($params = "$params&$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
 #end
 #end
+#end
+
+## Set _invalid_param for cache differentiation if invalid params were found
+#if($hasInvalidParams)
+#set($context.requestOverride.querystring._invalid_param = "true")
 #end
 
 #set($context.requestOverride.path.resourcePath = "/v1/organizations$params")
