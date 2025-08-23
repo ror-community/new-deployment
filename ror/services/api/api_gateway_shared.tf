@@ -46,18 +46,18 @@ resource "aws_api_gateway_resource" "v1_organizations" {
   path_part   = "organizations"
 }
 
+# v1/organizations/{proxy+} resource - catches all subpaths under v1/organizations
+resource "aws_api_gateway_resource" "v1_organizations_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_resource.v1_organizations.id
+  path_part   = "{proxy+}"
+}
+
 # v2/organizations resource
 resource "aws_api_gateway_resource" "v2_organizations" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_resource.v2.id
   path_part   = "organizations"
-}
-
-# v1/organizations/{id} resource
-resource "aws_api_gateway_resource" "v1_organizations_id" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  parent_id   = aws_api_gateway_resource.v1_organizations.id
-  path_part   = "{id}"
 }
 
 # v2/organizations/{id} resource
@@ -114,28 +114,6 @@ resource "aws_api_gateway_method" "root_get" {
   authorization = "NONE"
 }
 
-# v1/organizations GET method
-resource "aws_api_gateway_method" "v1_organizations_get" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v1_organizations.id
-  http_method   = "GET"
-  authorization = "NONE"
-
-  request_parameters = {
-    "method.request.querystring.page" = false
-    "method.request.querystring.query" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-    "method.request.querystring.all_status" = false
-    "method.request.querystring.query.advanced" = false
-    "method.request.querystring.page_size" = false
-    "method.request.querystring._invalid_param" = false
-  }
-}
-
 # v2/organizations GET method
 resource "aws_api_gateway_method" "v2_organizations_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
@@ -157,17 +135,7 @@ resource "aws_api_gateway_method" "v2_organizations_get" {
   }
 }
 
-# v1/organizations/{id} GET method
-resource "aws_api_gateway_method" "v1_organizations_id_get" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v1_organizations_id.id
-  http_method   = "GET"
-  authorization = "NONE"
 
-  request_parameters = {
-    "method.request.path.id" = true
-  }
-}
 
 # GET method for v2/organizations/{id}
 resource "aws_api_gateway_method" "v2_organizations_id_get" {
@@ -242,6 +210,26 @@ resource "aws_api_gateway_method" "proxy" {
   }
 }
 
+# v1/organizations ANY method (simplified - catches all query params)
+resource "aws_api_gateway_method" "v1_organizations_proxy_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v1_organizations.id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+# v1/organizations/{proxy+} ANY method (catches all subpaths and query params)
+resource "aws_api_gateway_method" "v1_organizations_proxy_any" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v1_organizations_proxy.id
+  http_method   = "ANY"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
+}
+
 # =============================================================================
 # METHOD RESPONSES
 # =============================================================================
@@ -259,19 +247,7 @@ resource "aws_api_gateway_method_response" "root_get" {
   }
 }
 
-# Method response for v1/organizations
-resource "aws_api_gateway_method_response" "v1_organizations_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_get.http_method
-  status_code = "200"
 
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
 
 # Method response for v2/organizations
 resource "aws_api_gateway_method_response" "v2_organizations_get" {
@@ -287,19 +263,7 @@ resource "aws_api_gateway_method_response" "v2_organizations_get" {
   }
 }
 
-# Method response for v1/organizations/{id}
-resource "aws_api_gateway_method_response" "v1_organizations_id_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
-  status_code = "200"
 
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
 
 # Method response for v2/organizations/{id}
 resource "aws_api_gateway_method_response" "v2_organizations_id_get" {
@@ -385,6 +349,34 @@ resource "aws_api_gateway_method_response" "proxy" {
   }
 }
 
+# Method response for v1/organizations proxy (base endpoint)
+resource "aws_api_gateway_method_response" "v1_organizations_proxy_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_organizations.id
+  http_method = aws_api_gateway_method.v1_organizations_proxy_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for v1/organizations/{proxy+} (subpaths)
+resource "aws_api_gateway_method_response" "v1_organizations_proxy_any" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_organizations_proxy.id
+  http_method = aws_api_gateway_method.v1_organizations_proxy_any.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
 # =============================================================================
 # INTEGRATIONS
 # =============================================================================
@@ -402,166 +394,7 @@ resource "aws_api_gateway_integration" "root_get" {
   }
 }
 
-# Integration for v1/organizations
-resource "aws_api_gateway_integration" "v1_organizations_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_get.http_method
 
-  integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
-
-  request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
-  }
-
-  # Handle all_status parameter transformation using request template
-  request_templates = {
-    "application/json" = <<EOF
-#set($params = "")
-#set($hasParams = false)
-#set($validParams = ["page", "query", "affiliation", "filter", "format", "query.name", "query.names", "query.advanced", "all_status", "page_size"])
-
-## Process valid parameters first
-#if($input.params('page'))
-  #if(!$hasParams)
-    #set($params = "$params?page=$util.urlEncode($input.params('page'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&page=$util.urlEncode($input.params('page'))")
-  #end
-#end
-
-#if($input.params('query'))
-  #if(!$hasParams)
-    #set($params = "$params?query=$util.urlEncode($input.params('query'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&query=$util.urlEncode($input.params('query'))")
-  #end
-#end
-
-#if($input.params('affiliation'))
-  #if(!$hasParams)
-    #set($params = "$params?affiliation=$util.urlEncode($input.params('affiliation'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&affiliation=$util.urlEncode($input.params('affiliation'))")
-  #end
-#end
-
-#if($input.params('filter'))
-  #if(!$hasParams)
-    #set($params = "$params?filter=$util.urlEncode($input.params('filter'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&filter=$util.urlEncode($input.params('filter'))")
-  #end
-#end
-
-#if($input.params('format'))
-  #if(!$hasParams)
-    #set($params = "$params?format=$util.urlEncode($input.params('format'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&format=$util.urlEncode($input.params('format'))")
-  #end
-#end
-
-#if($input.params('query.name'))
-  #if(!$hasParams)
-    #set($params = "$params?query.name=$util.urlEncode($input.params('query.name'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&query.name=$util.urlEncode($input.params('query.name'))")
-  #end
-#end
-
-#if($input.params('query.names'))
-  #if(!$hasParams)
-    #set($params = "$params?query.names=$util.urlEncode($input.params('query.names'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&query.names=$util.urlEncode($input.params('query.names'))")
-  #end
-#end
-
-#if($input.params('query.advanced'))
-  #if(!$hasParams)
-    #set($params = "$params?query.advanced=$util.urlEncode($input.params('query.advanced'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&query.advanced=$util.urlEncode($input.params('query.advanced'))")
-  #end
-#end
-
-#if($input.params('all_status'))
-  #set($allStatusValue = $input.params('all_status'))
-  #if($allStatusValue == "")
-    #set($allStatusValue = "true")
-  #end
-  #if(!$hasParams)
-    #set($params = "$params?all_status=$util.urlEncode($allStatusValue)")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&all_status=$util.urlEncode($allStatusValue)")
-  #end
-#end
-
-#if($input.params('page_size'))
-  #if(!$hasParams)
-    #set($params = "$params?page_size=$util.urlEncode($input.params('page_size'))")
-    #set($hasParams = true)
-  #else
-    #set($params = "$params&page_size=$util.urlEncode($input.params('page_size'))")
-  #end
-#end
-
-## Set all querystring values in context override for proper cache key handling (before loop)
-#set($context.requestOverride.querystring.page = $input.params('page'))
-#set($context.requestOverride.querystring.query = $input.params('query'))
-#set($context.requestOverride.querystring.affiliation = $input.params('affiliation'))
-#set($context.requestOverride.querystring.filter = $input.params('filter'))
-#set($context.requestOverride.querystring.format = $input.params('format'))
-#set($context.requestOverride.querystring.query.name = $input.params('query.name'))
-#set($context.requestOverride.querystring.query.names = $input.params('query.names'))
-#set($context.requestOverride.querystring.query.advanced = $input.params('query.advanced'))
-#set($context.requestOverride.querystring.page_size = $input.params('page_size'))
-
-## Initialize _invalid_param to false
-#set($context.requestOverride.querystring._invalid_param = "false")
-
-## Process invalid parameters - pass them through to backend but track for caching
-#foreach($paramName in $input.params().keySet())
-  #set($isValid = false)
-  #foreach($validParam in $validParams)
-    #if($paramName == $validParam)
-      #set($isValid = true)
-      #break
-    #end
-  #end
-  #if(!$isValid)
-    ## Set _invalid_param to true immediately when we find an invalid param
-    #set($context.requestOverride.querystring._invalid_param = "true")
-    #set($paramValue = $input.params($paramName))
-    #if(!$hasParams)
-      #set($params = "$params?$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
-      #set($hasParams = true)
-    #else
-      #set($params = "$params&$util.urlEncode($paramName)=$util.urlEncode($paramValue)")
-    #end
-  #end
-#end
-
-#set($context.requestOverride.path.resourcePath = "/v1/organizations$params")
-EOF
-  }
-
-  # Caching configuration - include all query parameters including _invalid_param for proper cache differentiation
-  cache_key_parameters = ["method.request.querystring.page", "method.request.querystring.query", "method.request.querystring.affiliation", "method.request.querystring.filter", "method.request.querystring.format", "method.request.querystring.query.name", "method.request.querystring.query.names", "method.request.querystring.all_status", "method.request.querystring.query.advanced", "method.request.querystring.page_size", "method.request.querystring._invalid_param"]
-  cache_namespace      = "v1-organizations"
-}
 
 
 # Integration for v2/organizations
@@ -676,25 +509,7 @@ EOF
   cache_namespace     = "v2-organizations"
 }
 
-# Integration for v1/organizations/{id}
-resource "aws_api_gateway_integration" "v1_organizations_id_get" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_get.http_method
 
-  integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{id}"
-
-  request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
-    "integration.request.header.Host" = "stageVariables.api_host"
-  }
-
-  # Caching configuration
-  cache_key_parameters = ["method.request.path.id"]
-  cache_namespace     = "v1-organizations-id"
-}
 
 # Integration for v2/organizations/{id}
 resource "aws_api_gateway_integration" "v2_organizations_id_get" {
@@ -891,6 +706,37 @@ resource "aws_api_gateway_integration" "proxy" {
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/{proxy}"
+
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.header.Host" = "stageVariables.api_host"
+  }
+}
+
+# v1/organizations proxy integration (base endpoint) - passes through all query params
+resource "aws_api_gateway_integration" "v1_organizations_proxy_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_organizations.id
+  http_method = aws_api_gateway_method.v1_organizations_proxy_get.http_method
+
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
+
+  request_parameters = {
+    "integration.request.header.Host" = "stageVariables.api_host"
+  }
+}
+
+# v1/organizations/{proxy+} integration (subpaths) - passes through all query params
+resource "aws_api_gateway_integration" "v1_organizations_proxy_any" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_organizations_proxy.id
+  http_method = aws_api_gateway_method.v1_organizations_proxy_any.http_method
+
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
