@@ -193,6 +193,14 @@ resource "aws_api_gateway_method" "v1_proxy" {
 
   request_parameters = {
     "method.request.path.proxy" = true
+    "method.request.querystring.query" = false
+    "method.request.querystring.page" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.all_status" = false
+    "method.request.querystring.query.advanced" = false
+    "method.request.querystring.page_size" = false
   }
 }
 
@@ -648,8 +656,18 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - cache by the complete proxy path
-  cache_key_parameters = ["method.request.path.proxy"]
+  # Caching configuration - cache by common query parameters
+  cache_key_parameters = [
+    "method.request.path.proxy",
+    "method.request.querystring.query",
+    "method.request.querystring.page", 
+    "method.request.querystring.affiliation",
+    "method.request.querystring.filter",
+    "method.request.querystring.format",
+    "method.request.querystring.all_status",
+    "method.request.querystring.query.advanced",
+    "method.request.querystring.page_size"
+  ]
   cache_namespace      = "v1-proxy"
 }
 
