@@ -54,11 +54,11 @@ resource "aws_api_gateway_stage" "api_gateway_staging" {
 # METHOD SETTINGS FOR CACHING - STAGING STAGE
 # =============================================================================
 
-# Enable caching for v1/organizations endpoint
-resource "aws_api_gateway_method_settings" "v1_organizations_cache_staging" {
+# Enable caching for v1/{proxy+} endpoint (replaces old v1/organizations)
+resource "aws_api_gateway_method_settings" "v1_proxy_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
-  method_path = "v1/organizations/GET"
+  method_path = "v1/{proxy+}/ANY"
 
   settings {
     caching_enabled        = true
@@ -81,7 +81,7 @@ resource "aws_api_gateway_method_settings" "v2_organizations_cache_staging" {
   method_path = "v2/organizations/GET"
 
   depends_on = [
-    aws_api_gateway_method_settings.v1_organizations_cache_staging
+    aws_api_gateway_method_settings.v1_proxy_cache_staging
   ]
 
   settings {
@@ -122,29 +122,7 @@ resource "aws_api_gateway_method_settings" "organizations_cache_staging" {
   }
 }
 
-# Enable caching for v1/organizations/{id} endpoint
-resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_staging" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
-  method_path = "v1/organizations/{id}/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.organizations_cache_staging
-  ]
-
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
 
 # Enable caching for v2/organizations/{id} endpoint
 resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_staging" {
@@ -153,7 +131,7 @@ resource "aws_api_gateway_method_settings" "v2_organizations_id_cache_staging" {
   method_path = "v2/organizations/{id}/GET"
 
   depends_on = [
-    aws_api_gateway_method_settings.v1_organizations_id_cache_staging
+    aws_api_gateway_method_settings.organizations_cache_staging
   ]
 
   settings {
