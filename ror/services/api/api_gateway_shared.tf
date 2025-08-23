@@ -39,18 +39,11 @@ resource "aws_api_gateway_resource" "v2" {
   path_part   = "v2"
 }
 
-# v1/organizations resource
-resource "aws_api_gateway_resource" "v1_organizations" {
+# v1/{proxy+} resource - catches everything after v1/ including organizations
+resource "aws_api_gateway_resource" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "organizations"
-}
-
-# v1/organizations/{id} resource - simple proxy for ID lookups
-resource "aws_api_gateway_resource" "v1_organizations_id" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  parent_id   = aws_api_gateway_resource.v1_organizations.id
-  path_part   = "{id}"
+  path_part   = "{proxy+}"
 }
 
 # v2/organizations resource
@@ -191,23 +184,15 @@ resource "aws_api_gateway_method" "organizations_id_get" {
   }
 }
 
-# v1/organizations ANY method (catches all query params)
-resource "aws_api_gateway_method" "v1_organizations_proxy_get" {
+# v1/{proxy+} ANY method (catches everything after v1/)
+resource "aws_api_gateway_method" "v1_proxy" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v1_organizations.id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-# v1/organizations/{id} ANY method (simple proxy for ID lookups)
-resource "aws_api_gateway_method" "v1_organizations_id_any" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v1_organizations_id.id
+  resource_id   = aws_api_gateway_resource.v1_proxy.id
   http_method   = "ANY"
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.path.id" = true
+    "method.request.path.proxy" = true
   }
 }
 
@@ -316,25 +301,11 @@ resource "aws_api_gateway_method_response" "organizations_id_get" {
   }
 }
 
-# Method response for v1/organizations proxy (base endpoint)
-resource "aws_api_gateway_method_response" "v1_organizations_proxy_get" {
+# Method response for v1/{proxy+} (catches everything after v1/)
+resource "aws_api_gateway_method_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_proxy_get.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v1/organizations/{id} (ID lookups)
-resource "aws_api_gateway_method_response" "v1_organizations_id_any" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_any.http_method
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
   status_code = "200"
 
   response_parameters = {
@@ -664,43 +635,24 @@ resource "aws_api_gateway_integration" "organizations_id_get" {
   cache_namespace     = "organizations-id"
 }
 
-# v1/organizations proxy integration (base endpoint) - constructs path with params
-resource "aws_api_gateway_integration" "v1_organizations_proxy_get" {
+# v1/{proxy+} integration - passes everything after v1/ directly to backend
+resource "aws_api_gateway_integration" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations.id
-  http_method = aws_api_gateway_method.v1_organizations_proxy_get.http_method
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
 
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations"
+  uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - cache by request URI (includes all query parameters)
-  cache_key_parameters = ["method.request.uri"]
-  cache_namespace      = "v1-organizations-proxy"
-}
-
-# v1/organizations/{id} integration (ID lookups) - passes through all query params
-resource "aws_api_gateway_integration" "v1_organizations_id_any" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_organizations_id.id
-  http_method = aws_api_gateway_method.v1_organizations_id_any.http_method
-
-  integration_http_method = "ANY"
-  type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/organizations/{id}"
-
-  request_parameters = {
-    "integration.request.path.id" = "method.request.path.id"
-    "integration.request.header.Host" = "stageVariables.api_host"
-  }
-
-  # Caching configuration - cache by ID and any query parameters
-  cache_key_parameters = ["method.request.path.id"]
-  cache_namespace      = "v1-organizations-id-proxy"
+  # Caching configuration - cache by the complete proxy path
+  cache_key_parameters = ["method.request.path.proxy"]
+  cache_namespace      = "v1-proxy"
 }
 
 # =============================================================================
