@@ -53,7 +53,7 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
 resource "aws_api_gateway_method_settings" "v1_proxy_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "v1/{proxy}/ANY"
+  method_path = "v1/*/ANY"
 
   settings {
     caching_enabled        = true
