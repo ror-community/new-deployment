@@ -508,7 +508,6 @@ resource "aws_api_gateway_integration" "v1_organizations_get" {
 EOF
   }
 
-  # Caching configuration - include all query parameters for proper cache differentiation
   # Using request.querystring to include ALL parameters (including invalid ones) in cache key
   cache_key_parameters = ["method.request.querystring"]
   cache_namespace     = "v1-organizations"
@@ -621,7 +620,6 @@ resource "aws_api_gateway_integration" "v2_organizations_get" {
 EOF
   }
 
-  # Caching configuration - include all query parameters for proper cache differentiation
   # Using request.querystring to include ALL parameters (including invalid ones) in cache key
   cache_key_parameters = ["method.request.querystring"]
   cache_namespace     = "v2-organizations"
@@ -808,7 +806,6 @@ resource "aws_api_gateway_integration" "organizations_get" {
 EOF
   }
 
-  # Caching configuration - include all query parameters for proper cache differentiation
   # Using request.querystring to include ALL parameters (including invalid ones) in cache key
   cache_key_parameters = ["method.request.querystring"]
   cache_namespace     = "organizations"
