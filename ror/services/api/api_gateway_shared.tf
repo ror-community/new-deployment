@@ -639,7 +639,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
-  integration_http_method = "ANY"
+  integration_http_method = "GET"
   type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
@@ -648,8 +648,8 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - cache by the complete proxy path
-  cache_key_parameters = ["method.request.path.proxy"]
+  # Caching configuration - let API Gateway determine cache key automatically
+  cache_key_parameters = []
   cache_namespace      = "v1-proxy"
 }
 
