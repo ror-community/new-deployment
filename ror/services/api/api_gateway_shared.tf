@@ -648,8 +648,8 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  # Caching configuration - let API Gateway determine cache key automatically
-  cache_key_parameters = []
+  # Caching configuration - cache by the complete proxy path
+  cache_key_parameters = ["method.request.path.proxy"]
   cache_namespace      = "v1-proxy"
 }
 
