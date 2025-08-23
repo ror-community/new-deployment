@@ -32,7 +32,7 @@ resource "aws_api_gateway_stage" "api_gateway_staging" {
       filter            = "$context.requestOverride.querystring.filter"
       page              = "$context.requestOverride.querystring.page"
       page_size         = "$context.requestOverride.querystring.page_size"
-      invalid_parampage = "$context.requestOverride.querystring._invalid_param"
+      invalid_param     = "$context.requestOverride.querystring._invalid_param"
       status            = "$context.status"
       responseLatency   = "$context.responseLatency"
       integrationLatency = "$context.integrationLatency"
