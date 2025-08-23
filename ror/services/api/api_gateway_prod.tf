@@ -27,6 +27,7 @@ resource "aws_api_gateway_stage" "api_gateway_prod" {
       httpMethod        = "$context.httpMethod"
       path              = "$context.path"
       resourcePath      = "$context.resourcePath"
+      overrideResourcePath = "$context.requestOverride.path.resourcePath"
       status            = "$context.status"
       responseLatency   = "$context.responseLatency"
       integrationLatency = "$context.integrationLatency"
