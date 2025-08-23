@@ -679,7 +679,7 @@ resource "aws_api_gateway_integration" "v1_organizations_proxy_get" {
   }
 
   # Caching configuration - use entire query string as cache key
-  cache_key_parameters = ["method.request.multivaluequerystring"]
+  cache_key_parameters = []
   cache_namespace      = "v1-organizations-proxy"
 }
 
@@ -723,8 +723,6 @@ resource "aws_api_gateway_integration_response" "root_get" {
     "application/json" = "{\"organizations\":\"https://$${stageVariables.api_host}/v2/organizations\"}"
   }
 }
-
-
 
 # =============================================================================
 # API GATEWAY DEPLOYMENT
