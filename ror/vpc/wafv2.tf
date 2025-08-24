@@ -488,6 +488,19 @@ resource "aws_wafv2_web_acl" "staging-v2" {
                     }
                 }
                 statement {
+                    byte_match_statement {
+                        positional_constraint = "CONTAINS"
+                        search_string = "="
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
                     not_statement {
                         statement {
                             regex_pattern_set_reference_statement {
