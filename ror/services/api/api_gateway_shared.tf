@@ -662,7 +662,6 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -713,7 +712,6 @@ EOF
 
   # Caching configuration - cache by common query parameters
   cache_key_parameters = [
-    "method.request.path.proxy",
     "method.request.querystring.query",
     "method.request.querystring.page", 
     "method.request.querystring.affiliation",
