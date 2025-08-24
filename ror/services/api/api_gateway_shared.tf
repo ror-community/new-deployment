@@ -184,12 +184,21 @@ resource "aws_api_gateway_method" "organizations_id_get" {
   }
 }
 
+# Request validator for v1 proxy - validates query parameters
+resource "aws_api_gateway_request_validator" "v1_proxy_validator" {
+  name                        = "v1-proxy-validator"
+  rest_api_id                = aws_api_gateway_rest_api.api_gateway.id
+  validate_request_parameters = true
+  validate_request_body       = false
+}
+
 # v1/{proxy+} ANY method (catches everything after v1/)
 resource "aws_api_gateway_method" "v1_proxy" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v1_proxy.id
-  http_method   = "ANY"
-  authorization = "NONE"
+  rest_api_id          = aws_api_gateway_rest_api.api_gateway.id
+  resource_id          = aws_api_gateway_resource.v1_proxy.id
+  http_method          = "ANY"
+  authorization        = "NONE"
+  request_validator_id = aws_api_gateway_request_validator.v1_proxy_validator.id
 
   request_parameters = {
     "method.request.path.proxy" = true
@@ -200,8 +209,8 @@ resource "aws_api_gateway_method" "v1_proxy" {
     "method.request.querystring.format" = false
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
-    "method.request.querystring.page_size" = false
-    "method.request.querystring.invalid_params" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
   }
 }
 
@@ -661,62 +670,30 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     "application/json" = <<EOF
 #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
 
-## Define valid parameters for v1 endpoints
-#set($validParams = ["query", "page", "affiliation", "filter", "format", "all_status", "query.advanced", "page_size"])
-
-## Initialize query string parts and invalid parameter flag
+## Initialize query string parts
 #set($queryParts = [])
-#set($hasInvalidParams = false)
 
-## Process all query parameters
+## Process all query parameters (all are now valid due to gateway validation)
 #foreach($paramName in $input.params().querystring.keySet())
   #set($paramValue = $input.params().querystring.get($paramName))
   
-  ## Check if parameter is valid
-  #set($isValid = false)
-  #foreach($validParam in $validParams)
-    #if($paramName == $validParam)
-      #set($isValid = true)
-      #break
-    #end
-  #end
-  
-  ## Handle parameter based on validity
-  #if($isValid)
-    ## Valid parameter - add to query string
-    #if($paramValue && $paramValue != "")
-      ## Parameter has a value
-      #if($paramName == "all_status" && $paramValue == "")
-        ## Special case: empty all_status becomes true
-        #set($ignore = $queryParts.add("$paramName=true"))
-      #else
-        #set($ignore = $queryParts.add("$paramName=$paramValue"))
-      #end
+  ## Handle parameter
+  #if($paramValue && $paramValue != "")
+    ## Parameter has a value
+    #if($paramName == "all_status" && $paramValue == "")
+      ## Special case: empty all_status becomes true
+      #set($ignore = $queryParts.add("$paramName=true"))
     #else
-      ## Parameter without value (like ?all_status)
-      #if($paramName == "all_status")
-        #set($ignore = $queryParts.add("$paramName=true"))
-      #else
-        #set($ignore = $queryParts.add($paramName))
-      #end
+      #set($ignore = $queryParts.add("$paramName=$paramValue"))
     #end
   #else
-    ## Invalid parameter - mark flag and pass it through
-    #set($hasInvalidParams = true)
-    #if($paramValue && $paramValue != "")
-      #set($ignore = $queryParts.add("$paramName=$paramValue"))
+    ## Parameter without value (like ?all_status)
+    #if($paramName == "all_status")
+      #set($ignore = $queryParts.add("$paramName=true"))
     #else
       #set($ignore = $queryParts.add($paramName))
     #end
   #end
-#end
-
-## Set cache key for invalid_params parameter
-#if($hasInvalidParams)
-  #set($ignore = $queryParts.add("invalid_params=true"))
-  #set($context.requestOverride.querystring.invalid_params = "true")
-#else
-  #set($context.requestOverride.querystring.invalid_params = "false")
 #end
 
 ## Build final query string
@@ -744,9 +721,8 @@ EOF
     "method.request.querystring.format",
     "method.request.querystring.all_status",
     "method.request.querystring.query.advanced",
-    "method.request.querystring.page_size",
-    "method.request.querystring.invalid_params",
-    "integration.request.path.proxy"
+    "method.request.querystring.query.name",
+    "method.request.querystring.query.names"
   ]
   cache_namespace      = "v1-proxy"
 }
@@ -769,6 +745,29 @@ resource "aws_api_gateway_integration_response" "root_get" {
 
   response_templates = {
     "application/json" = "{\"organizations\":\"https://$${stageVariables.api_host}/v2/organizations\"}"
+  }
+}
+
+# =============================================================================
+# GATEWAY RESPONSES
+# =============================================================================
+
+# Custom response for bad request parameters (invalid query parameters)
+resource "aws_api_gateway_gateway_response" "bad_request_parameters" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  response_type = "BAD_REQUEST_PARAMETERS"
+  
+  status_code = "200"
+  
+  response_templates = {
+    "application/json" = jsonencode({
+      errors = ["query parameter '$context.error.validationErrorString' is illegal"]
+    })
+  }
+  
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+    "gatewayresponse.header.Content-Type" = "'application/json'"
   }
 }
 
