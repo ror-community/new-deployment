@@ -668,12 +668,38 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 
   request_templates = {
     "application/json" = <<EOF
+## Define valid parameters for v1 endpoints
+#set($validParams = ["query", "page", "affiliation", "filter", "format", "all_status", "query.advanced", "query.name", "query.names"])
+
+## Check for invalid parameters first
+#set($invalidParam = "")
+#foreach($paramName in $input.params().querystring.keySet())
+  #set($isValid = false)
+  #foreach($validParam in $validParams)
+    #if($paramName == $validParam)
+      #set($isValid = true)
+      #break
+    #end
+  #end
+  #if(!$isValid)
+    #set($invalidParam = $paramName)
+    #break
+  #end
+#end
+
+## If invalid parameter found, return error immediately
+#if($invalidParam != "")
+{
+  "errors": ["query parameter '$invalidParam' is illegal"]
+}
+#else
+## Valid request - process normally
 #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
 
 ## Initialize query string parts
 #set($queryParts = [])
 
-## Process all query parameters (all are now valid due to gateway validation)
+## Process all query parameters (all are valid)
 #foreach($paramName in $input.params().querystring.keySet())
   #set($paramValue = $input.params().querystring.get($paramName))
   
@@ -707,6 +733,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     #end
   #end
   #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
+#end
 #end
 EOF
   }
