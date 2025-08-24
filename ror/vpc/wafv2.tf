@@ -60,7 +60,31 @@ resource "aws_wafv2_regex_pattern_set" "valid_query_params_staging" {
   scope = "REGIONAL"
   
   regular_expression {
-    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names)(=([^&]*)?)?(&(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names)(=([^&]*)?)?)*$"
+    regex_string = "^query(=|$)"
+  }
+  regular_expression {
+    regex_string = "^page(=|$)"
+  }
+  regular_expression {
+    regex_string = "^affiliation(=|$)"
+  }
+  regular_expression {
+    regex_string = "^filter(=|$)"
+  }
+  regular_expression {
+    regex_string = "^format(=|$)"
+  }
+  regular_expression {
+    regex_string = "^all_status(=|$)"
+  }
+  regular_expression {
+    regex_string = "^query\\.advanced(=|$)"
+  }
+  regular_expression {
+    regex_string = "^query\\.name(=|$)"
+  }
+  regular_expression {
+    regex_string = "^query\\.names(=|$)"
   }
 }
 
