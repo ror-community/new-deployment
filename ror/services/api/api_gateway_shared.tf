@@ -208,22 +208,6 @@ resource "aws_api_gateway_method" "v1_proxy" {
 # METHOD RESPONSES
 # =============================================================================
 
-# v1/{proxy+} method response
-resource "aws_api_gateway_method_response" "v1_proxy_200" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_proxy.id
-  http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = "200"
-
-  response_models = {
-    "application/json" = "Empty"
-  }
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = false
-  }
-}
-
 # Root path method response
 resource "aws_api_gateway_method_response" "root_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -763,7 +747,7 @@ resource "aws_api_gateway_integration_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = aws_api_gateway_method_response.v1_proxy_200.status_code
+  status_code = aws_api_gateway_method_response.v1_proxy.status_code
 
   response_templates = {
     "application/json" = "$input.body"
