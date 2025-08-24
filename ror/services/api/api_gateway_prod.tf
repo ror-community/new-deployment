@@ -94,10 +94,10 @@ resource "aws_api_gateway_method_settings" "v2_proxy_cache_prod" {
 }
 
 # Enable caching for organizations endpoint (no version)
-resource "aws_api_gateway_method_settings" "organizations_cache_prod" {
+resource "aws_api_gateway_method_settings" "root_proxy_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "organizations/GET"
+  method_path = "{proxy+}/GET"
 
   depends_on = [
     aws_api_gateway_method_settings.v2_proxy_cache_prod
@@ -124,7 +124,7 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
   method_path = "v1/organizations/{id}/GET"
 
   depends_on = [
-    aws_api_gateway_method_settings.organizations_cache_prod
+    aws_api_gateway_method_settings.root_proxy_cache_prod
   ]
 
   settings {
@@ -144,23 +144,19 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
 
 
 # Enable caching for organizations/{id} endpoint (no version)
-resource "aws_api_gateway_method_settings" "organizations_id_cache_prod" {
+resource "aws_api_gateway_method_settings" "heartbeat_no_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "organizations/{id}/GET"
+  method_path = "heartbeat/GET"
 
   depends_on = [
-    aws_api_gateway_method_settings.v2_proxy_cache_prod
+    aws_api_gateway_method_settings.root_proxy_cache_prod
   ]
 
   settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
     cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
     
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
@@ -174,7 +170,7 @@ resource "aws_api_gateway_method_settings" "v1_heartbeat_no_cache_prod" {
   method_path = "v1/heartbeat/GET"
 
   depends_on = [
-    aws_api_gateway_method_settings.organizations_id_cache_prod
+    aws_api_gateway_method_settings.heartbeat_no_cache_prod
   ]
 
   settings {
