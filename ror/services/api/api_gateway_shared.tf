@@ -184,21 +184,12 @@ resource "aws_api_gateway_method" "organizations_id_get" {
   }
 }
 
-# Request validator for v1 proxy - validates query parameters
-resource "aws_api_gateway_request_validator" "v1_proxy_validator" {
-  name                        = "v1-proxy-validator"
-  rest_api_id                = aws_api_gateway_rest_api.api_gateway.id
-  validate_request_parameters = true
-  validate_request_body       = false
-}
-
-# v1/{proxy+} ANY method (catches everything after v1/)
+# v1/{proxy+} ANY method
 resource "aws_api_gateway_method" "v1_proxy" {
-  rest_api_id          = aws_api_gateway_rest_api.api_gateway.id
-  resource_id          = aws_api_gateway_resource.v1_proxy.id
-  http_method          = "ANY"
-  authorization        = "NONE"
-  request_validator_id = aws_api_gateway_request_validator.v1_proxy_validator.id
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v1_proxy.id
+  http_method   = "ANY"
+  authorization = "NONE"
 
   request_parameters = {
     "method.request.path.proxy" = true
@@ -319,7 +310,7 @@ resource "aws_api_gateway_method_response" "organizations_id_get" {
   }
 }
 
-# Method response for v1/{proxy+} - 200 success
+# Method response for v1/{proxy+}
 resource "aws_api_gateway_method_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
@@ -330,19 +321,6 @@ resource "aws_api_gateway_method_response" "v1_proxy" {
     "method.response.header.Access-Control-Allow-Origin" = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v1/{proxy+} - 400 validation error
-resource "aws_api_gateway_method_response" "v1_proxy_400" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_proxy.id
-  http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = "400"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Content-Type" = true
   }
 }
 
@@ -679,77 +657,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
-  request_templates = {
-    "application/json" = <<EOF
-## Define valid parameters for v1 endpoints
-#set($validParams = ["query", "page", "affiliation", "filter", "format", "all_status", "query.advanced", "query.name", "query.names"])
 
-## Check for invalid parameters first
-#set($invalidParam = "")
-#foreach($paramName in $input.params().querystring.keySet())
-  #set($isValid = false)
-  #foreach($validParam in $validParams)
-    #if($paramName == $validParam)
-      #set($isValid = true)
-      #break
-    #end
-  #end
-  #if(!$isValid)
-    #set($invalidParam = $paramName)
-    #break
-  #end
-#end
-
-## If invalid parameter found, return error immediately
-#if($invalidParam != "")
-{
-  "errors": ["query parameter '$invalidParam' is illegal"]
-}
-#else
-## Valid request - process normally
-#set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
-
-## Initialize query string parts
-#set($queryParts = [])
-
-## Process all query parameters (all are valid)
-#foreach($paramName in $input.params().querystring.keySet())
-  #set($paramValue = $input.params().querystring.get($paramName))
-  
-  ## Handle parameter
-  #if($paramValue && $paramValue != "")
-    ## Parameter has a value
-    #if($paramName == "all_status" && $paramValue == "")
-      ## Special case: empty all_status becomes true
-      #set($ignore = $queryParts.add("$paramName=true"))
-    #else
-      #set($ignore = $queryParts.add("$paramName=$paramValue"))
-    #end
-  #else
-    ## Parameter without value (like ?all_status)
-    #if($paramName == "all_status")
-      #set($ignore = $queryParts.add("$paramName=true"))
-    #else
-      #set($ignore = $queryParts.add($paramName))
-    #end
-  #end
-#end
-
-## Build final query string
-#if($queryParts.size() > 0)
-  #set($queryString = "?")
-  #foreach($part in $queryParts)
-    #if($velocityCount > 1)
-      #set($queryString = "$queryString&$part")
-    #else
-      #set($queryString = "$queryString$part")
-    #end
-  #end
-  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
-#end
-#end
-EOF
-  }
 
   # Caching configuration - cache by common query parameters
   cache_key_parameters = [
@@ -771,35 +679,6 @@ EOF
 # INTEGRATION RESPONSES
 # =============================================================================
 
-# v1/{proxy+} integration response for success (200)
-resource "aws_api_gateway_integration_response" "v1_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_proxy.id
-  http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = aws_api_gateway_method_response.v1_proxy.status_code
-
-  response_templates = {
-    "application/json" = "$input.body"
-  }
-
-  selection_pattern = "2\\d{2}"
-  depends_on = [aws_api_gateway_integration.v1_proxy]
-}
-
-# v1/{proxy+} integration response for validation errors (400)
-resource "aws_api_gateway_integration_response" "v1_proxy_400" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_proxy.id
-  http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = aws_api_gateway_method_response.v1_proxy_400.status_code
-
-  response_templates = {
-    "application/json" = "$input.body"
-  }
-
-  selection_pattern = ".*errors.*"
-  depends_on = [aws_api_gateway_integration.v1_proxy]
-}
 
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
