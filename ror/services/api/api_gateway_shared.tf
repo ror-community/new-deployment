@@ -730,6 +730,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
     #end
   #end
   #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
+#else
+  ## No query parameters - just set the base path
+  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
 #end
 EOF
   }
