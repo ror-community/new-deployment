@@ -351,6 +351,12 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         content_type  = "TEXT_PLAIN"
     }
 
+    custom_response_body {
+        key           = "invalid_query_param_response"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names\"]}"
+        content_type  = "APPLICATION_JSON"
+    }
+
     default_action {
         allow {}
     }
@@ -458,7 +464,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         action {
             block {
                 custom_response {
-                    custom_response_body_key  = "invalid_req_blocked_response"
+                    custom_response_body_key  = "invalid_query_param_response"
                     response_code = 400
                 }
             }
