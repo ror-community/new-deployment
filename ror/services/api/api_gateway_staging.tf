@@ -78,7 +78,7 @@ resource "aws_api_gateway_method_settings" "v1_proxy_cache_staging" {
 resource "aws_api_gateway_method_settings" "v2_proxy_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
-  method_path = "v2/{proxy+}/ANY"
+  method_path = "v2/{proxy+}/GET"
 
   depends_on = [
     aws_api_gateway_method_settings.v1_proxy_cache_staging

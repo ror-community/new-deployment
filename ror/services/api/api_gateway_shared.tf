@@ -102,6 +102,16 @@ resource "aws_api_gateway_method" "v2_proxy" {
 
   request_parameters = {
     "method.request.path.proxy" = true
+    "method.request.path.proxy" = true
+    "method.request.querystring.query" = false
+    "method.request.querystring.page" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.all_status" = false
+    "method.request.querystring.query.advanced" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
   }
 }
 
