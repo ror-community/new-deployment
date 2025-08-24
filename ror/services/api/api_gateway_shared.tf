@@ -702,14 +702,14 @@ resource "aws_api_gateway_integration" "v1_proxy" {
       ## Parameter has a value
       #if($paramName == "all_status" && $paramValue == "")
         ## Special case: empty all_status becomes true
-        #set($ignore = $queryParts.add("${paramName}=true"))
+        #set($ignore = $queryParts.add("$paramName=true"))
       #else
-        #set($ignore = $queryParts.add("${paramName}=${paramValue}"))
+        #set($ignore = $queryParts.add("$paramName=$paramValue"))
       #end
     #else
       ## Parameter without value (like ?all_status)
       #if($paramName == "all_status")
-        #set($ignore = $queryParts.add("${paramName}=true"))
+        #set($ignore = $queryParts.add("$paramName=true"))
       #else
         #set($ignore = $queryParts.add($paramName))
       #end
@@ -717,7 +717,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #else
     ## Invalid parameter - still pass it through
     #if($paramValue && $paramValue != "")
-      #set($ignore = $queryParts.add("${paramName}=${paramValue}"))
+      #set($ignore = $queryParts.add("$paramName=$paramValue"))
     #else
       #set($ignore = $queryParts.add($paramName))
     #end
@@ -729,12 +729,12 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #set($queryString = "?")
   #foreach($part in $queryParts)
     #if($velocityCount > 1)
-      #set($queryString = "${queryString}&${part}")
+      #set($queryString = "$queryString&$part")
     #else
-      #set($queryString = "${queryString}${part}")
+      #set($queryString = "$queryString$part")
     #end
   #end
-  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')${queryString}")
+  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
 #end
 EOF
   }
