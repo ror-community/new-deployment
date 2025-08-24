@@ -649,7 +649,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
@@ -751,27 +751,11 @@ EOF
     "method.request.querystring.invalid_params"
   ]
   cache_namespace      = "v1-proxy"
-
-  depends_on = [aws_api_gateway_method.v1_proxy]
 }
 
 # =============================================================================
 # INTEGRATION RESPONSES
 # =============================================================================
-
-# v1/{proxy+} integration response
-resource "aws_api_gateway_integration_response" "v1_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_proxy.id
-  http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = aws_api_gateway_method_response.v1_proxy.status_code
-
-  response_templates = {
-    "application/json" = "$input.body"
-  }
-
-  depends_on = [aws_api_gateway_integration.v1_proxy]
-}
 
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
@@ -805,8 +789,7 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_integration.v1_proxy,
-    aws_api_gateway_integration_response.v1_proxy
+    aws_api_gateway_integration.v1_proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
