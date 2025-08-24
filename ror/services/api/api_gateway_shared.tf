@@ -491,7 +491,9 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.heartbeat_get,
     aws_api_gateway_integration.v1_heartbeat_get,
     aws_api_gateway_integration.v2_heartbeat_get,
-    aws_api_gateway_integration.root_get
+    aws_api_gateway_integration.root_get,
+    aws_api_gateway_method.root_proxy,
+    aws_api_gateway_method.heartbeat_get
   ]
   
   lifecycle {
