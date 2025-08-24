@@ -668,7 +668,8 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 #set($queryParts = [])
 #set($hasInvalidParams = false)
 
-## Process all query parameters
+## Process all query parameters (only if they exist)
+#if($input.params().querystring.size() > 0)
 #foreach($paramName in $input.params().querystring.keySet())
   #set($paramValue = $input.params().querystring.get($paramName))
   
@@ -709,6 +710,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
       #set($ignore = $queryParts.add($paramName))
     #end
   #end
+#end
 #end
 
 ## Set cache key for invalid_params parameter
