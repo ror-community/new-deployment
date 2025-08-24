@@ -700,53 +700,53 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## If invalid parameter found, force an error response
+## If invalid parameter found, return error immediately
 #if($invalidParam != "")
-  ## Override to a non-existent endpoint that will return 404, then we'll catch it
-  #set($context.requestOverride.path.resourcePath = "/error/invalid-parameter")
-  #set($context.requestOverride.querystring.error_message = "query parameter '$invalidParam' is illegal")
+{
+  "errors": ["query parameter '$invalidParam' is illegal"]
+}
 #else
-  ## Valid request - process normally
-  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
+## Valid request - process normally
+#set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
 
-  ## Initialize query string parts
-  #set($queryParts = [])
+## Initialize query string parts
+#set($queryParts = [])
 
-  ## Process all query parameters (all are valid)
-  #foreach($paramName in $input.params().querystring.keySet())
-    #set($paramValue = $input.params().querystring.get($paramName))
-    
-    ## Handle parameter
-    #if($paramValue && $paramValue != "")
-      ## Parameter has a value
-      #if($paramName == "all_status" && $paramValue == "")
-        ## Special case: empty all_status becomes true
-        #set($ignore = $queryParts.add("$paramName=true"))
-      #else
-        #set($ignore = $queryParts.add("$paramName=$paramValue"))
-      #end
+## Process all query parameters (all are valid)
+#foreach($paramName in $input.params().querystring.keySet())
+  #set($paramValue = $input.params().querystring.get($paramName))
+  
+  ## Handle parameter
+  #if($paramValue && $paramValue != "")
+    ## Parameter has a value
+    #if($paramName == "all_status" && $paramValue == "")
+      ## Special case: empty all_status becomes true
+      #set($ignore = $queryParts.add("$paramName=true"))
     #else
-      ## Parameter without value (like ?all_status)
-      #if($paramName == "all_status")
-        #set($ignore = $queryParts.add("$paramName=true"))
-      #else
-        #set($ignore = $queryParts.add($paramName))
-      #end
+      #set($ignore = $queryParts.add("$paramName=$paramValue"))
+    #end
+  #else
+    ## Parameter without value (like ?all_status)
+    #if($paramName == "all_status")
+      #set($ignore = $queryParts.add("$paramName=true"))
+    #else
+      #set($ignore = $queryParts.add($paramName))
     #end
   #end
+#end
 
-  ## Build final query string
-  #if($queryParts.size() > 0)
-    #set($queryString = "?")
-    #foreach($part in $queryParts)
-      #if($velocityCount > 1)
-        #set($queryString = "$queryString&$part")
-      #else
-        #set($queryString = "$queryString$part")
-      #end
+## Build final query string
+#if($queryParts.size() > 0)
+  #set($queryString = "?")
+  #foreach($part in $queryParts)
+    #if($velocityCount > 1)
+      #set($queryString = "$queryString&$part")
+    #else
+      #set($queryString = "$queryString$part")
     #end
-    #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
   #end
+  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
+#end
 #end
 EOF
   }
@@ -794,14 +794,10 @@ resource "aws_api_gateway_integration_response" "v1_proxy_400" {
   status_code = aws_api_gateway_method_response.v1_proxy_400.status_code
 
   response_templates = {
-    "application/json" = <<EOF
-{
-  "errors": ["$input.params('error_message')"]
-}
-EOF
+    "application/json" = "$input.body"
   }
 
-  selection_pattern = "4\\d{2}"
+  selection_pattern = ".*errors.*"
   depends_on = [aws_api_gateway_integration.v1_proxy]
 }
 
