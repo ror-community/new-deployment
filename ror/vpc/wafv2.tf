@@ -475,15 +475,32 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         statement {
             and_statement {
                 statement {
-                    byte_match_statement {
-                        positional_constraint = "STARTS_WITH"
-                        search_string = "/v1/"
-                        field_to_match {
-                            uri_path {}
+                    or_statement {
+                        statement {
+                            byte_match_statement {
+                                positional_constraint = "STARTS_WITH"
+                                search_string = "/v1/"
+                                field_to_match {
+                                    uri_path {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "NONE"
+                                }
+                            }
                         }
-                        text_transformation {
-                            priority = 1
-                            type     = "NONE"
+                        statement {
+                            byte_match_statement {
+                                positional_constraint = "STARTS_WITH"
+                                search_string = "/v2/"
+                                field_to_match {
+                                    uri_path {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "NONE"
+                                }
+                            }
                         }
                     }
                 }
