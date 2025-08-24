@@ -662,6 +662,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
   }
 
@@ -784,7 +785,9 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_integration.v1_proxy
+    aws_api_gateway_integration.v1_proxy,
+    aws_api_gateway_request_validator.v1_proxy_validator,
+    aws_api_gateway_gateway_response.bad_request_parameters
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
