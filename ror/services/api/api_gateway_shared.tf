@@ -649,7 +649,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
@@ -667,9 +667,6 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 ## Initialize query string parts and invalid parameter flag
 #set($queryParts = [])
 #set($hasInvalidParams = false)
-
-## Initialize cache key parameter early
-#set($context.requestOverride.querystring.invalid_params = "false")
 
 ## Process all query parameters
 #foreach($paramName in $input.params().querystring.keySet())
@@ -706,8 +703,6 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #else
     ## Invalid parameter - mark flag and pass it through
     #set($hasInvalidParams = true)
-    ## Set cache key immediately when invalid param detected
-    #set($context.requestOverride.querystring.invalid_params = "true")
     #if($paramValue && $paramValue != "")
       #set($ignore = $queryParts.add("$paramName=$paramValue"))
     #else
@@ -716,9 +711,12 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Add invalid_params to backend URL if any invalid parameters detected
+## Set cache key for invalid_params parameter
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
+  #set($context.requestOverride.querystring.invalid_params = "true")
+#else
+  #set($context.requestOverride.querystring.invalid_params = "false")
 #end
 
 ## Build final query string
@@ -759,6 +757,20 @@ EOF
 # INTEGRATION RESPONSES
 # =============================================================================
 
+# v1/{proxy+} integration response
+resource "aws_api_gateway_integration_response" "v1_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy.status_code
+
+  response_templates = {
+    "application/json" = "$input.body"
+  }
+
+  depends_on = [aws_api_gateway_integration.v1_proxy]
+}
+
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -791,7 +803,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_integration.v1_proxy
+    aws_api_gateway_integration.v1_proxy,
+    aws_api_gateway_integration_response.v1_proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
