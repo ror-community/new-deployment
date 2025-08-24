@@ -713,7 +713,7 @@ resource "aws_api_gateway_gateway_response" "bad_request_parameters" {
       errors = ["query parameter '$context.error.validationErrorString' is illegal"]
     })
   }
-  
+
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
     "gatewayresponse.header.Content-Type" = "'application/json'"
