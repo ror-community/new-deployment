@@ -574,6 +574,14 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     force_update = "true"
   }
   
+  depends_on = [
+    aws_api_gateway_integration.v1_proxy,
+    aws_api_gateway_integration.v2_proxy,
+    aws_api_gateway_integration.v1_heartbeat_get,
+    aws_api_gateway_integration.v2_heartbeat_get,
+    aws_api_gateway_integration.root_get
+  ]
+  
   lifecycle {
     create_before_destroy = true
   }
