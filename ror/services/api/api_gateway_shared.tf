@@ -711,16 +711,12 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Set cache key for invalid_params parameter and create cache body
+## Set cache key for invalid_params parameter
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
-  #set($cacheKey = "proxy=$input.params('proxy')|invalid_params=true")
 #else
-  #set($cacheKey = "proxy=$input.params('proxy')|invalid_params=false")
+  ## No invalid params - don't add invalid_params to backend URL
 #end
-
-## Set request body for caching purposes
-#set($context.requestOverride.body = $cacheKey)
 
 ## Build final query string
 #if($queryParts.size() > 0)
@@ -740,9 +736,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 EOF
   }
 
-  # Caching configuration - cache by request body (contains VTL-generated cache key)
+  # Caching configuration - cache by path and let parameter differences create natural cache differentiation
   cache_key_parameters = [
-    "method.request.body"
+    "method.request.path.proxy"
   ]
   cache_namespace      = "v1-proxy"
 }
