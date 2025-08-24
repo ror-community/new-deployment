@@ -54,6 +54,16 @@ resource "aws_wafv2_ip_set" "whitelist-staging" {
   addresses          = var.whitelist_ips_staging
 }
 
+resource "aws_wafv2_regex_pattern_set" "valid_query_params_staging" {
+  name  = "valid-query-params-staging"
+  description = "Valid query parameters for ROR API staging"
+  scope = "REGIONAL"
+  
+  regular_expression {
+    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names)(=([^&]*)?)?(&(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names)(=([^&]*)?)?)*$"
+  }
+}
+
 resource "aws_wafv2_ip_set" "blacklist-staging" {
   name = "blacklistIPSetStaging"
   description        = "STAGING Blacklist IP set"
@@ -419,8 +429,63 @@ resource "aws_wafv2_web_acl" "staging-v2" {
     }
 
     rule {
-        name = "block-invalid-request-rule"
+        name = "block-invalid-query-params-rule"
         priority = 5
+        action {
+            block {
+                custom_response {
+                    custom_response_body_key  = "invalid_req_blocked_response"
+                    response_code = 400
+                }
+            }
+        }
+        statement {
+            and_statement {
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "STARTS_WITH"
+                        search_string = "/v1/"
+                        field_to_match {
+                            uri_path {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
+                    not_statement {
+                        statement {
+                            regex_pattern_set_reference_statement {
+                                arn = aws_wafv2_regex_pattern_set.valid_query_params_staging.arn
+                                field_to_match {
+                                    query_string {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "URL_DECODE"
+                                }
+                                text_transformation {
+                                    priority = 2
+                                    type     = "LOWERCASE"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "block-invalid-query-params-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name = "block-invalid-request-rule"
+        priority = 6
         action {
             block {
                 custom_response {
