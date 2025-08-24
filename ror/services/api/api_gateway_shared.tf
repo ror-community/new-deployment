@@ -768,7 +768,8 @@ EOF
 
   # Caching configuration - cache by custom header containing parameter hash
   cache_key_parameters = [
-    "method.request.header.XCacheKey"
+    "method.request.header.XCacheKey",
+    "integration.request.header.XCacheKey"
   ]
   cache_namespace      = "v1-proxy"
 }
