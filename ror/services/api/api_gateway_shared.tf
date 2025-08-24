@@ -202,7 +202,7 @@ resource "aws_api_gateway_method" "v1_proxy" {
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
     "method.request.querystring.invalid_params" = false
-    "method.request.header.X-Cache-Key" = false
+    "method.request.header.XCacheKey" = false
   }
 }
 
@@ -744,8 +744,8 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Set the custom header for caching
-#set($context.requestOverride.header.X-Cache-Key = "$cacheKey")
+## Set the cache key as a custom header for caching
+#set($context.requestOverride.header.XCacheKey = "$cacheKey")
 
 ## Build final query string
 #if($queryParts.size() > 0)
@@ -767,7 +767,7 @@ EOF
 
   # Caching configuration - cache by custom header containing parameter hash
   cache_key_parameters = [
-    "method.request.header.X-Cache-Key"
+    "method.request.header.XCacheKey"
   ]
   cache_namespace      = "v1-proxy"
 }
