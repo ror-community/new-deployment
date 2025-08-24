@@ -711,9 +711,12 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Add invalid_params parameter if there were invalid parameters
+## Set cache key for invalid_params parameter
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
+  #set($context.requestOverride.querystring.invalid_params = "true")
+#else
+  #set($context.requestOverride.querystring.invalid_params = "false")
 #end
 
 ## Build final query string
