@@ -202,6 +202,7 @@ resource "aws_api_gateway_method" "v1_proxy" {
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
     "method.request.querystring.invalid_params" = false
+    "method.request.header.XCacheKey" = false
   }
 }
 
@@ -649,12 +650,13 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.XCacheKey" = "method.request.header.XCacheKey"
   }
 
   request_templates = {
@@ -711,13 +713,40 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Set cache key for invalid_params parameter
+## Add invalid_params to backend URL if needed
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
-  #set($context.requestOverride.querystring.invalid_params = "true")
-#else
-  #set($context.requestOverride.querystring.invalid_params = "false")
 #end
+
+## Create a hash-like cache key from all parameters
+#set($cacheKeyParts = [])
+#set($ignore = $cacheKeyParts.add("proxy:$input.params('proxy')"))
+#foreach($paramName in $input.params().querystring.keySet())
+  #set($paramValue = $input.params().querystring.get($paramName))
+  #if($paramValue && $paramValue != "")
+    #set($ignore = $cacheKeyParts.add("$paramName:$paramValue"))
+  #else
+    #set($ignore = $cacheKeyParts.add("$paramName:empty"))
+  #end
+#end
+#if($hasInvalidParams)
+  #set($ignore = $cacheKeyParts.add("invalid_params:true"))
+#else
+  #set($ignore = $cacheKeyParts.add("invalid_params:false"))
+#end
+
+## Join all parts with pipes to create a unique cache key
+#set($cacheKey = "")
+#foreach($part in $cacheKeyParts)
+  #if($velocityCount > 1)
+    #set($cacheKey = "$cacheKey|$part")
+  #else
+    #set($cacheKey = "$part")
+  #end
+#end
+
+## Set the cache key as a custom header for caching
+#set($context.requestOverride.header.XCacheKey = "$cacheKey")
 
 ## Build final query string
 #if($queryParts.size() > 0)
@@ -737,18 +766,10 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 EOF
   }
 
-  # Caching configuration - cache by common query parameters
+  # Caching configuration - cache by custom header containing parameter hash
   cache_key_parameters = [
-    "method.request.path.proxy",
-    "method.request.querystring.query",
-    "method.request.querystring.page", 
-    "method.request.querystring.affiliation",
-    "method.request.querystring.filter",
-    "method.request.querystring.format",
-    "method.request.querystring.all_status",
-    "method.request.querystring.query.advanced",
-    "method.request.querystring.page_size",
-    "method.request.querystring.invalid_params"
+    "method.request.header.XCacheKey",
+    "integration.request.header.XCacheKey"
   ]
   cache_namespace      = "v1-proxy"
 }
@@ -756,6 +777,20 @@ EOF
 # =============================================================================
 # INTEGRATION RESPONSES
 # =============================================================================
+
+# v1/{proxy+} integration response
+resource "aws_api_gateway_integration_response" "v1_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy.status_code
+
+  response_templates = {
+    "application/json" = "$input.body"
+  }
+
+  depends_on = [aws_api_gateway_integration.v1_proxy]
+}
 
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
@@ -789,7 +824,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_integration.v1_proxy
+    aws_api_gateway_integration.v1_proxy,
+    aws_api_gateway_integration_response.v1_proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
