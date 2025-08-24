@@ -752,6 +752,8 @@ EOF
     "method.request.querystring.invalid_params"
   ]
   cache_namespace      = "v1-proxy"
+
+  depends_on = [aws_api_gateway_method.v1_proxy]
 }
 
 # =============================================================================
