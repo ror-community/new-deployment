@@ -668,6 +668,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 #set($queryParts = [])
 #set($hasInvalidParams = false)
 
+## Initialize cache key parameter early
+#set($context.requestOverride.querystring.invalid_params = "false")
+
 ## Process all query parameters
 #foreach($paramName in $input.params().querystring.keySet())
   #set($paramValue = $input.params().querystring.get($paramName))
@@ -703,6 +706,8 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #else
     ## Invalid parameter - mark flag and pass it through
     #set($hasInvalidParams = true)
+    ## Set cache key immediately when invalid param detected
+    #set($context.requestOverride.querystring.invalid_params = "true")
     #if($paramValue && $paramValue != "")
       #set($ignore = $queryParts.add("$paramName=$paramValue"))
     #else
@@ -711,12 +716,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Set cache key for invalid_params parameter
+## Add invalid_params to backend URL if any invalid parameters detected
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
-  #set($context.requestOverride.querystring.invalid_params = "true")
-#else
-  #set($context.requestOverride.querystring.invalid_params = "false")
 #end
 
 ## Build final query string
