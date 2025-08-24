@@ -713,6 +713,7 @@ EOF
 
   # Caching configuration - cache by common query parameters
   cache_key_parameters = [
+    "method.request.path.proxy",
     "method.request.querystring.query",
     "method.request.querystring.page", 
     "method.request.querystring.affiliation",
