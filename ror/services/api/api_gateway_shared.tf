@@ -208,6 +208,22 @@ resource "aws_api_gateway_method" "v1_proxy" {
 # METHOD RESPONSES
 # =============================================================================
 
+# v1/{proxy+} method response
+resource "aws_api_gateway_method_response" "v1_proxy_200" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = "200"
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = false
+  }
+}
+
 # Root path method response
 resource "aws_api_gateway_method_response" "root_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -648,12 +664,79 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
+  type                    = "HTTP"
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
+  }
+
+  request_templates = {
+    "application/json" = <<EOF
+#set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')")
+
+## Define valid parameters for v1 endpoints
+#set($validParams = ["query", "page", "affiliation", "filter", "format", "all_status", "query.advanced", "page_size"])
+
+## Initialize query string parts
+#set($queryParts = [])
+
+## Process all query parameters
+#foreach($paramName in $input.params().querystring.keySet())
+  #set($paramValue = $input.params().querystring.get($paramName))
+  
+  ## Check if parameter is valid
+  #set($isValid = false)
+  #foreach($validParam in $validParams)
+    #if($paramName == $validParam)
+      #set($isValid = true)
+      #break
+    #end
+  #end
+  
+  ## Handle parameter based on validity
+  #if($isValid)
+    ## Valid parameter - add to query string
+    #if($paramValue && $paramValue != "")
+      ## Parameter has a value
+      #if($paramName == "all_status" && $paramValue == "")
+        ## Special case: empty all_status becomes true
+        #set($ignore = $queryParts.add("$paramName=true"))
+      #else
+        #set($ignore = $queryParts.add("$paramName=$paramValue"))
+      #end
+    #else
+      ## Parameter without value (like ?all_status)
+      #if($paramName == "all_status")
+        #set($ignore = $queryParts.add("$paramName=true"))
+      #else
+        #set($ignore = $queryParts.add($paramName))
+      #end
+    #end
+  #else
+    ## Invalid parameter - still pass it through
+    #if($paramValue && $paramValue != "")
+      #set($ignore = $queryParts.add("$paramName=$paramValue"))
+    #else
+      #set($ignore = $queryParts.add($paramName))
+    #end
+  #end
+#end
+
+## Build final query string
+#if($queryParts.size() > 0)
+  #set($queryString = "?")
+  #foreach($part in $queryParts)
+    #if($velocityCount > 1)
+      #set($queryString = "$queryString&$part")
+    #else
+      #set($queryString = "$queryString$part")
+    #end
+  #end
+  #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
+#end
+EOF
   }
 
   # Caching configuration - cache by common query parameters
@@ -674,6 +757,20 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 # =============================================================================
 # INTEGRATION RESPONSES
 # =============================================================================
+
+# v1/{proxy+} integration response
+resource "aws_api_gateway_integration_response" "v1_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy_200.status_code
+
+  response_templates = {
+    "application/json" = "$input.body"
+  }
+
+  depends_on = [aws_api_gateway_integration.v1_proxy]
+}
 
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
@@ -707,7 +804,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_integration.v1_proxy
+    aws_api_gateway_integration.v1_proxy,
+    aws_api_gateway_integration_response.v1_proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
