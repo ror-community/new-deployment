@@ -711,13 +711,16 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Set cache key for invalid_params parameter
+## Set cache key for invalid_params parameter and create cache body
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
-  #set($context.requestOverride.querystring.invalid_params = "true")
+  #set($cacheKey = "proxy=$input.params('proxy')|invalid_params=true")
 #else
-  #set($context.requestOverride.querystring.invalid_params = "false")
+  #set($cacheKey = "proxy=$input.params('proxy')|invalid_params=false")
 #end
+
+## Set request body for caching purposes
+#set($context.requestOverride.body = $cacheKey)
 
 ## Build final query string
 #if($queryParts.size() > 0)
@@ -737,18 +740,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 EOF
   }
 
-  # Caching configuration - cache by common query parameters
+  # Caching configuration - cache by request body (contains VTL-generated cache key)
   cache_key_parameters = [
-    "method.request.path.proxy",
-    "method.request.querystring.query",
-    "method.request.querystring.page", 
-    "method.request.querystring.affiliation",
-    "method.request.querystring.filter",
-    "method.request.querystring.format",
-    "method.request.querystring.all_status",
-    "method.request.querystring.query.advanced",
-    "method.request.querystring.page_size",
-    "method.request.querystring.invalid_params"
+    "method.request.body"
   ]
   cache_namespace      = "v1-proxy"
 }
