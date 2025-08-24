@@ -202,6 +202,7 @@ resource "aws_api_gateway_method" "v1_proxy" {
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
     "method.request.querystring.invalid_params" = false
+    "method.request.header.X-Cache-Key" = false
   }
 }
 
@@ -711,12 +712,40 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Set cache key for invalid_params parameter
+## Add invalid_params to backend URL if needed
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
-#else
-  ## No invalid params - don't add invalid_params to backend URL
 #end
+
+## Create a hash-like cache key from all parameters
+#set($cacheKeyParts = [])
+#set($ignore = $cacheKeyParts.add("proxy:$input.params('proxy')"))
+#foreach($paramName in $input.params().querystring.keySet())
+  #set($paramValue = $input.params().querystring.get($paramName))
+  #if($paramValue && $paramValue != "")
+    #set($ignore = $cacheKeyParts.add("$paramName:$paramValue"))
+  #else
+    #set($ignore = $cacheKeyParts.add("$paramName:empty"))
+  #end
+#end
+#if($hasInvalidParams)
+  #set($ignore = $cacheKeyParts.add("invalid_params:true"))
+#else
+  #set($ignore = $cacheKeyParts.add("invalid_params:false"))
+#end
+
+## Join all parts with pipes to create a unique cache key
+#set($cacheKey = "")
+#foreach($part in $cacheKeyParts)
+  #if($velocityCount > 1)
+    #set($cacheKey = "$cacheKey|$part")
+  #else
+    #set($cacheKey = "$part")
+  #end
+#end
+
+## Set the custom header for caching
+#set($context.requestOverride.header.X-Cache-Key = "$cacheKey")
 
 ## Build final query string
 #if($queryParts.size() > 0)
@@ -736,9 +765,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 EOF
   }
 
-  # Caching configuration - cache by path and let parameter differences create natural cache differentiation
+  # Caching configuration - cache by custom header containing parameter hash
   cache_key_parameters = [
-    "method.request.path.proxy"
+    "method.request.header.X-Cache-Key"
   ]
   cache_namespace      = "v1-proxy"
 }
