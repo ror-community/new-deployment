@@ -648,7 +648,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
   integration_http_method = "GET"
-  type                    = "HTTP"
+  type                    = "HTTP_PROXY"
   uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
@@ -722,6 +722,17 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 #end
 EOF
   }
+  
+  # Map query parameters with special handling for all_status
+    "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.page" = "method.request.querystring.page"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
+    "integration.request.querystring.page_size" = "method.request.querystring.page_size"
+  }
 
   # Caching configuration - cache by common query parameters
   cache_key_parameters = [
@@ -741,20 +752,6 @@ EOF
 # =============================================================================
 # INTEGRATION RESPONSES
 # =============================================================================
-
-# v1/{proxy+} integration response
-resource "aws_api_gateway_integration_response" "v1_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v1_proxy.id
-  http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = aws_api_gateway_method_response.v1_proxy.status_code
-
-  response_templates = {
-    "application/json" = "$input.body"
-  }
-
-  depends_on = [aws_api_gateway_integration.v1_proxy]
-}
 
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
@@ -788,8 +785,7 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
-    aws_api_gateway_integration.v1_proxy,
-    aws_api_gateway_integration_response.v1_proxy
+    aws_api_gateway_integration.v1_proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
