@@ -60,6 +60,9 @@ resource "aws_wafv2_regex_pattern_set" "valid_query_params_staging" {
   scope = "REGIONAL"
   
   regular_expression {
+    regex_string = "^$"
+  }
+  regular_expression {
     regex_string = "^query(=|$)"
   }
   regular_expression {
@@ -477,19 +480,6 @@ resource "aws_wafv2_web_acl" "staging-v2" {
                         search_string = "/v1/"
                         field_to_match {
                             uri_path {}
-                        }
-                        text_transformation {
-                            priority = 1
-                            type     = "NONE"
-                        }
-                    }
-                }
-                statement {
-                    byte_match_statement {
-                        positional_constraint = "CONTAINS"
-                        search_string = "="
-                        field_to_match {
-                            query_string {}
                         }
                         text_transformation {
                             priority = 1
