@@ -201,6 +201,7 @@ resource "aws_api_gateway_method" "v1_proxy" {
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
+    "method.request.querystring.invalid_params" = false
   }
 }
 
@@ -663,8 +664,9 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 ## Define valid parameters for v1 endpoints
 #set($validParams = ["query", "page", "affiliation", "filter", "format", "all_status", "query.advanced", "page_size"])
 
-## Initialize query string parts
+## Initialize query string parts and invalid parameter flag
 #set($queryParts = [])
+#set($hasInvalidParams = false)
 
 ## Process all query parameters
 #foreach($paramName in $input.params().querystring.keySet())
@@ -699,13 +701,19 @@ resource "aws_api_gateway_integration" "v1_proxy" {
       #end
     #end
   #else
-    ## Invalid parameter - still pass it through
+    ## Invalid parameter - mark flag and pass it through
+    #set($hasInvalidParams = true)
     #if($paramValue && $paramValue != "")
       #set($ignore = $queryParts.add("$paramName=$paramValue"))
     #else
       #set($ignore = $queryParts.add($paramName))
     #end
   #end
+#end
+
+## Add invalid_params parameter if there were invalid parameters
+#if($hasInvalidParams)
+  #set($ignore = $queryParts.add("invalid_params=true"))
 #end
 
 ## Build final query string
@@ -733,7 +741,8 @@ EOF
     "method.request.querystring.format",
     "method.request.querystring.all_status",
     "method.request.querystring.query.advanced",
-    "method.request.querystring.page_size"
+    "method.request.querystring.page_size",
+    "method.request.querystring.invalid_params"
   ]
   cache_namespace      = "v1-proxy"
 }
