@@ -654,6 +654,14 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.page" = "method.request.querystring.page"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
+    "integration.request.querystring.page_size" = "method.request.querystring.page_size"
   }
 
   request_templates = {
@@ -721,17 +729,6 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #set($context.requestOverride.path.resourcePath = "/v1/$input.params('proxy')$queryString")
 #end
 EOF
-  }
-  
-  # Map query parameters with special handling for all_status
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
-    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
-    "integration.request.querystring.page_size" = "method.request.querystring.page_size"
   }
 
   # Caching configuration - cache by common query parameters
