@@ -105,7 +105,7 @@ resource "aws_api_gateway_method_settings" "organizations_cache_staging" {
   method_path = "organizations/GET"
 
   depends_on = [
-    aws_api_gateway_method_settings.v2_organizations_cache_staging
+    aws_api_gateway_method_settings.v2_proxy_cache_staging
   ]
 
   settings {
