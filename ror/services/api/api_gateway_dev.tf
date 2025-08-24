@@ -89,11 +89,11 @@ resource "aws_api_gateway_method_settings" "v2_proxy_cache" {
   }
 }
 
-# Enable caching for organizations endpoint (no version)
-resource "aws_api_gateway_method_settings" "organizations_cache" {
+# Enable caching for root /{proxy+} endpoint (versionless)
+resource "aws_api_gateway_method_settings" "root_proxy_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "organizations/GET"
+  method_path = "{proxy+}/GET"
 
   settings {
     caching_enabled        = true
@@ -109,20 +109,16 @@ resource "aws_api_gateway_method_settings" "organizations_cache" {
   }
 }
 
-# Enable caching for organizations/{id} endpoint (no version)
-resource "aws_api_gateway_method_settings" "organizations_id_cache" {
+# Disable caching for root /heartbeat endpoint (versionless)
+resource "aws_api_gateway_method_settings" "heartbeat_no_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "organizations/{id}/GET"
+  method_path = "heartbeat/GET"
 
   settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
     cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
     
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
