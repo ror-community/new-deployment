@@ -319,7 +319,7 @@ resource "aws_api_gateway_method_response" "organizations_id_get" {
   }
 }
 
-# Method response for v1/{proxy+} (catches everything after v1/)
+# Method response for v1/{proxy+} - 200 success
 resource "aws_api_gateway_method_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
@@ -330,6 +330,19 @@ resource "aws_api_gateway_method_response" "v1_proxy" {
     "method.response.header.Access-Control-Allow-Origin" = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for v1/{proxy+} - 400 validation error
+resource "aws_api_gateway_method_response" "v1_proxy_400" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = "400"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Content-Type" = true
   }
 }
 
@@ -758,6 +771,36 @@ EOF
 # INTEGRATION RESPONSES
 # =============================================================================
 
+# v1/{proxy+} integration response for success (200)
+resource "aws_api_gateway_integration_response" "v1_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy.status_code
+
+  response_templates = {
+    "application/json" = "$input.body"
+  }
+
+  selection_pattern = "2\\d{2}"
+  depends_on = [aws_api_gateway_integration.v1_proxy]
+}
+
+# v1/{proxy+} integration response for validation errors (400)
+resource "aws_api_gateway_integration_response" "v1_proxy_400" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy_400.status_code
+
+  response_templates = {
+    "application/json" = "$input.body"
+  }
+
+  selection_pattern = ".*errors.*"
+  depends_on = [aws_api_gateway_integration.v1_proxy]
+}
+
 # Root path integration response
 resource "aws_api_gateway_integration_response" "root_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -814,6 +857,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.organizations_get,
     aws_api_gateway_integration.organizations_id_get,
     aws_api_gateway_integration.v1_proxy,
+    aws_api_gateway_integration_response.v1_proxy,
+    aws_api_gateway_integration_response.v1_proxy_400,
     aws_api_gateway_request_validator.v1_proxy_validator,
     aws_api_gateway_gateway_response.bad_request_parameters
   ]
