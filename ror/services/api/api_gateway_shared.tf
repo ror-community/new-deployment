@@ -202,7 +202,6 @@ resource "aws_api_gateway_method" "v1_proxy" {
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
     "method.request.querystring.invalid_params" = false
-    "method.request.header.XCacheKey" = false
   }
 }
 
@@ -656,7 +655,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.XCacheKey" = "method.request.header.XCacheKey"
+    "integration.request.querystring.invalid_params" = "method.request.querystring.invalid_params"
   }
 
   request_templates = {
@@ -713,40 +712,13 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   #end
 #end
 
-## Add invalid_params to backend URL if needed
+## Set cache key for invalid_params parameter
 #if($hasInvalidParams)
   #set($ignore = $queryParts.add("invalid_params=true"))
-#end
-
-## Create a hash-like cache key from all parameters
-#set($cacheKeyParts = [])
-#set($ignore = $cacheKeyParts.add("proxy:$input.params('proxy')"))
-#foreach($paramName in $input.params().querystring.keySet())
-  #set($paramValue = $input.params().querystring.get($paramName))
-  #if($paramValue && $paramValue != "")
-    #set($ignore = $cacheKeyParts.add("$paramName:$paramValue"))
-  #else
-    #set($ignore = $cacheKeyParts.add("$paramName:empty"))
-  #end
-#end
-#if($hasInvalidParams)
-  #set($ignore = $cacheKeyParts.add("invalid_params:true"))
+  #set($context.requestOverride.querystring.invalid_params = "true")
 #else
-  #set($ignore = $cacheKeyParts.add("invalid_params:false"))
+  #set($context.requestOverride.querystring.invalid_params = "false")
 #end
-
-## Join all parts with pipes to create a unique cache key
-#set($cacheKey = "")
-#foreach($part in $cacheKeyParts)
-  #if($velocityCount > 1)
-    #set($cacheKey = "$cacheKey|$part")
-  #else
-    #set($cacheKey = "$part")
-  #end
-#end
-
-## Set the cache key as a custom header for caching
-#set($context.requestOverride.header.XCacheKey = "$cacheKey")
 
 ## Build final query string
 #if($queryParts.size() > 0)
@@ -766,10 +738,18 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 EOF
   }
 
-  # Caching configuration - cache by custom header containing parameter hash
+  # Caching configuration - cache by common query parameters
   cache_key_parameters = [
-    "method.request.header.XCacheKey",
-    "integration.request.header.XCacheKey"
+    "method.request.path.proxy",
+    "method.request.querystring.query",
+    "method.request.querystring.page", 
+    "method.request.querystring.affiliation",
+    "method.request.querystring.filter",
+    "method.request.querystring.format",
+    "method.request.querystring.all_status",
+    "method.request.querystring.query.advanced",
+    "method.request.querystring.page_size",
+    "method.request.querystring.invalid_params"
   ]
   cache_namespace      = "v1-proxy"
 }
