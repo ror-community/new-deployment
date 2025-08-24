@@ -93,11 +93,11 @@ resource "aws_api_gateway_method" "root_get" {
   authorization = "NONE"
 }
 
-# GET method for v2/{proxy+}
+# ANY method for v2/{proxy+}
 resource "aws_api_gateway_method" "v2_proxy" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.v2_proxy.id
-  http_method   = "GET"
+  http_method   = "ANY"
   authorization = "NONE"
 
   request_parameters = {
