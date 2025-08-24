@@ -656,6 +656,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.XCacheKey" = "method.request.header.XCacheKey"
   }
 
   request_templates = {
