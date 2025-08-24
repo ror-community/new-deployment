@@ -745,7 +745,8 @@ EOF
     "method.request.querystring.all_status",
     "method.request.querystring.query.advanced",
     "method.request.querystring.page_size",
-    "method.request.querystring.invalid_params"
+    "method.request.querystring.invalid_params",
+    "integration.request.path.proxy"
   ]
   cache_namespace      = "v1-proxy"
 }
