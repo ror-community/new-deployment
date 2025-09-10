@@ -89,6 +89,9 @@ resource "aws_wafv2_regex_pattern_set" "valid_query_params" {
   regular_expression {
     regex_string = "^query\\.names(=|$)"
   }
+  regular_expression {
+    regex_string = "^single_search(=|$)"
+  }
 }
 
 resource "aws_wafv2_ip_set" "blacklist-staging" {
@@ -158,7 +161,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search\"]}"
         content_type  = "APPLICATION_JSON"
     }
 
@@ -460,7 +463,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search\"]}"
         content_type  = "APPLICATION_JSON"
     }
 

@@ -158,6 +158,7 @@ resource "aws_api_gateway_method" "v2_proxy" {
     "method.request.querystring.query.name" = false
     "method.request.querystring.query.names" = false
     "method.request.querystring.page_size" = false
+    "method.request.querystring.single_search" = false
   }
 }
 
@@ -180,6 +181,7 @@ resource "aws_api_gateway_method" "root_proxy" {
     "method.request.querystring.all_status" = false
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size" = false
+    "method.request.querystring.single_search" = false
   }
 }
 
@@ -411,7 +413,8 @@ resource "aws_api_gateway_integration" "v2_proxy" {
     "method.request.querystring.query.advanced",
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
-    "method.request.querystring.page_size"
+    "method.request.querystring.page_size",
+    "method.request.querystring.single_search"
     ]
   cache_namespace     = "v2-proxy"
 }
@@ -443,7 +446,8 @@ resource "aws_api_gateway_integration" "root_proxy" {
     "method.request.querystring.query.advanced",
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
-    "method.request.querystring.page_size"
+    "method.request.querystring.page_size",
+    "method.request.querystring.single_search"
   ]
   cache_namespace     = "root-proxy"
 }
