@@ -54,46 +54,6 @@ resource "aws_wafv2_ip_set" "whitelist-staging" {
   addresses          = var.whitelist_ips_staging
 }
 
-resource "aws_wafv2_regex_pattern_set" "valid_query_params" {
-  name  = "valid-query-params"
-  description = "Valid query parameters for ROR API"
-  scope = "REGIONAL"
-  
-  regular_expression {
-    regex_string = "^$"
-  }
-  regular_expression {
-    regex_string = "^query(=|$)"
-  }
-  regular_expression {
-    regex_string = "^page(=|$)"
-  }
-  regular_expression {
-    regex_string = "^affiliation(=|$)"
-  }
-  regular_expression {
-    regex_string = "^filter(=|$)"
-  }
-  regular_expression {
-    regex_string = "^format(=|$)"
-  }
-  regular_expression {
-    regex_string = "^all_status(=|$)"
-  }
-  regular_expression {
-    regex_string = "^query\\.advanced(=|$)"
-  }
-  regular_expression {
-    regex_string = "^query\\.name(=|$)"
-  }
-  regular_expression {
-    regex_string = "^query\\.names(=|$)"
-  }
-  regular_expression {
-    regex_string = "^single_search(=|$)"
-  }
-}
-
 resource "aws_wafv2_ip_set" "blacklist-staging" {
   name = "blacklistIPSetStaging"
   description        = "STAGING Blacklist IP set"
@@ -157,12 +117,6 @@ resource "aws_wafv2_web_acl" "dev-v2" {
         key           = "invalid_req_blocked_response"
         content       = "Bad Request"
         content_type  = "TEXT_PLAIN"
-    }
-
-    custom_response_body {
-        key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search\"]}"
-        content_type  = "APPLICATION_JSON"
     }
 
     default_action {
@@ -267,106 +221,8 @@ resource "aws_wafv2_web_acl" "dev-v2" {
     }
 
     rule {
-        name = "block-invalid-query-params-rule"
-        priority = 5
-        action {
-            block {
-                custom_response {
-                    custom_response_body_key  = "invalid_query_param_response"
-                    response_code = 400
-                }
-            }
-        }
-        statement {
-            and_statement {
-                statement {
-                    or_statement {
-                        statement {
-                            byte_match_statement {
-                                positional_constraint = "STARTS_WITH"
-                                search_string = "/v1/"
-                                field_to_match {
-                                    uri_path {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "NONE"
-                                }
-                            }
-                        }
-                        statement {
-                            byte_match_statement {
-                                positional_constraint = "STARTS_WITH"
-                                search_string = "/v2/"
-                                field_to_match {
-                                    uri_path {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "NONE"
-                                }
-                            }
-                        }
-                        statement {
-                            byte_match_statement {
-                                positional_constraint = "STARTS_WITH"
-                                search_string = "/organizations"
-                                field_to_match {
-                                    uri_path {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "NONE"
-                                }
-                            }
-                        }
-                    }
-                }
-                statement {
-                    byte_match_statement {
-                        positional_constraint = "CONTAINS"
-                        search_string = "="
-                        field_to_match {
-                            query_string {}
-                        }
-                        text_transformation {
-                            priority = 1
-                            type     = "NONE"
-                        }
-                    }
-                }
-                statement {
-                    not_statement {
-                        statement {
-                            regex_pattern_set_reference_statement {
-                                arn = aws_wafv2_regex_pattern_set.valid_query_params.arn
-                                field_to_match {
-                                    query_string {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "URL_DECODE"
-                                }
-                                text_transformation {
-                                    priority = 2
-                                    type     = "LOWERCASE"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        visibility_config {
-        cloudwatch_metrics_enabled = true
-        metric_name                = "block-invalid-query-params-metric"
-        sampled_requests_enabled   = true
-        }
-    }
-
-    rule {
         name = "block-invalid-request-rule"
-        priority = 6
+        priority = 5
         action {
             block {
                 custom_response {
@@ -459,12 +315,6 @@ resource "aws_wafv2_web_acl" "staging-v2" {
         key           = "invalid_req_blocked_response"
         content       = "Bad Request"
         content_type  = "TEXT_PLAIN"
-    }
-
-    custom_response_body {
-        key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search\"]}"
-        content_type  = "APPLICATION_JSON"
     }
 
     default_action {
@@ -569,106 +419,8 @@ resource "aws_wafv2_web_acl" "staging-v2" {
     }
 
     rule {
-        name = "block-invalid-query-params-rule"
-        priority = 5
-        action {
-            block {
-                custom_response {
-                    custom_response_body_key  = "invalid_query_param_response"
-                    response_code = 400
-                }
-            }
-        }
-        statement {
-            and_statement {
-                statement {
-                    or_statement {
-                        statement {
-                            byte_match_statement {
-                                positional_constraint = "STARTS_WITH"
-                                search_string = "/v1/"
-                                field_to_match {
-                                    uri_path {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "NONE"
-                                }
-                            }
-                        }
-                        statement {
-                            byte_match_statement {
-                                positional_constraint = "STARTS_WITH"
-                                search_string = "/v2/"
-                                field_to_match {
-                                    uri_path {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "NONE"
-                                }
-                            }
-                        }
-                        statement {
-                            byte_match_statement {
-                                positional_constraint = "STARTS_WITH"
-                                search_string = "/organizations"
-                                field_to_match {
-                                    uri_path {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "NONE"
-                                }
-                            }
-                        }
-                    }
-                }
-                statement {
-                    byte_match_statement {
-                        positional_constraint = "CONTAINS"
-                        search_string = "="
-                        field_to_match {
-                            query_string {}
-                        }
-                        text_transformation {
-                            priority = 1
-                            type     = "NONE"
-                        }
-                    }
-                }
-                statement {
-                    not_statement {
-                        statement {
-                            regex_pattern_set_reference_statement {
-                                arn = aws_wafv2_regex_pattern_set.valid_query_params.arn
-                                field_to_match {
-                                    query_string {}
-                                }
-                                text_transformation {
-                                    priority = 1
-                                    type     = "URL_DECODE"
-                                }
-                                text_transformation {
-                                    priority = 2
-                                    type     = "LOWERCASE"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        visibility_config {
-        cloudwatch_metrics_enabled = true
-        metric_name                = "block-invalid-query-params-metric"
-        sampled_requests_enabled   = true
-        }
-    }
-
-    rule {
         name = "block-invalid-request-rule"
-        priority = 6
+        priority = 5
         action {
             block {
                 custom_response {
@@ -1007,13 +759,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         sampled_requests_enabled   = true
     }
 }
+resource "aws_wafv2_web_acl_association" "staging-v2" {
+    resource_arn = data.aws_lb.alb-staging.arn
+    web_acl_arn  = aws_wafv2_web_acl.staging-v2.arn
+}
 
 resource "aws_wafv2_web_acl_association" "prod-v2" {
     resource_arn = data.aws_lb.alb.arn
     web_acl_arn  = aws_wafv2_web_acl.prod-v2.arn
-}
-
-resource "aws_wafv2_web_acl_association" "staging-v2" {
-    resource_arn = data.aws_lb.alb-staging.arn
-    web_acl_arn  = aws_wafv2_web_acl.staging-v2.arn
 }
