@@ -166,7 +166,7 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging" {
 
   settings {
     metrics_enabled             = true
-    logging_level               = "ERROR"
+    logging_level               = "INFO"
     data_trace_enabled         = false
     throttling_rate_limit       = 10000
     throttling_burst_limit      = 5000
