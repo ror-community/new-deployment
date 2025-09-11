@@ -759,6 +759,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         sampled_requests_enabled   = true
     }
 }
+
+resource "aws_wafv2_web_acl_association" "dev-v2" {
+    resource_arn = data.aws_lb.alb-dev.arn
+    web_acl_arn  = aws_wafv2_web_acl.dev-v2.arn
+}
+
 resource "aws_wafv2_web_acl_association" "staging-v2" {
     resource_arn = data.aws_lb.alb-staging.arn
     web_acl_arn  = aws_wafv2_web_acl.staging-v2.arn
