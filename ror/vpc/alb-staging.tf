@@ -72,19 +72,3 @@ resource "aws_route53_record" "www-staging" {
     records = [data.aws_lb.alb-staging.dns_name]
 }
 
-# HTTP listener rule to handle API Gateway requests (higher priority than default redirect)
-resource "aws_lb_listener_rule" "api-staging-http-forward" {
-  listener_arn = aws_lb_listener.alb-http-staging.arn
-  priority     = 100
-
-  action {
-    type             = "forward"
-    target_group_arn = data.aws_lb_target_group.api-staging.arn
-  }
-
-  condition {
-    host_header {
-      values = ["api.staging.ror.org"]
-    }
-  }
-}
