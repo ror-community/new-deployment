@@ -321,7 +321,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
+  uri                     = "https://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -338,7 +338,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
+  uri                     = "https://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -355,7 +355,7 @@ resource "aws_api_gateway_integration" "heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/heartbeat"
+  uri                     = "https://$${stageVariables.backend_host}/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -372,7 +372,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "http://$${stageVariables.backend_host}/v1/{proxy}"
+  uri                     = "https://$${stageVariables.backend_host}/v1/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -404,7 +404,7 @@ resource "aws_api_gateway_integration" "v2_proxy" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://$${stageVariables.backend_host}/v2/{proxy}"
+  uri                     = "https://$${stageVariables.backend_host}/v2/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -437,7 +437,7 @@ resource "aws_api_gateway_integration" "root_proxy" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://$${stageVariables.backend_host}/{proxy}"
+  uri                     = "https://$${stageVariables.backend_host}/{proxy}"
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
