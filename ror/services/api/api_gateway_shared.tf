@@ -3,6 +3,16 @@
 # Used by all stages (dev, staging, prod)
 # =============================================================================
 
+# Client certificate for API Gateway to backend communication
+resource "aws_api_gateway_client_certificate" "api_gateway_client_cert" {
+  description = "Client certificate for ROR API Gateway to ALB communication"
+  
+  tags = {
+    Name = "ror-api-gateway-client-cert"
+    environment = "api-gateway"
+  }
+}
+
 # API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name = "ror-api"
