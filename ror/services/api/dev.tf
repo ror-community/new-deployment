@@ -169,6 +169,23 @@ resource "aws_ecs_task_definition" "api-dev" {
 resource "aws_route53_record" "api-dev" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "api.dev.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = ["api-gateway.dev.ror.org"]
+}
+
+resource "aws_route53_record" "split-api-dev" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name = "api.dev.ror.org"
+  type = "CNAME"
+  ttl = var.ttl
+  records = ["api-gateway.dev.ror.org"]
+}
+
+# Route53 record for the API Gateway custom domain
+resource "aws_route53_record" "api-gateway-dev" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "api-gateway.dev.ror.org"
     type = "A"
     
     alias {
@@ -178,9 +195,10 @@ resource "aws_route53_record" "api-dev" {
     }
 }
 
-resource "aws_route53_record" "split-api-dev" {
+# Internal Route53 record for the API Gateway custom domain
+resource "aws_route53_record" "split-api-gateway-dev" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name = "api.dev.ror.org"
+  name = "api-gateway.dev.ror.org"
   type = "A"
   
   alias {
@@ -244,7 +262,7 @@ resource "aws_s3_bucket_policy" "public-dev-bucket-policy" {
 
 # API Gateway Custom Domain Name for development
 resource "aws_api_gateway_domain_name" "api_gateway_dev" {
-  domain_name = "api.dev.ror.org"
+  domain_name = "api-gateway.dev.ror.org"
   
   regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
