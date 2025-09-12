@@ -110,12 +110,6 @@ resource "aws_lb_listener_rule" "block_api_traffic_dev" {
       status_code  = "403"
     }
   }
-
-  condition {
-    host_header {
-      values = ["api.dev.ror.org"]
-    }
-  }
   
   condition {
     path_pattern {
