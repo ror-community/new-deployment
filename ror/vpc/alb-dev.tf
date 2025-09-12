@@ -113,7 +113,7 @@ resource "aws_lb_listener_rule" "block_api_traffic_dev" {
 
   condition {
     host_header {
-      values = ["alb-dev.ror.org"]
+      values = ["api.dev.ror.org"]
     }
   }
   
