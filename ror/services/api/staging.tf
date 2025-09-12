@@ -82,20 +82,6 @@ resource "aws_lb_listener_rule" "redirect-api-staging" {
   }
 }
 
-resource "aws_lb_listener_rule" "api-staging" {
-  listener_arn = data.aws_lb_listener.alb-staging.arn
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.api-staging.arn
-  }
-
-  condition {
-    field  = "host-header"
-    values = [aws_route53_record.api-staging.name]
-  }
-}
-
 resource "aws_cloudwatch_log_group" "api-staging" {
   name = "/ecs/api-staging"
 }
@@ -229,7 +215,7 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_staging" {
 resource "aws_api_gateway_domain_name" "api_gateway_staging" {
   domain_name = "api.staging.ror.org"
   
-  regional_certificate_arn = data.aws_acm_certificate.ror-staging.arn
+  regional_certificate_arn = data.aws_acm_certificate.ror.arn
   
   endpoint_configuration {
     types = ["REGIONAL"]
