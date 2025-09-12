@@ -56,6 +56,12 @@ resource "aws_lb_listener_rule" "allow_api_gateway_dev" {
   }
 
   condition {
+    host_header {
+      values = ["api.dev.ror.org"]
+    }
+  }
+
+  condition {
     http_header {
       http_header_name = "X-ROR-API-Gateway-Token"
       values = [var.api_gateway_token]
