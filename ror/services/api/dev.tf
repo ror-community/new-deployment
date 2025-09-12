@@ -208,6 +208,24 @@ resource "aws_route53_record" "split-api-gateway-dev" {
   }
 }
 
+# Route53 CNAME record for ALB dev (public)
+resource "aws_route53_record" "alb-dev" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "alb-dev.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-dev.dns_name]
+}
+
+# Route53 CNAME record for ALB dev (internal)
+resource "aws_route53_record" "split-alb-dev" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name = "alb-dev.ror.org"
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb-dev.dns_name]
+}
+
 resource "aws_service_discovery_service" "api-dev" {
   name = "api.dev"
 
