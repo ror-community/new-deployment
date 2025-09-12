@@ -113,12 +113,6 @@ resource "aws_lb_listener_rule" "block_api_traffic_staging" {
       status_code  = "403"
     }
   }
-
-  condition {
-    host_header {
-      values = ["alb-staging.ror.org"]
-    }
-  }
   
   condition {
     path_pattern {
