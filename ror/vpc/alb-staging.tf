@@ -116,7 +116,7 @@ resource "aws_lb_listener_rule" "block_api_traffic_staging" {
 
   condition {
     host_header {
-      values = [data.aws_lb.alb-staging.dns_name]
+      values = ["alb-staging.ror.org"]
     }
   }
   

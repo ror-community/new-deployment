@@ -14,7 +14,7 @@ resource "aws_api_gateway_stage" "api_gateway_staging" {
   
   # Stage variables for backend routing
   variables = {
-    backend_host = data.aws_lb.alb-staging.dns_name
+    backend_host = "alb-staging.ror.org"
     api_host = "api.staging.ror.org"
   }
   

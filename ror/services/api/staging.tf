@@ -44,6 +44,24 @@ resource "aws_lb_target_group" "api-staging" {
   ]
 }
 
+# Route53 CNAME record for ALB staging (public)
+resource "aws_route53_record" "alb-staging" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "alb-staging.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb-staging.dns_name]
+}
+
+# Route53 CNAME record for ALB staging (internal)
+resource "aws_route53_record" "split-alb-staging" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name = "alb-staging.ror.org"
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb-staging.dns_name]
+}
+
 resource "aws_lb_listener_rule" "redirect-api-staging" {
   listener_arn = data.aws_lb_listener.alb-http-staging.arn
 
