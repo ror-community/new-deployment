@@ -14,7 +14,7 @@ resource "aws_api_gateway_stage" "api_gateway_staging" {
   
   # Stage variables for backend routing
   variables = {
-    backend_host = data.aws_lb.alb-staging.dns_name
+    backend_host = "alb-staging.ror.org"
     api_host = "api.staging.ror.org"
   }
   
@@ -192,4 +192,10 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
     throttling_rate_limit       = 10000
     throttling_burst_limit      = 5000
   }
+}
+
+# Associate staging WAF with API Gateway staging stage
+resource "aws_wafv2_web_acl_association" "api_gateway_staging" {
+  resource_arn = aws_api_gateway_stage.api_gateway_staging.arn
+  web_acl_arn  = data.aws_wafv2_web_acl.staging-v2.arn
 }
