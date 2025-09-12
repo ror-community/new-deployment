@@ -91,3 +91,7 @@ variable "db_port_dev" {}
 variable "db_port_staging" {}
 
 variable "db_name" {}
+
+variable "api_gateway_token" {
+  type        = string
+}

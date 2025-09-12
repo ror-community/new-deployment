@@ -85,3 +85,7 @@ variable "ratelimit_ips_prod"{
 variable "blacklist_custom_msg_ips_prod"{
   type = list(string)
 }
+
+variable "api_gateway_token" {
+  type        = string
+}
