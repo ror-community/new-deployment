@@ -316,7 +316,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "${var.api_gateway_token}"
   }
 
   # No caching for heartbeat
@@ -334,7 +334,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "${var.api_gateway_token}"
   }
 
   # No caching for heartbeat
@@ -352,7 +352,7 @@ resource "aws_api_gateway_integration" "heartbeat_get" {
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "${var.api_gateway_token}"
   }
 
   # No caching for heartbeat
@@ -371,7 +371,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "${var.api_gateway_token}"
   }
 
   # Caching configuration - cache by common query parameters
@@ -404,7 +404,7 @@ resource "aws_api_gateway_integration" "v2_proxy" {
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "${var.api_gateway_token}"
   }
 
   # Caching configuration - cache on the proxy path
@@ -438,7 +438,7 @@ resource "aws_api_gateway_integration" "root_proxy" {
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
     "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "${var.api_gateway_token}"
   }
 
   # Caching configuration - cache on the proxy path
