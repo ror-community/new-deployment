@@ -312,7 +312,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/v1/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -329,7 +329,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/v2/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -346,7 +346,7 @@ resource "aws_api_gateway_integration" "heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
