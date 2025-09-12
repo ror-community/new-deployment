@@ -106,7 +106,7 @@ resource "aws_lb_listener_rule" "block_api_traffic_dev" {
     type = "fixed-response"
     fixed_response {
       content_type = "application/json"
-      message_body = "{\"error\":\"Access denied - API access restricted\"}"
+      message_body = "{\"error\":\"Access denied\"}"
       status_code  = "403"
     }
   }
@@ -114,6 +114,12 @@ resource "aws_lb_listener_rule" "block_api_traffic_dev" {
   condition {
     host_header {
       values = ["alb-dev.ror.org"]
+    }
+  }
+  
+  condition {
+    path_pattern {
+      values = ["/v1/*", "/v2/*", "/organizations*", "/heartbeat*"]
     }
   }
 }
