@@ -45,6 +45,78 @@ resource "aws_lb_listener" "alb-dev" {
 
 
 
+# Rule 1: Allow traffic that came through API Gateway (highest priority)
+resource "aws_lb_listener_rule" "allow_api_gateway_dev" {
+  listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-dev.id
+  }
+
+  condition {
+    host_header {
+      values = ["api.dev.ror.org"]
+    }
+  }
+}
+
+# Rule 2: Allow traffic with "indexdata" in the path
+resource "aws_lb_listener_rule" "allow_indexdata_dev" {
+  listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 20
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-dev.id
+  }
+
+  condition {
+    path_pattern {
+      values = ["*indexdata*"]
+    }
+  }
+}
+
+# Rule 3: Allow traffic with "indexdatadump" in the path
+resource "aws_lb_listener_rule" "allow_indexdatadump_dev" {
+  listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 30
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-dev.id
+  }
+
+  condition {
+    path_pattern {
+      values = ["*indexdatadump*"]
+    }
+  }
+}
+
+# Rule 4: Block all other API traffic (return 403)
+resource "aws_lb_listener_rule" "block_api_traffic_dev" {
+  listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 90
+
+  action {
+    type = "fixed_response"
+    fixed_response {
+      content_type = "application/json"
+      message_body = "{\"error\":\"Access denied - API access restricted\"}"
+      status_code  = "403"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["alb-dev.ror.org"]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "redirect_www-dev" {
   listener_arn = aws_lb_listener.alb-dev.arn
   priority = 100
