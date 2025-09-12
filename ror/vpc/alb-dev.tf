@@ -36,12 +36,6 @@ resource "aws_lb_listener" "alb-dev" {
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = data.aws_acm_certificate.ror.arn
 
-  # Mutual authentication with client certificate
-  mutual_authentication {
-    mode                             = "verify"
-    trust_store_arn                 = aws_lb_trust_store.api_gateway_trust_store.arn
-    ignore_client_certificate_expiry = false
-  }
 
   default_action {
     target_group_arn = data.aws_lb_target_group.api-dev.id
@@ -50,24 +44,6 @@ resource "aws_lb_listener" "alb-dev" {
 }
 
 
-# Trust store for API Gateway client certificate
-resource "aws_lb_trust_store" "api_gateway_trust_store" {
-  name = "ror-api-gateway-trust-store-dev"
-  
-  ca_certificates_bundle_s3_bucket = data.aws_s3_bucket.cert_store.bucket
-  ca_certificates_bundle_s3_key    = data.aws_s3_object.api_gateway_cert.key
-}
-
-# Reference to existing S3 bucket with certificate
-data "aws_s3_bucket" "cert_store" {
-  bucket = "ror-dev-trust-store"
-}
-
-# Reference to existing certificate file
-data "aws_s3_object" "api_gateway_cert" {
-  bucket = data.aws_s3_bucket.cert_store.bucket
-  key    = "dev.cert"
-}
 
 resource "aws_lb_listener_rule" "redirect_www-dev" {
   listener_arn = aws_lb_listener.alb-dev.arn

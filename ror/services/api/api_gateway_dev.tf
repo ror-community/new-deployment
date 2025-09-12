@@ -18,9 +18,6 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
     api_host = "api.dev.ror.org"
   }
   
-  # Client certificate for mutual TLS with backend
-  client_certificate_id = aws_api_gateway_client_certificate.api_gateway_client_cert.id
-  
   # Access logging configuration
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs.arn

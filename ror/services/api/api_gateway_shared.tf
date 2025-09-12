@@ -3,15 +3,6 @@
 # Used by all stages (dev, staging, prod)
 # =============================================================================
 
-# Client certificate for API Gateway to backend communication
-resource "aws_api_gateway_client_certificate" "api_gateway_client_cert" {
-  description = "Client certificate for ROR API Gateway to ALB communication"
-  
-  tags = {
-    Name = "ror-api-gateway-client-cert"
-    environment = "api-gateway"
-  }
-}
 
 # API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway" {
@@ -321,7 +312,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/v1/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/v1/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -338,7 +329,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/v2/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
@@ -355,7 +346,7 @@ resource "aws_api_gateway_integration" "heartbeat_get" {
 
   integration_http_method = "GET"
   type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/heartbeat"
+  uri                     = "http://$${stageVariables.backend_host}/heartbeat"
 
   request_parameters = {
     "integration.request.header.Host" = "stageVariables.api_host"
