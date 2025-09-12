@@ -193,3 +193,9 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
     throttling_burst_limit      = 5000
   }
 }
+
+# Associate staging WAF with API Gateway staging stage
+resource "aws_wafv2_web_acl_association" "api_gateway_staging" {
+  resource_arn = aws_api_gateway_stage.api_gateway_staging.arn
+  web_acl_arn  = data.aws_wafv2_web_acl.staging-v2.arn
+}

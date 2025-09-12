@@ -96,17 +96,25 @@ resource "aws_ecs_task_definition" "api-staging" {
 resource "aws_route53_record" "api-staging" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "api.staging.ror.org"
-    type = "CNAME"
-    ttl = var.ttl
-    records = [data.aws_lb.alb-staging.dns_name]
+    type = "A"
+    
+    alias {
+      name                   = aws_api_gateway_domain_name.api_gateway_staging.regional_domain_name
+      zone_id                = aws_api_gateway_domain_name.api_gateway_staging.regional_zone_id
+      evaluate_target_health = false
+    }
 }
 
 resource "aws_route53_record" "split-api-staging" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name = "api.staging.ror.org"
-  type = "CNAME"
-  ttl = var.ttl
-  records = [data.aws_lb.alb-staging.dns_name]
+  type = "A"
+  
+  alias {
+    name                   = aws_api_gateway_domain_name.api_gateway_staging.regional_domain_name
+    zone_id                = aws_api_gateway_domain_name.api_gateway_staging.regional_zone_id
+    evaluate_target_health = false
+  }
 }
 
 resource "aws_service_discovery_service" "api-staging" {
