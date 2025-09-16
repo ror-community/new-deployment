@@ -195,24 +195,4 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_prod" {
   })
 }
 
-# API Gateway Custom Domain Name for production
-resource "aws_api_gateway_domain_name" "api_gateway_prod" {
-  domain_name = "api.ror.org"
-  
-  regional_certificate_arn = data.aws_acm_certificate.ror.arn
-  
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
-}
-
-# Base path mapping for API Gateway production custom domain
-resource "aws_api_gateway_base_path_mapping" "api_gateway_prod" {
-  api_id      = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  domain_name = aws_api_gateway_domain_name.api_gateway_prod.domain_name
-  
-  depends_on = [
-    aws_api_gateway_stage.api_gateway_prod
-  ]
-}
+# API Gateway domain removed - production uses direct ALB routing
