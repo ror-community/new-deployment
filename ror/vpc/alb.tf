@@ -59,12 +59,8 @@ resource "aws_lb_listener_rule" "allow_api_gateway_prod" {
   priority = 10
 
   action {
-    type = "fixed-response"
-    fixed_response {
-      content_type = "application/json"
-      message_body = "{\"error\":\"Actually this is working as expected.\"}"
-      status_code  = "403"
-    }
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-community.id
   }
 
   condition {
