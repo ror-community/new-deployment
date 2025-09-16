@@ -240,13 +240,3 @@ resource "aws_api_gateway_base_path_mapping" "api_gateway_prod" {
     aws_api_gateway_stage.api_gateway_prod
   ]
 }
-
-# WAF Association for API Gateway production service
-resource "aws_wafv2_web_acl_association" "api_gateway_prod" {
-  resource_arn = "${aws_api_gateway_rest_api.api_gateway.arn}/stages/${aws_api_gateway_stage.api_gateway_prod.stage_name}"
-  web_acl_arn  = data.aws_wafv2_web_acl.prod-v2.arn
-  
-  depends_on = [
-    aws_api_gateway_stage.api_gateway_prod
-  ]
-}
