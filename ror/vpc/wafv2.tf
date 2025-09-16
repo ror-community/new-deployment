@@ -748,6 +748,12 @@ resource "aws_wafv2_web_acl" "prod-v2" {
         content_type  = "TEXT_PLAIN"
     }
 
+    custom_response_body {
+        key           = "invalid_query_param_response"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search\"]}"
+        content_type  = "APPLICATION_JSON"
+    }
+
     default_action {
         allow {}
     }
@@ -902,8 +908,106 @@ resource "aws_wafv2_web_acl" "prod-v2" {
     }
 
     rule {
-        name = "block-invalid-request-rule"
+        name = "block-invalid-query-params-rule"
         priority = 7
+        action {
+            block {
+                custom_response {
+                    custom_response_body_key  = "invalid_query_param_response"
+                    response_code = 400
+                }
+            }
+        }
+        statement {
+            and_statement {
+                statement {
+                    or_statement {
+                        statement {
+                            byte_match_statement {
+                                positional_constraint = "STARTS_WITH"
+                                search_string = "/v1/"
+                                field_to_match {
+                                    uri_path {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "NONE"
+                                }
+                            }
+                        }
+                        statement {
+                            byte_match_statement {
+                                positional_constraint = "STARTS_WITH"
+                                search_string = "/v2/"
+                                field_to_match {
+                                    uri_path {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "NONE"
+                                }
+                            }
+                        }
+                        statement {
+                            byte_match_statement {
+                                positional_constraint = "STARTS_WITH"
+                                search_string = "/organizations"
+                                field_to_match {
+                                    uri_path {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "NONE"
+                                }
+                            }
+                        }
+                    }
+                }
+                statement {
+                    byte_match_statement {
+                        positional_constraint = "CONTAINS"
+                        search_string = "="
+                        field_to_match {
+                            query_string {}
+                        }
+                        text_transformation {
+                            priority = 1
+                            type     = "NONE"
+                        }
+                    }
+                }
+                statement {
+                    not_statement {
+                        statement {
+                            regex_pattern_set_reference_statement {
+                                arn = aws_wafv2_regex_pattern_set.valid_query_params.arn
+                                field_to_match {
+                                    query_string {}
+                                }
+                                text_transformation {
+                                    priority = 1
+                                    type     = "URL_DECODE"
+                                }
+                                text_transformation {
+                                    priority = 2
+                                    type     = "LOWERCASE"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "block-invalid-query-params-metric"
+        sampled_requests_enabled   = true
+        }
+    }
+
+    rule {
+        name = "block-invalid-request-rule"
+        priority = 8
         action {
             block {
                 custom_response {
