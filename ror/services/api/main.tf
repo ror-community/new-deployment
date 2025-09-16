@@ -101,7 +101,23 @@ resource "aws_route53_record" "split-api" {
   records = [data.aws_lb.alb.dns_name]
 }
 
+# Route53 CNAME record for ALB prod (public)
+resource "aws_route53_record" "alb-prod" {
+    zone_id = data.aws_route53_zone.public.zone_id
+    name = "alb.ror.org"
+    type = "CNAME"
+    ttl = var.ttl
+    records = [data.aws_lb.alb.dns_name]
+}
 
+# Route53 CNAME record for ALB prod (internal)
+resource "aws_route53_record" "split-alb-prod" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name = "alb.ror.org"
+  type = "CNAME"
+  ttl = var.ttl
+  records = [data.aws_lb.alb.dns_name]
+}
 
 # Service Discovery Namepace
 resource "aws_service_discovery_private_dns_namespace" "internal" {
@@ -195,4 +211,3 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_logs_prod" {
   })
 }
 
-# API Gateway domain removed - production uses direct ALB routing
