@@ -53,7 +53,67 @@ resource "aws_lb_listener" "alb" {
   }
 }
 
-# ALB security rules removed - production uses original direct routing
+# Rule 1: Allow traffic that came through API Gateway (highest priority)
+resource "aws_lb_listener_rule" "allow_api_gateway_prod" {
+  listener_arn = aws_lb_listener.alb.arn
+  priority = 10
+
+  action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "application/json"
+      message_body = "{\"error\":\"Actually this is working as expected.\"}"
+      status_code  = "403"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["api.ror.org"]
+    }
+  }
+
+  condition {
+    http_header {
+      http_header_name = "X-ROR-API-Gateway-Token"
+      values = [var.api_gateway_token]
+    }
+  }
+}
+
+# Rule 2: Allow traffic with "indexdata" in the path
+resource "aws_lb_listener_rule" "allow_indexdata_prod" {
+  listener_arn = aws_lb_listener.alb.arn
+  priority = 20
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-community.id
+  }
+
+  condition {
+    path_pattern {
+      values = ["*indexdata*"]
+    }
+  }
+}
+
+# Rule 3: Allow traffic with "indexdatadump" in the path  
+resource "aws_lb_listener_rule" "allow_indexdatadump_prod" {
+  listener_arn = aws_lb_listener.alb.arn
+  priority = 30
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-community.id
+  }
+
+  condition {
+    path_pattern {
+      values = ["*indexdatadump*"]
+    }
+  }
+}
 
 resource "aws_lb_listener_rule" "redirect_www" {
   listener_arn = aws_lb_listener.alb.arn
