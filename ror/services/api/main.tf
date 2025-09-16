@@ -88,44 +88,20 @@ resource "aws_ecs_task_definition" "api-community" {
 resource "aws_route53_record" "api" {
     zone_id = data.aws_route53_zone.public.zone_id
     name = "api.ror.org"
-    type = "A"
-    
-    alias {
-      name                   = aws_api_gateway_domain_name.api_gateway_prod.regional_domain_name
-      zone_id                = aws_api_gateway_domain_name.api_gateway_prod.regional_zone_id
-      evaluate_target_health = false
-    }
-}
-
-resource "aws_route53_record" "split-api" {
-  zone_id = data.aws_route53_zone.internal.zone_id
-  name = "api.ror.org"
-  type = "A"
-  
-  alias {
-    name                   = aws_api_gateway_domain_name.api_gateway_prod.regional_domain_name
-    zone_id                = aws_api_gateway_domain_name.api_gateway_prod.regional_zone_id
-    evaluate_target_health = false
-  }
-}
-
-# Route53 CNAME record for ALB prod (public)
-resource "aws_route53_record" "alb-prod" {
-    zone_id = data.aws_route53_zone.public.zone_id
-    name = "alb.ror.org"
     type = "CNAME"
     ttl = var.ttl
     records = [data.aws_lb.alb.dns_name]
 }
 
-# Route53 CNAME record for ALB prod (internal)
-resource "aws_route53_record" "split-alb-prod" {
+resource "aws_route53_record" "split-api" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name = "alb.ror.org"
+  name = "api.ror.org"
   type = "CNAME"
   ttl = var.ttl
   records = [data.aws_lb.alb.dns_name]
 }
+
+
 
 # Service Discovery Namepace
 resource "aws_service_discovery_private_dns_namespace" "internal" {
