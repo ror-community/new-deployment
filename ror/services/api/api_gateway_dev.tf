@@ -36,6 +36,8 @@ resource "aws_api_gateway_stage" "api_gateway_dev" {
       userAgent         = "$context.identity.userAgent"
       error             = "$context.error.message"
       responseLength    = "$context.responseLength"
+      wafStatus         = "$context.waf.status"
+      wafResponseCode   = "$context.wafResponseCode"
     })
   }
   
