@@ -54,17 +54,27 @@ resource "aws_wafv2_ip_set" "whitelist-staging" {
   addresses          = var.whitelist_ips_staging
 }
 
+resource "aws_wafv2_regex_pattern_set" "valid_query_params_v2" {
+  name  = "valid-query-params-v2"
+  description = "Valid query parameters for ROR API including validate"
+  scope = "REGIONAL"
+  
+  regular_expression {
+    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|validate)(=|$)"
+  }
+  regular_expression {
+    regex_string = "^$"
+  }
+}
+
+# Keep old resource for now to avoid breaking existing references
 resource "aws_wafv2_regex_pattern_set" "valid_query_params" {
   name  = "valid-query-params"
   description = "Valid query parameters for ROR API"
   scope = "REGIONAL"
   
-  lifecycle {
-    create_before_destroy = true
-  }
-  
   regular_expression {
-    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|validate)(=|$)"
+    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search)(=|$)"
   }
   regular_expression {
     regex_string = "^$"
@@ -316,7 +326,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
                     not_statement {
                         statement {
                             regex_pattern_set_reference_statement {
-                                arn = aws_wafv2_regex_pattern_set.valid_query_params.arn
+                                arn = aws_wafv2_regex_pattern_set.valid_query_params_v2.arn
                                 field_to_match {
                                     query_string {}
                                 }
@@ -618,7 +628,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
                     not_statement {
                         statement {
                             regex_pattern_set_reference_statement {
-                                arn = aws_wafv2_regex_pattern_set.valid_query_params.arn
+                                arn = aws_wafv2_regex_pattern_set.valid_query_params_v2.arn
                                 field_to_match {
                                     query_string {}
                                 }
@@ -984,7 +994,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
                     not_statement {
                         statement {
                             regex_pattern_set_reference_statement {
-                                arn = aws_wafv2_regex_pattern_set.valid_query_params.arn
+                                arn = aws_wafv2_regex_pattern_set.valid_query_params_v2.arn
                                 field_to_match {
                                     query_string {}
                                 }
