@@ -59,6 +59,10 @@ resource "aws_wafv2_regex_pattern_set" "valid_query_params" {
   description = "Valid query parameters for ROR API"
   scope = "REGIONAL"
   
+  lifecycle {
+    create_before_destroy = true
+  }
+  
   regular_expression {
     regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|validate)(=|$)"
   }
