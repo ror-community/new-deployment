@@ -117,8 +117,12 @@ resource "aws_lb_listener_rule" "block_api_traffic_prod" {
   priority = 90
 
   action {
-    type             = "forward"
-    target_group_arn = data.aws_lb_target_group.api-community.id
+    type = "fixed-response"
+    fixed_response {
+      content_type = "application/json"
+      message_body = "{\"error\":\"Access denied\"}"
+      status_code  = "403"
+    }
   }
 
   condition {
