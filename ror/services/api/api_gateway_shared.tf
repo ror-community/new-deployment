@@ -398,7 +398,7 @@ resource "aws_api_gateway_integration" "v2_proxy" {
   http_method = aws_api_gateway_method.v2_proxy.http_method
 
   type                    = "HTTP_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "ANY"
   uri                     = "https://$${stageVariables.backend_host}/v2/{proxy}"
 
   request_parameters = {
@@ -432,7 +432,7 @@ resource "aws_api_gateway_integration" "root_proxy" {
   http_method = aws_api_gateway_method.root_proxy.http_method
 
   type                    = "HTTP_PROXY"
-  integration_http_method = "GET"
+  integration_http_method = "ANY"
   uri                     = "https://$${stageVariables.backend_host}/{proxy}"
 
   request_parameters = {
