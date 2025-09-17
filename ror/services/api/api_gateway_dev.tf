@@ -71,6 +71,22 @@ resource "aws_api_gateway_method_settings" "v1_proxy_cache" {
   }
 }
 
+# Disable caching for v1/{proxy+} POST requests
+resource "aws_api_gateway_method_settings" "v1_proxy_post_no_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v1/{proxy+}/POST"
+
+  settings {
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
 # Enable caching for v2/organizations endpoint
 resource "aws_api_gateway_method_settings" "v2_proxy_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -91,6 +107,22 @@ resource "aws_api_gateway_method_settings" "v2_proxy_cache" {
   }
 }
 
+# Disable caching for v2/{proxy+} POST requests
+resource "aws_api_gateway_method_settings" "v2_proxy_post_no_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v2/{proxy+}/POST"
+
+  settings {
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
 # Enable caching for root /{proxy+} endpoint (versionless)
 resource "aws_api_gateway_method_settings" "root_proxy_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -105,6 +137,22 @@ resource "aws_api_gateway_method_settings" "root_proxy_cache" {
     # Prevent cache bypass from client headers
     require_authorization_for_cache_control = true
     unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
+# Disable caching for root /{proxy+} POST requests (versionless)
+resource "aws_api_gateway_method_settings" "root_proxy_post_no_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "{proxy+}/POST"
+
+  settings {
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
     
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000

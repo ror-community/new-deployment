@@ -56,25 +56,11 @@ resource "aws_wafv2_ip_set" "whitelist-staging" {
 
 resource "aws_wafv2_regex_pattern_set" "valid_query_params_v2" {
   name  = "valid-query-params-v2"
-  description = "Valid query parameters for ROR API including validate"
-  scope = "REGIONAL"
-  
-  regular_expression {
-    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|validate)(=|$)"
-  }
-  regular_expression {
-    regex_string = "^$"
-  }
-}
-
-# Keep old resource for now to avoid breaking existing references
-resource "aws_wafv2_regex_pattern_set" "valid_query_params" {
-  name  = "valid-query-params"
   description = "Valid query parameters for ROR API"
   scope = "REGIONAL"
   
   regular_expression {
-    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search)(=|$)"
+    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|validate)(=|$)"
   }
   regular_expression {
     regex_string = "^$"
