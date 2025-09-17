@@ -96,9 +96,13 @@ resource "aws_route53_record" "api" {
 resource "aws_route53_record" "split-api" {
   zone_id = data.aws_route53_zone.internal.zone_id
   name = "api.ror.org"
-  type = "CNAME"
-  ttl = var.ttl
-  records = [data.aws_lb.alb.dns_name]
+  type = "A"
+  
+  alias {
+    name                   = aws_api_gateway_domain_name.api_gateway_prod.regional_domain_name
+    zone_id                = aws_api_gateway_domain_name.api_gateway_prod.regional_zone_id
+    evaluate_target_health = false
+  }
 }
 
 # Route53 CNAME record for ALB prod (public)
