@@ -364,7 +364,7 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
-  integration_http_method = "GET"
+  integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
   uri                     = "https://$${stageVariables.backend_host}/v1/{proxy}"
 
