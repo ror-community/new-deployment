@@ -152,8 +152,8 @@ resource "aws_api_gateway_method_settings" "root_proxy_cache_prod" {
   }
 }
 
-# Enable caching for v1/organizations/{id} endpoint
-resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
+# Disable caching for root /{proxy+} POST requests (versionless)
+resource "aws_api_gateway_method_settings" "root_proxy_post_no_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
   method_path = "{proxy+}/POST"
@@ -168,7 +168,7 @@ resource "aws_api_gateway_method_settings" "v1_organizations_id_cache_prod" {
   }
 }
 
-# Enable caching for organizations/{id} endpoint (no version)
+# Disable caching for root /heartbeat endpoint (versionless)
 resource "aws_api_gateway_method_settings" "heartbeat_no_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
