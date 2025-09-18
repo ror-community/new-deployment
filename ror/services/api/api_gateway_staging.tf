@@ -50,7 +50,7 @@ resource "aws_api_gateway_stage" "api_gateway_staging" {
 # METHOD SETTINGS FOR CACHING - STAGING STAGE
 # =============================================================================
 
-# Enable caching for v1/{proxy+} endpoint (replaces old v1/organizations)
+# Enable caching for v1/{proxy+} endpoint
 resource "aws_api_gateway_method_settings" "v1_proxy_cache_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
