@@ -245,7 +245,7 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
 }
 
 # =============================================================================
-# CORS CONFIGURATION FOR STAGING STAGE
+# CORS CONFIGURATION
 # =============================================================================
 
 # OPTIONS method for v1/{proxy+} - CORS preflight
