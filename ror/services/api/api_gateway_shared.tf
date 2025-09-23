@@ -561,6 +561,328 @@ resource "aws_api_gateway_integration_response" "root_proxy" {
 }
 
 # =============================================================================
+# CORS OPTIONS METHODS
+# =============================================================================
+
+# OPTIONS method for v1/{proxy+} - CORS preflight
+resource "aws_api_gateway_method" "v1_proxy_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v1_proxy.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for v2/{proxy+} - CORS preflight
+resource "aws_api_gateway_method" "v2_proxy_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v2_proxy.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for root /{proxy+} - CORS preflight
+resource "aws_api_gateway_method" "root_proxy_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.root_proxy.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for v1/heartbeat - CORS preflight
+resource "aws_api_gateway_method" "v1_heartbeat_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v1_heartbeat.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for v2/heartbeat - CORS preflight
+resource "aws_api_gateway_method" "v2_heartbeat_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.v2_heartbeat.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for root /heartbeat - CORS preflight
+resource "aws_api_gateway_method" "heartbeat_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.heartbeat.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# =============================================================================
+# CORS METHOD RESPONSES
+# =============================================================================
+
+# Method response for v1/{proxy+} OPTIONS
+resource "aws_api_gateway_method_response" "v1_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# Method response for v2/{proxy+} OPTIONS
+resource "aws_api_gateway_method_response" "v2_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v2_proxy.id
+  http_method = aws_api_gateway_method.v2_proxy_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# Method response for root /{proxy+} OPTIONS
+resource "aws_api_gateway_method_response" "root_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.root_proxy.id
+  http_method = aws_api_gateway_method.root_proxy_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# Method response for v1/heartbeat OPTIONS
+resource "aws_api_gateway_method_response" "v1_heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_heartbeat.id
+  http_method = aws_api_gateway_method.v1_heartbeat_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# Method response for v2/heartbeat OPTIONS
+resource "aws_api_gateway_method_response" "v2_heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v2_heartbeat.id
+  http_method = aws_api_gateway_method.v2_heartbeat_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# Method response for root /heartbeat OPTIONS
+resource "aws_api_gateway_method_response" "heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.heartbeat.id
+  http_method = aws_api_gateway_method.heartbeat_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# =============================================================================
+# CORS INTEGRATIONS (MOCK)
+# =============================================================================
+
+# Mock integration for v1/{proxy+} OPTIONS
+resource "aws_api_gateway_integration" "v1_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for v2/{proxy+} OPTIONS
+resource "aws_api_gateway_integration" "v2_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v2_proxy.id
+  http_method = aws_api_gateway_method.v2_proxy_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for root /{proxy+} OPTIONS
+resource "aws_api_gateway_integration" "root_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.root_proxy.id
+  http_method = aws_api_gateway_method.root_proxy_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for v1/heartbeat OPTIONS
+resource "aws_api_gateway_integration" "v1_heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_heartbeat.id
+  http_method = aws_api_gateway_method.v1_heartbeat_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for v2/heartbeat OPTIONS
+resource "aws_api_gateway_integration" "v2_heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v2_heartbeat.id
+  http_method = aws_api_gateway_method.v2_heartbeat_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for root /heartbeat OPTIONS
+resource "aws_api_gateway_integration" "heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.heartbeat.id
+  http_method = aws_api_gateway_method.heartbeat_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# =============================================================================
+# CORS INTEGRATION RESPONSES
+# =============================================================================
+
+# Integration response for v1/{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "v1_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_proxy.id
+  http_method = aws_api_gateway_method.v1_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.v1_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# Integration response for v2/{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "v2_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v2_proxy.id
+  http_method = aws_api_gateway_method.v2_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.v2_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# Integration response for root /{proxy+} OPTIONS
+resource "aws_api_gateway_integration_response" "root_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.root_proxy.id
+  http_method = aws_api_gateway_method.root_proxy_options.http_method
+  status_code = aws_api_gateway_method_response.root_proxy_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# Integration response for v1/heartbeat OPTIONS
+resource "aws_api_gateway_integration_response" "v1_heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v1_heartbeat.id
+  http_method = aws_api_gateway_method.v1_heartbeat_options.http_method
+  status_code = aws_api_gateway_method_response.v1_heartbeat_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# Integration response for v2/heartbeat OPTIONS
+resource "aws_api_gateway_integration_response" "v2_heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.v2_heartbeat.id
+  http_method = aws_api_gateway_method.v2_heartbeat_options.http_method
+  status_code = aws_api_gateway_method_response.v2_heartbeat_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# Integration response for root /heartbeat OPTIONS
+resource "aws_api_gateway_integration_response" "heartbeat_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.heartbeat.id
+  http_method = aws_api_gateway_method.heartbeat_options.http_method
+  status_code = aws_api_gateway_method_response.heartbeat_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# =============================================================================
 # API GATEWAY DEPLOYMENT
 # =============================================================================
 
@@ -582,14 +904,32 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v1_heartbeat_get,
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.root_get,
+    aws_api_gateway_integration.v1_proxy_options,
+    aws_api_gateway_integration.v2_proxy_options,
+    aws_api_gateway_integration.root_proxy_options,
+    aws_api_gateway_integration.v1_heartbeat_options,
+    aws_api_gateway_integration.v2_heartbeat_options,
+    aws_api_gateway_integration.heartbeat_options,
     aws_api_gateway_integration_response.v1_proxy,
     aws_api_gateway_integration_response.v2_proxy,
     aws_api_gateway_integration_response.root_proxy,
     aws_api_gateway_integration_response.v1_heartbeat_get,
     aws_api_gateway_integration_response.v2_heartbeat_get,
     aws_api_gateway_integration_response.heartbeat_get,
+    aws_api_gateway_integration_response.v1_proxy_options,
+    aws_api_gateway_integration_response.v2_proxy_options,
+    aws_api_gateway_integration_response.root_proxy_options,
+    aws_api_gateway_integration_response.v1_heartbeat_options,
+    aws_api_gateway_integration_response.v2_heartbeat_options,
+    aws_api_gateway_integration_response.heartbeat_options,
     aws_api_gateway_method.root_proxy,
-    aws_api_gateway_method.heartbeat_get
+    aws_api_gateway_method.heartbeat_get,
+    aws_api_gateway_method.v1_proxy_options,
+    aws_api_gateway_method.v2_proxy_options,
+    aws_api_gateway_method.root_proxy_options,
+    aws_api_gateway_method.v1_heartbeat_options,
+    aws_api_gateway_method.v2_heartbeat_options,
+    aws_api_gateway_method.heartbeat_options
   ]
   
   lifecycle {
