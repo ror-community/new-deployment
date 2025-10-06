@@ -572,6 +572,10 @@ resource "aws_api_gateway_integration_response" "generateid_get" {
   http_method = aws_api_gateway_method.generateid_get.http_method
   status_code = "200"
 
+  depends_on = [
+    aws_api_gateway_integration.generateid_get
+  ]
+
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
@@ -981,6 +985,10 @@ resource "aws_api_gateway_integration_response" "generateid_options" {
   resource_id = aws_api_gateway_resource.generateid.id
   http_method = aws_api_gateway_method.generateid_options.http_method
   status_code = aws_api_gateway_method_response.generateid_options.status_code
+
+  depends_on = [
+    aws_api_gateway_integration.generateid_options
+  ]
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
