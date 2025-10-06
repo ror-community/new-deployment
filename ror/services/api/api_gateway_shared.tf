@@ -82,6 +82,13 @@ resource "aws_api_gateway_resource" "heartbeat" {
   path_part   = "heartbeat"
 }
 
+# Root /generateid resource
+resource "aws_api_gateway_resource" "generateid" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "generateid"
+}
+
 # =============================================================================
 # METHODS
 # =============================================================================
@@ -114,6 +121,14 @@ resource "aws_api_gateway_method" "v2_heartbeat_get" {
 resource "aws_api_gateway_method" "heartbeat_get" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.heartbeat.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+# /generateid GET method
+resource "aws_api_gateway_method" "generateid_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.generateid.id
   http_method   = "GET"
   authorization = "NONE"
 }
@@ -259,6 +274,20 @@ resource "aws_api_gateway_method_response" "heartbeat_get" {
   }
 }
 
+# Method response for root /generateid
+resource "aws_api_gateway_method_response" "generateid_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.generateid.id
+  http_method = aws_api_gateway_method.generateid_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
 # Method response for v1/{proxy+}
 resource "aws_api_gateway_method_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -356,6 +385,22 @@ resource "aws_api_gateway_integration" "heartbeat_get" {
   }
 
   # No caching for heartbeat
+}
+
+# Integration for root /generateid
+resource "aws_api_gateway_integration" "generateid_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.generateid.id
+  http_method = aws_api_gateway_method.generateid_get.http_method
+
+  integration_http_method = "GET"
+  type                    = "HTTP_PROXY"
+  uri                     = "https://$${stageVariables.backend_host}/generateid"
+
+  request_parameters = {
+    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+  }
 }
 
 # Integration for v1/{proxy+}
@@ -521,6 +566,19 @@ resource "aws_api_gateway_integration_response" "heartbeat_get" {
   }
 }
 
+resource "aws_api_gateway_integration_response" "generateid_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.generateid.id
+  http_method = aws_api_gateway_method.generateid_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+  }
+}
+
 resource "aws_api_gateway_integration_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
@@ -607,6 +665,14 @@ resource "aws_api_gateway_method" "v2_heartbeat_options" {
 resource "aws_api_gateway_method" "heartbeat_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.heartbeat.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for root /generateid - CORS preflight
+resource "aws_api_gateway_method" "generateid_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.generateid.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
@@ -705,6 +771,21 @@ resource "aws_api_gateway_method_response" "heartbeat_options" {
   }
 }
 
+# Method response for root /generateid OPTIONS
+resource "aws_api_gateway_method_response" "generateid_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.generateid.id
+  http_method = aws_api_gateway_method.generateid_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
 # =============================================================================
 # CORS INTEGRATIONS (MOCK)
 # =============================================================================
@@ -779,6 +860,19 @@ resource "aws_api_gateway_integration" "heartbeat_options" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.heartbeat.id
   http_method = aws_api_gateway_method.heartbeat_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for root /generateid OPTIONS
+resource "aws_api_gateway_integration" "generateid_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.generateid.id
+  http_method = aws_api_gateway_method.generateid_options.http_method
 
   type = "MOCK"
   
@@ -881,6 +975,21 @@ resource "aws_api_gateway_integration_response" "heartbeat_options" {
   }
 }
 
+# Integration response for root /generateid OPTIONS
+resource "aws_api_gateway_integration_response" "generateid_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.generateid.id
+  http_method = aws_api_gateway_method.generateid_options.http_method
+  status_code = aws_api_gateway_method_response.generateid_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
 # =============================================================================
 # API GATEWAY DEPLOYMENT
 # =============================================================================
@@ -903,32 +1012,38 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v1_heartbeat_get,
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.root_get,
+    aws_api_gateway_integration.generateid_get,
     aws_api_gateway_integration.v1_proxy_options,
     aws_api_gateway_integration.v2_proxy_options,
     aws_api_gateway_integration.root_proxy_options,
     aws_api_gateway_integration.v1_heartbeat_options,
     aws_api_gateway_integration.v2_heartbeat_options,
     aws_api_gateway_integration.heartbeat_options,
+    aws_api_gateway_integration.generateid_options,
     aws_api_gateway_integration_response.v1_proxy,
     aws_api_gateway_integration_response.v2_proxy,
     aws_api_gateway_integration_response.root_proxy,
     aws_api_gateway_integration_response.v1_heartbeat_get,
     aws_api_gateway_integration_response.v2_heartbeat_get,
     aws_api_gateway_integration_response.heartbeat_get,
+    aws_api_gateway_integration_response.generateid_get,
     aws_api_gateway_integration_response.v1_proxy_options,
     aws_api_gateway_integration_response.v2_proxy_options,
     aws_api_gateway_integration_response.root_proxy_options,
     aws_api_gateway_integration_response.v1_heartbeat_options,
     aws_api_gateway_integration_response.v2_heartbeat_options,
     aws_api_gateway_integration_response.heartbeat_options,
+    aws_api_gateway_integration_response.generateid_options,
     aws_api_gateway_method.root_proxy,
     aws_api_gateway_method.heartbeat_get,
+    aws_api_gateway_method.generateid_get,
     aws_api_gateway_method.v1_proxy_options,
     aws_api_gateway_method.v2_proxy_options,
     aws_api_gateway_method.root_proxy_options,
     aws_api_gateway_method.v1_heartbeat_options,
     aws_api_gateway_method.v2_heartbeat_options,
-    aws_api_gateway_method.heartbeat_options
+    aws_api_gateway_method.heartbeat_options,
+    aws_api_gateway_method.generateid_options
   ]
   
   lifecycle {
