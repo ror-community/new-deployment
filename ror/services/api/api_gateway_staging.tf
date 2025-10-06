@@ -224,6 +224,25 @@ resource "aws_api_gateway_method_settings" "v2_heartbeat_no_cache_staging" {
   }
 }
 
+# Disable caching for generateid endpoint
+resource "aws_api_gateway_method_settings" "generateid_no_cache_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
+  method_path = "generateid/GET"
+
+  depends_on = [
+    aws_api_gateway_method_settings.v2_heartbeat_no_cache_staging
+  ]
+
+  settings {
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
 # Enable CloudWatch metrics and execution logging for all methods
 resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -231,7 +250,7 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_staging" {
   method_path = "*/*"  # Apply to all methods
 
   depends_on = [
-    aws_api_gateway_method_settings.v2_heartbeat_no_cache_staging,
+    aws_api_gateway_method_settings.generateid_no_cache_staging,
     aws_api_gateway_account.api_gateway_account
   ]
 
