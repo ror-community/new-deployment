@@ -1,4 +1,4 @@
 ror-api-staging_tags = {
-  sha = "0515c6e"
+  sha = "9d17481"
   version = ""
 }
