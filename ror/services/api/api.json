@@ -26,6 +26,10 @@
       "value": "production"
     },
     {
+      "name": "V1_DEPRECATED",
+      "value": "True"
+    },
+    {
       "name": "ELASTIC7_HOST",
       "value": "${elastic7_host}"
     },
