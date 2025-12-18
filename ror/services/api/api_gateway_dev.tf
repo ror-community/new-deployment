@@ -147,7 +147,7 @@ resource "aws_api_gateway_method_settings" "root_proxy_cache" {
 resource "aws_api_gateway_method_settings" "organizations_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "organizations/ANY"
+  method_path = "/organizations/ANY"
 
   settings {
     caching_enabled        = true
@@ -167,7 +167,7 @@ resource "aws_api_gateway_method_settings" "organizations_cache" {
 resource "aws_api_gateway_method_settings" "organizations_orgid_no_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "organizations/{orgid}/GET"
+  method_path = "/organizations/{orgid}/GET"
 
   settings {
     caching_enabled        = false
