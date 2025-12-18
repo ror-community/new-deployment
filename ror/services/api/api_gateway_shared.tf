@@ -492,6 +492,8 @@ resource "aws_api_gateway_integration" "organizations_orgid_get" {
   request_parameters = {
     "integration.request.path.orgid" = "method.request.path.orgid"
     "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+
   }
 
   # No caching for organizations/{orgid}
