@@ -147,7 +147,7 @@ resource "aws_api_gateway_method_settings" "root_proxy_cache" {
 resource "aws_api_gateway_method_settings" "organizations_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
-  method_path = "organizations/ANY"
+  method_path = "organizations/GET"
 
   settings {
     caching_enabled        = true
@@ -157,6 +157,9 @@ resource "aws_api_gateway_method_settings" "organizations_cache" {
     # Prevent cache bypass from client headers
     require_authorization_for_cache_control = true
     unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
