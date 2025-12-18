@@ -89,6 +89,20 @@ resource "aws_api_gateway_resource" "generateid" {
   path_part   = "generateid"
 }
 
+# Root /organizations resource
+resource "aws_api_gateway_resource" "organizations" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "organizations"
+}
+
+# /organizations/{orgid} resource
+resource "aws_api_gateway_resource" "organizations_orgid" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_resource.organizations.id
+  path_part   = "{orgid}"
+}
+
 # =============================================================================
 # METHODS
 # =============================================================================
@@ -131,6 +145,40 @@ resource "aws_api_gateway_method" "generateid_get" {
   resource_id   = aws_api_gateway_resource.generateid.id
   http_method   = "GET"
   authorization = "NONE"
+}
+
+# /organizations/{orgid} GET method
+resource "aws_api_gateway_method" "organizations_orgid_get" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.organizations_orgid.id
+  http_method   = "GET"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.path.orgid" = true
+  }
+}
+
+# /organizations ANY method (for query strings and other requests)
+resource "aws_api_gateway_method" "organizations_any" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.organizations.id
+  http_method   = "ANY"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.querystring.query" = false
+    "method.request.querystring.page" = false
+    "method.request.querystring.affiliation" = false
+    "method.request.querystring.filter" = false
+    "method.request.querystring.format" = false
+    "method.request.querystring.all_status" = false
+    "method.request.querystring.query.advanced" = false
+    "method.request.querystring.query.name" = false
+    "method.request.querystring.query.names" = false
+    "method.request.querystring.page_size" = false
+    "method.request.querystring.single_search" = false
+  }
 }
 
 # v1/{proxy+} ANY method
@@ -288,6 +336,34 @@ resource "aws_api_gateway_method_response" "generateid_get" {
   }
 }
 
+# Method response for /organizations/{orgid}
+resource "aws_api_gateway_method_response" "organizations_orgid_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations_orgid.id
+  http_method = aws_api_gateway_method.organizations_orgid_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
+# Method response for /organizations ANY
+resource "aws_api_gateway_method_response" "organizations_any" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_any.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
+
 # Method response for v1/{proxy+}
 resource "aws_api_gateway_method_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
@@ -401,6 +477,67 @@ resource "aws_api_gateway_integration" "generateid_get" {
     "integration.request.header.Host" = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
   }
+}
+
+# Integration for /organizations/{orgid}
+resource "aws_api_gateway_integration" "organizations_orgid_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations_orgid.id
+  http_method = aws_api_gateway_method.organizations_orgid_get.http_method
+
+  integration_http_method = "GET"
+  type                    = "HTTP_PROXY"
+  uri                     = "https://$${stageVariables.backend_host}/organizations/{orgid}"
+
+  request_parameters = {
+    "integration.request.path.orgid" = "method.request.path.orgid"
+    "integration.request.header.Host" = "stageVariables.api_host"
+  }
+
+  # No caching for organizations/{orgid}
+}
+
+# Integration for /organizations ANY (for query strings)
+resource "aws_api_gateway_integration" "organizations_any" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_any.http_method
+
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "https://$${stageVariables.backend_host}/organizations"
+
+  request_parameters = {
+    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.querystring.query" = "method.request.querystring.query"
+    "integration.request.querystring.page" = "method.request.querystring.page"
+    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter" = "method.request.querystring.filter"
+    "integration.request.querystring.format" = "method.request.querystring.format"
+    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
+    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
+    "integration.request.querystring.page_size" = "method.request.querystring.page_size"
+    "integration.request.querystring.single_search" = "method.request.querystring.single_search"
+  }
+
+  # Caching configuration - cache by query parameters
+  cache_key_parameters = [
+    "method.request.querystring.query",
+    "method.request.querystring.page",
+    "method.request.querystring.affiliation",
+    "method.request.querystring.filter",
+    "method.request.querystring.format",
+    "method.request.querystring.all_status",
+    "method.request.querystring.query.advanced",
+    "method.request.querystring.query.name",
+    "method.request.querystring.query.names",
+    "method.request.querystring.page_size",
+    "method.request.querystring.single_search"
+  ]
+  cache_namespace = "organizations"
 }
 
 # Integration for v1/{proxy+}
@@ -583,6 +720,32 @@ resource "aws_api_gateway_integration_response" "generateid_get" {
   }
 }
 
+resource "aws_api_gateway_integration_response" "organizations_orgid_get" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations_orgid.id
+  http_method = aws_api_gateway_method.organizations_orgid_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "organizations_any" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_any.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+  }
+}
+
 resource "aws_api_gateway_integration_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
@@ -677,6 +840,22 @@ resource "aws_api_gateway_method" "heartbeat_options" {
 resource "aws_api_gateway_method" "generateid_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.generateid.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for /organizations/{orgid} - CORS preflight
+resource "aws_api_gateway_method" "organizations_orgid_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.organizations_orgid.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# OPTIONS method for /organizations - CORS preflight
+resource "aws_api_gateway_method" "organizations_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
+  resource_id   = aws_api_gateway_resource.organizations.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
@@ -790,6 +969,36 @@ resource "aws_api_gateway_method_response" "generateid_options" {
   }
 }
 
+# Method response for /organizations/{orgid} OPTIONS
+resource "aws_api_gateway_method_response" "organizations_orgid_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations_orgid.id
+  http_method = aws_api_gateway_method.organizations_orgid_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+# Method response for /organizations OPTIONS
+resource "aws_api_gateway_method_response" "organizations_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
 # =============================================================================
 # CORS INTEGRATIONS (MOCK)
 # =============================================================================
@@ -877,6 +1086,32 @@ resource "aws_api_gateway_integration" "generateid_options" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.generateid.id
   http_method = aws_api_gateway_method.generateid_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for /organizations/{orgid} OPTIONS
+resource "aws_api_gateway_integration" "organizations_orgid_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations_orgid.id
+  http_method = aws_api_gateway_method.organizations_orgid_options.http_method
+
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Mock integration for /organizations OPTIONS
+resource "aws_api_gateway_integration" "organizations_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_options.http_method
 
   type = "MOCK"
   
@@ -998,6 +1233,44 @@ resource "aws_api_gateway_integration_response" "generateid_options" {
   }
 }
 
+# Integration response for /organizations/{orgid} OPTIONS
+resource "aws_api_gateway_integration_response" "organizations_orgid_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations_orgid.id
+  http_method = aws_api_gateway_method.organizations_orgid_options.http_method
+  status_code = aws_api_gateway_method_response.organizations_orgid_options.status_code
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_orgid_options
+  ]
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+# Integration response for /organizations OPTIONS
+resource "aws_api_gateway_integration_response" "organizations_options" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  resource_id = aws_api_gateway_resource.organizations.id
+  http_method = aws_api_gateway_method.organizations_options.http_method
+  status_code = aws_api_gateway_method_response.organizations_options.status_code
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_options
+  ]
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
 # =============================================================================
 # API GATEWAY DEPLOYMENT
 # =============================================================================
@@ -1021,6 +1294,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_get,
     aws_api_gateway_integration.root_get,
     aws_api_gateway_integration.generateid_get,
+    aws_api_gateway_integration.organizations_orgid_get,
+    aws_api_gateway_integration.organizations_any,
     aws_api_gateway_integration.v1_proxy_options,
     aws_api_gateway_integration.v2_proxy_options,
     aws_api_gateway_integration.root_proxy_options,
@@ -1028,6 +1303,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_heartbeat_options,
     aws_api_gateway_integration.heartbeat_options,
     aws_api_gateway_integration.generateid_options,
+    aws_api_gateway_integration.organizations_orgid_options,
+    aws_api_gateway_integration.organizations_options,
     aws_api_gateway_integration_response.v1_proxy,
     aws_api_gateway_integration_response.v2_proxy,
     aws_api_gateway_integration_response.root_proxy,
@@ -1035,6 +1312,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.v2_heartbeat_get,
     aws_api_gateway_integration_response.heartbeat_get,
     aws_api_gateway_integration_response.generateid_get,
+    aws_api_gateway_integration_response.organizations_orgid_get,
+    aws_api_gateway_integration_response.organizations_any,
     aws_api_gateway_integration_response.v1_proxy_options,
     aws_api_gateway_integration_response.v2_proxy_options,
     aws_api_gateway_integration_response.root_proxy_options,
@@ -1042,6 +1321,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.v2_heartbeat_options,
     aws_api_gateway_integration_response.heartbeat_options,
     aws_api_gateway_integration_response.generateid_options,
+    aws_api_gateway_integration_response.organizations_orgid_options,
+    aws_api_gateway_integration_response.organizations_options,
     aws_api_gateway_method.root_proxy,
     aws_api_gateway_method.heartbeat_get,
     aws_api_gateway_method.generateid_get,
