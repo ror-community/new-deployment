@@ -179,6 +179,42 @@ resource "aws_api_gateway_method_settings" "organizations_orgid_no_cache" {
   }
 }
 
+# Enable caching for v2/organizations endpoint
+resource "aws_api_gateway_method_settings" "v2_organizations_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v2/organizations/GET"
+
+  settings {
+    caching_enabled        = true
+    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
+    cache_data_encrypted   = false
+    
+    # Prevent cache bypass from client headers
+    require_authorization_for_cache_control = true
+    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
+# Disable caching for v2/organizations/{orgid} endpoint
+resource "aws_api_gateway_method_settings" "v2_organizations_orgid_no_cache" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_dev.stage_name
+  method_path = "v2/organizations/{orgid}/GET"
+
+  settings {
+    caching_enabled        = false
+    cache_ttl_in_seconds   = 0
+    cache_data_encrypted   = false
+    
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
+  }
+}
+
 # Disable caching for root /{proxy+} POST requests (versionless)
 resource "aws_api_gateway_method_settings" "root_proxy_post_no_cache" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
