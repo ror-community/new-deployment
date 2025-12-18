@@ -726,6 +726,10 @@ resource "aws_api_gateway_integration_response" "organizations_orgid_get" {
   http_method = aws_api_gateway_method.organizations_orgid_get.http_method
   status_code = "200"
 
+  depends_on = [
+    aws_api_gateway_integration.organizations_orgid_get
+  ]
+
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
@@ -738,6 +742,10 @@ resource "aws_api_gateway_integration_response" "organizations_any" {
   resource_id = aws_api_gateway_resource.organizations.id
   http_method = aws_api_gateway_method.organizations_any.http_method
   status_code = "200"
+
+  depends_on = [
+    aws_api_gateway_integration.organizations_any
+  ]
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
