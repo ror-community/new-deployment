@@ -314,17 +314,18 @@ resource "aws_api_gateway_method_response" "root_get" {
   }
 }
 
-# Method response for v1/heartbeat
+# Method response for v1/heartbeat - 410 Gone
 resource "aws_api_gateway_method_response" "v1_heartbeat_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
-  status_code = "200"
+  status_code = "410"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Content-Type" = true
   }
 }
 
@@ -440,17 +441,18 @@ resource "aws_api_gateway_method_response" "v2_organizations_any" {
   }
 }
 
-# Method response for v1/{proxy+}
+# Method response for v1/{proxy+} - 410 Gone
 resource "aws_api_gateway_method_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = "200"
+  status_code = "410"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Content-Type" = true
   }
 }
 
@@ -485,22 +487,17 @@ resource "aws_api_gateway_integration" "root_get" {
   }
 }
 
-# Integration for v1/heartbeat
+# Integration for v1/heartbeat - Return 410 Gone
 resource "aws_api_gateway_integration" "v1_heartbeat_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
 
-  integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/v1/heartbeat"
-
-  request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 410}"
   }
-
-  # No caching for heartbeat
 }
 
 # Integration for v2/heartbeat
@@ -680,37 +677,17 @@ resource "aws_api_gateway_integration" "v2_organizations_any" {
   cache_namespace = "v2-organizations"
 }
 
-# Integration for v1/{proxy+}
+# Integration for v1/{proxy+} - Return 410 Gone
 resource "aws_api_gateway_integration" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
-  integration_http_method = "ANY"
-  type                    = "HTTP_PROXY"
-  uri                     = "https://$${stageVariables.backend_host}/v1/{proxy}"
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+  type = "MOCK"
+  
+  request_templates = {
+    "application/json" = "{\"statusCode\": 410}"
   }
-
-  # Caching configuration - cache by common query parameters
-  cache_key_parameters = [
-    "method.request.path.proxy",
-    "method.request.querystring.query",
-    "method.request.querystring.page", 
-    "method.request.querystring.affiliation",
-    "method.request.querystring.filter",
-    "method.request.querystring.format",
-    "method.request.querystring.all_status",
-    "method.request.querystring.query.advanced",
-    "method.request.querystring.query.name",
-    "method.request.querystring.query.names",
-    "method.request.querystring.page_size"
-  ]
-  cache_namespace      = "v1-proxy"
 }
 
 # Integration for v2/{proxy+}
@@ -808,12 +785,17 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_get" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
-  status_code = "200"
+  status_code = "410"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Content-Type" = "'application/json'"
+  }
+
+  response_templates = {
+    "application/json" = "{\"errors\":[{\"status\":\"410\",\"title\":\"API Version Deprecated\",\"detail\":\"The v1 API has been deprecated. Please migrate to v2.\",\"deprecated_at\":\"2025-12-09\"}]}"
   }
 }
 
@@ -932,12 +914,17 @@ resource "aws_api_gateway_integration_response" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
-  status_code = "200"
+  status_code = "410"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Content-Type" = "'application/json'"
+  }
+
+  response_templates = {
+    "application/json" = "{\"errors\":[{\"status\":\"410\",\"title\":\"API Version Deprecated\",\"detail\":\"The v1 API has been deprecated. Please migrate to v2.\",\"deprecated_at\":\"2025-12-09\"}]}"
   }
 }
 
