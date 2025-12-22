@@ -315,7 +315,7 @@ resource "aws_api_gateway_method_response" "root_get" {
 }
 
 # Method response for v1/heartbeat - 410 Gone
-resource "aws_api_gateway_method_response" "v1_heartbeat_get" {
+resource "aws_api_gateway_method_response" "v1_heartbeat_get_410" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
@@ -325,7 +325,6 @@ resource "aws_api_gateway_method_response" "v1_heartbeat_get" {
     "method.response.header.Access-Control-Allow-Origin" = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Content-Type" = true
   }
 }
 
@@ -442,7 +441,7 @@ resource "aws_api_gateway_method_response" "v2_organizations_any" {
 }
 
 # Method response for v1/{proxy+} - 410 Gone
-resource "aws_api_gateway_method_response" "v1_proxy" {
+resource "aws_api_gateway_method_response" "v1_proxy_410" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
@@ -452,7 +451,6 @@ resource "aws_api_gateway_method_response" "v1_proxy" {
     "method.response.header.Access-Control-Allow-Origin" = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Content-Type" = true
   }
 }
 
@@ -781,7 +779,7 @@ resource "aws_api_gateway_integration_response" "root_get" {
 }
 
 # Integration responses for existing proxy methods to ensure CORS headers
-resource "aws_api_gateway_integration_response" "v1_heartbeat_get" {
+resource "aws_api_gateway_integration_response" "v1_heartbeat_get_410" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_heartbeat.id
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
@@ -791,12 +789,15 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_get" {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
-    "method.response.header.Content-Type" = "'application/json'"
   }
 
   response_templates = {
     "application/json" = "{\"errors\":[{\"status\":\"410\",\"title\":\"API Version Deprecated\",\"detail\":\"The v1 API has been deprecated. Please migrate to v2.\",\"deprecated_at\":\"2025-12-09\"}]}"
   }
+
+  depends_on = [
+    aws_api_gateway_method_response.v1_heartbeat_get_410
+  ]
 }
 
 resource "aws_api_gateway_integration_response" "v2_heartbeat_get" {
@@ -910,7 +911,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_any" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "v1_proxy" {
+resource "aws_api_gateway_integration_response" "v1_proxy_410" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy.http_method
@@ -920,12 +921,15 @@ resource "aws_api_gateway_integration_response" "v1_proxy" {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
-    "method.response.header.Content-Type" = "'application/json'"
   }
 
   response_templates = {
     "application/json" = "{\"errors\":[{\"status\":\"410\",\"title\":\"API Version Deprecated\",\"detail\":\"The v1 API has been deprecated. Please migrate to v2.\",\"deprecated_at\":\"2025-12-09\"}]}"
   }
+
+  depends_on = [
+    aws_api_gateway_method_response.v1_proxy_410
+  ]
 }
 
 resource "aws_api_gateway_integration_response" "v2_proxy" {
@@ -1588,10 +1592,10 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.organizations_options,
     aws_api_gateway_integration.v2_organizations_orgid_options,
     aws_api_gateway_integration.v2_organizations_options,
-    aws_api_gateway_integration_response.v1_proxy,
+    aws_api_gateway_integration_response.v1_proxy_410,
     aws_api_gateway_integration_response.v2_proxy,
     aws_api_gateway_integration_response.root_proxy,
-    aws_api_gateway_integration_response.v1_heartbeat_get,
+    aws_api_gateway_integration_response.v1_heartbeat_get_410,
     aws_api_gateway_integration_response.v2_heartbeat_get,
     aws_api_gateway_integration_response.heartbeat_get,
     aws_api_gateway_integration_response.generateid_get,
