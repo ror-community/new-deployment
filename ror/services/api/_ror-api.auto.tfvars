@@ -1,4 +1,4 @@
 ror-api_tags = {
-  sha = "dbaedbc"
-  version = "1.17.0"
+  sha = "b317f89"
+  version = "1.18.0"
 }
