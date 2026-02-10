@@ -22,6 +22,10 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
+locals {
+  cors_allow_headers = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
+}
+
 # =============================================================================
 # INDIVIDUAL ENDPOINT RESOURCES
 # =============================================================================
@@ -787,7 +791,7 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_get_410" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 
@@ -808,7 +812,7 @@ resource "aws_api_gateway_integration_response" "v2_heartbeat_get" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -821,7 +825,7 @@ resource "aws_api_gateway_integration_response" "heartbeat_get" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -838,7 +842,7 @@ resource "aws_api_gateway_integration_response" "generateid_get" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -855,7 +859,7 @@ resource "aws_api_gateway_integration_response" "organizations_orgid_get" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
 }
@@ -872,7 +876,7 @@ resource "aws_api_gateway_integration_response" "organizations_any" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -889,7 +893,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_orgid_get" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
 }
@@ -906,7 +910,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_any" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -919,7 +923,7 @@ resource "aws_api_gateway_integration_response" "v1_proxy_410" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 
@@ -940,7 +944,7 @@ resource "aws_api_gateway_integration_response" "v2_proxy" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -953,7 +957,7 @@ resource "aws_api_gateway_integration_response" "root_proxy" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
 }
@@ -1378,7 +1382,7 @@ resource "aws_api_gateway_integration_response" "v1_proxy_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1393,7 +1397,7 @@ resource "aws_api_gateway_integration_response" "v2_proxy_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1408,7 +1412,7 @@ resource "aws_api_gateway_integration_response" "root_proxy_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1423,7 +1427,7 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1438,7 +1442,7 @@ resource "aws_api_gateway_integration_response" "v2_heartbeat_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1453,7 +1457,7 @@ resource "aws_api_gateway_integration_response" "heartbeat_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1491,7 +1495,7 @@ resource "aws_api_gateway_integration_response" "organizations_orgid_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1510,7 +1514,7 @@ resource "aws_api_gateway_integration_response" "organizations_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1529,7 +1533,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_orgid_options"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
@@ -1548,7 +1552,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
