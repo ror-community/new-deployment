@@ -60,7 +60,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_query_params_v2" {
   scope = "REGIONAL"
   
   regular_expression {
-    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|multisearch|validate)(=|$)"
+    regex_string = "^(query|page|affiliation|filter|format|all_status|query\\.advanced|query\\.name|query\\.names|single_search|validate)(=|$)"
   }
   regular_expression {
     regex_string = "^$"
@@ -134,7 +134,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, multisearch, validate\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, validate\"]}"
         content_type  = "APPLICATION_JSON"
     }
 
@@ -436,7 +436,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, multisearch, validate\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, validate\"]}"
         content_type  = "APPLICATION_JSON"
     }
 
@@ -750,7 +750,7 @@ resource "aws_wafv2_web_acl" "prod-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, multisearch, validate\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, validate\"]}"
         content_type  = "APPLICATION_JSON"
     }
 
