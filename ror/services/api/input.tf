@@ -100,6 +100,7 @@ data "template_file" "api_task" {
     db_port            = var.db_port
     db_name            = var.db_name
     db_user            = var.db_username
+    single_search_default = var.single_search_default
   }
 }
 
@@ -127,6 +128,7 @@ data "template_file" "api-dev_task" {
     db_port            = var.db_port_dev
     db_name            = var.db_name
     db_user            = var.db_username_dev
+    single_search_default_dev = var.single_search_default_dev
   }
 }
 
@@ -154,6 +156,7 @@ data "template_file" "api-staging_task" {
     db_port            = var.db_port_staging
     db_name            = var.db_name
     db_user            = var.db_username_staging
+    single_search_default_staging = var.single_search_default_staging
   }
 }
 
