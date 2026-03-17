@@ -95,3 +95,6 @@ variable "db_name" {}
 variable "api_gateway_token" {
   type        = string
 }
+variable "single_search_default" { default = "False" }
+variable "single_search_default_dev" { default = "False" }
+variable "single_search_default_staging" { default = "False" }
