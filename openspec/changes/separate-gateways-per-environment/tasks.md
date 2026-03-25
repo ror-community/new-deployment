@@ -1,28 +1,28 @@
 ## 1. Create Dev API Gateway
 
-- [ ] 1.1 Create `ror/services/api/api_gateway_dev_full.tf` with `aws_api_gateway_rest_api` resource named `ror-api-dev`
-- [ ] 1.2 Add all endpoint resources (v1, v2, organizations, heartbeat, generateid) to dev gateway
-- [ ] 1.3 Add all methods (GET, POST, ANY, OPTIONS) for each endpoint to dev gateway
-- [ ] 1.4 Add all method responses and integrations to dev gateway
-- [ ] 1.5 Add all integration responses (including CORS) to dev gateway
-- [ ] 1.6 Create dev-specific CloudWatch log group for access logs
-- [ ] 1.7 Create dev deployment resource (`aws_api_gateway_deployment`) with `create_before_destroy` lifecycle
-- [ ] 1.8 Create dev stage with caching and backend host variables
-- [ ] 1.9 Add all method settings (caching configuration) for dev stage
-- [ ] 1.10 Associate dev WAF web ACL with dev gateway stage
+- [x] 1.1 Create `ror/services/api/api_gateway_dev_full.tf` with `aws_api_gateway_rest_api` resource named `ror-api-dev`
+- [x] 1.2 Add all endpoint resources (v1, v2, organizations, heartbeat, generateid) to dev gateway
+- [x] 1.3 Add all methods (GET, POST, ANY, OPTIONS) for each endpoint to dev gateway
+- [x] 1.4 Add all method responses and integrations to dev gateway
+- [x] 1.5 Add all integration responses (including CORS) to dev gateway
+- [x] 1.6 Create dev-specific CloudWatch log group for access logs
+- [x] 1.7 Create dev deployment resource (`aws_api_gateway_deployment`) with `create_before_destroy` lifecycle
+- [x] 1.8 Create dev stage with caching and backend host variables
+- [x] 1.9 Add all method settings (caching configuration) for dev stage
+- [x] 1.10 Associate dev WAF web ACL with dev gateway stage
 
 ## 2. Create Staging API Gateway
 
-- [ ] 2.1 Create `ror/services/api/api_gateway_staging_full.tf` with `aws_api_gateway_rest_api` resource named `ror-api-staging`
-- [ ] 2.2 Add all endpoint resources (v1, v2, organizations, heartbeat, generateid) to staging gateway
-- [ ] 2.3 Add all methods (GET, POST, ANY, OPTIONS) for each endpoint to staging gateway
-- [ ] 2.4 Add all method responses and integrations to staging gateway
-- [ ] 2.5 Add all integration responses (including CORS) to staging gateway
-- [ ] 2.6 Create staging-specific CloudWatch log group for access logs
-- [ ] 2.7 Create staging deployment resource (`aws_api_gateway_deployment`) with `create_before_destroy` lifecycle
-- [ ] 2.8 Create staging stage with caching and backend host variables
-- [ ] 2.9 Add all method settings (caching configuration) for staging stage
-- [ ] 2.10 Associate staging WAF web ACL with staging gateway stage
+- [x] 2.1 Create `ror/services/api/api_gateway_staging_full.tf` with `aws_api_gateway_rest_api` resource named `ror-api-staging`
+- [x] 2.2 Add all endpoint resources (v1, v2, organizations, heartbeat, generateid) to staging gateway
+- [x] 2.3 Add all methods (GET, POST, ANY, OPTIONS) for each endpoint to staging gateway
+- [x] 2.4 Add all method responses and integrations to staging gateway
+- [x] 2.5 Add all integration responses (including CORS) to staging gateway
+- [x] 2.6 Create staging-specific CloudWatch log group for access logs
+- [x] 2.7 Create staging deployment resource (`aws_api_gateway_deployment`) with `create_before_destroy` lifecycle
+- [x] 2.8 Create staging stage with caching and backend host variables
+- [x] 2.9 Add all method settings (caching configuration) for staging stage
+- [x] 2.10 Associate staging WAF web ACL with staging gateway stage
 
 ## 3. Verify and Deploy
 
