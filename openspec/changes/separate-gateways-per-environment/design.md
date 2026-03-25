@@ -10,73 +10,81 @@ This architecture creates tight coupling: any change to gateway configuration re
 ## Goals / Non-Goals
 
 **Goals:**
-- Create three independent API Gateway REST APIs (dev, staging, prod)
-- Each gateway has its own deployment and can be modified independently
-- Maintain identical endpoint configurations across all gateways initially
-- Preserve all existing functionality (endpoints, caching, WAF, logging)
+- Create two independent API Gateway REST APIs (dev, staging) separate from production
+- Each new gateway has its own deployment and can be modified independently
+- Production environment remains completely unchanged - no risk of disruption
+- Maintain identical endpoint configurations on new gateways initially
+- Preserve all existing functionality for all environments
 
 **Non-Goals:**
+- Making any changes to production API Gateway resources
 - Refactoring or optimizing the gateway configuration (future work)
 - Changing the endpoint structure or behavior
-- Modifying DNS or custom domain configurations (handled separately)
+- Modifying DNS or custom domain configurations for production (handled separately)
 
 ## Decisions
 
-### Decision 1: Create separate gateway files per environment
+### Decision 1: Create separate gateway files for dev and staging only
 
-**Choice:** Three independent `api_gateway_<env>.tf` files, each containing a complete REST API definition
+**Choice:** Two new `api_gateway_<env>_full.tf` files (dev and staging), each containing a complete REST API definition. Production continues using the existing shared gateway.
 
 **Rationale:**
-- Clear ownership: each environment's gateway is in its own file
-- Independent deployments: changes to dev don't require touching prod files
-- Future flexibility: each gateway can evolve independently
+- Zero risk to production - no Terraform changes affecting prod resources
+- Clear ownership: dev and staging gateways are in their own files
+- Independent deployments: changes to dev/staging don't affect production
+- Future flexibility: dev/staging gateways can evolve independently
 
 **Alternatives considered:**
-- Single file with `for_each` or `count`: harder to reason about, less clear ownership
-- Modules with per-environment instantiation: adds abstraction complexity; defer to future refactoring
+- Create separate gateways for all three environments: introduces risk to production
+- Keep shared gateway for all: doesn't solve the coupling problem for dev/staging
 
-### Decision 2: Copy shared configuration into each environment file
+### Decision 2: Copy shared configuration into dev and staging files
 
-**Choice:** Duplicate the complete gateway definition (resources, methods, integrations, CORS) in each environment file
+**Choice:** Duplicate the complete gateway definition (resources, methods, integrations, CORS) in dev and staging environment files
 
 **Rationale:**
 - Initial implementation simplicity
 - Each environment can diverge over time
 - No shared state that could cause cross-environment issues
+- Production remains on stable shared gateway
 
 **Alternatives considered:**
 - Terraform module for shared logic: good for maintenance but adds complexity for initial migration
-- Keep shared file for common definitions: defeats the purpose of separation
+- Keep shared file for common definitions: defeats the purpose of separation for dev/staging
 
-### Decision 3: Remove the shared gateway after migration
+### Decision 3: Keep shared gateway for production
 
-**Choice:** After creating separate gateways, remove `api_gateway_shared.tf` and update stage files to reference new gateway resources
+**Choice:** The existing `api_gateway_shared.tf` and `api_gateway_prod.tf` files remain unchanged. Production continues to use the shared API Gateway with the prod stage.
 
 **Rationale:**
-- Clean state without orphaned resources
-- Prevents confusion about which gateway is active
-- Terraform will handle resource lifecycle
+- Zero risk to production traffic
+- No need to migrate production DNS or custom domains
+- Production team can plan their own migration when ready
+- Changes are isolated to non-production environments
 
 ## Risks / Trade-offs
 
 | Risk | Mitigation |
 |------|------------|
-| Code duplication increases maintenance burden | Accept for now; refactor into module later |
-| Larger Terraform state with 3x gateway resources | Accept; AWS API Gateway limits are not a concern |
-| Migration requires creating new resources before destroying old | Use `create_before_destroy` lifecycle; stage migration carefully |
-| Custom domain/ACM certificate associations need updating | Verify DNS and certificate configurations per environment before cutover |
+| Code duplication increases maintenance burden for dev/staging | Accept for now; refactor into module later |
+| Larger Terraform state with additional gateway resources | Accept; AWS API Gateway limits are not a concern |
+| Dev/staging gateways need separate management | Clear ownership: dev/staging teams manage their own gateways |
+| Production still shares gateway with no isolation | Production can be migrated separately in future phase |
+| Custom domain/ACM certificate associations for dev/staging | Verify DNS and certificate configurations per environment |
 
 ## Migration Plan
 
-1. **Create new gateway files**: Add `api_gateway_dev_full.tf`, `api_gateway_staging_full.tf`, `api_gateway_prod_full.tf` with complete gateway definitions
-2. **Create deployments and stages**: Each gateway gets its own deployment resource pointing to environment-specific backend
-3. **Update WAF associations**: Point each gateway's stage(s) to environment-specific WAF web ACLs
-4. **Test in dev first**: Verify dev gateway works end-to-end before promoting
-5. **Migrate staging then prod**: Apply changes sequentially
-6. **Remove shared gateway**: Delete `api_gateway_shared.tf` after migration complete
-7. **Clean up old stage files**: Remove `api_gateway_dev.tf`, `api_gateway_staging.tf`, `api_gateway_prod.tf` as their content is now in the full gateway files
+1. **Create dev gateway file**: Add `api_gateway_dev_full.tf` with complete gateway definition
+2. **Create dev deployment and stage**: Point to dev ALB backend
+3. **Create staging gateway file**: Add `api_gateway_staging_full.tf` with complete gateway definition
+4. **Create staging deployment and stage**: Point to staging ALB backend
+5. **Update WAF associations**: Create new WAF associations for dev and staging gateway stages
+6. **Update DNS for dev/staging**: Point dev.staging custom domains to new gateways
+7. **Test dev first**: Verify dev gateway works end-to-end
+8. **Test staging**: Verify staging gateway works end-to-end
+9. **Production unchanged**: No changes to production resources
 
 ## Open Questions
 
-- Should we preserve the original stage-based approach as a fallback? (Recommend: no, clean migration)
-- How to handle the transition period when both gateways exist? (Recommend: use different names, test new gateway, then switch DNS)
+- Should production be migrated later? (Defer decision to production team)
+- How to handle the transition period for dev/staging DNS? (Recommend: use different gateway names, test, then switch DNS)

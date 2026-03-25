@@ -1,47 +1,30 @@
-## ADDED Requirements
+## UNCHANGED Requirements
 
 ### Requirement: Prod API Gateway REST API
-The system SHALL provide a dedicated API Gateway REST API for the production environment named `ror-api-prod` with independent configuration from dev and staging.
+The production environment SHALL continue using the existing shared API Gateway REST API without any changes.
 
-#### Scenario: Prod gateway exists as independent resource
-- **WHEN** Terraform applies the prod gateway configuration
-- **THEN** a new `aws_api_gateway_rest_api` resource `ror-api-prod` is created
+#### Scenario: Prod gateway remains on shared infrastructure
+- **WHEN** Terraform applies changes for this feature
+- **THEN** the production API Gateway resources are not modified
+- **AND** the production stage continues to use the existing `ror-api` shared gateway
 
-#### Scenario: Prod gateway has complete endpoint definitions
-- **WHEN** the prod gateway is created
-- **THEN** all endpoints (v1/*, v2/*, organizations, heartbeat, generateid) are defined identically to the original shared gateway
+#### Scenario: Prod gateway endpoints unchanged
+- **WHEN** the feature is deployed
+- **THEN** all production endpoints continue to function exactly as before
+- **AND** no changes to production DNS, custom domains, or WAFassociations
 
-### Requirement: Prod API Gateway Deployment
-The system SHALL create an independent deployment for the prod API Gateway.
+### Requirement: No Production Terraform Changes
+The system SHALL NOT make any Terraform changes that affect production resources.
 
-#### Scenario: Prod deployment is created
-- **WHEN** the prod gateway resources are defined
-- **THEN** an `aws_api_gateway_deployment` resource is created for `ror-api-prod`
+#### Scenario: Terraform plan shows no production changes
+- **WHEN** running `terraform plan` for this feature
+- **THEN** no changes are shown to production API Gateway resources
+- **AND** production infrastructure remains stable
 
-#### Scenario: Prod deployment triggers on gateway changes
-- **WHEN** any endpoint configuration changes in the prod gateway
-- **THEN** a new deployment is created without affecting dev or staging gateways
+### Rationale
 
-### Requirement: Prod API Gateway Stage
-The system SHALL configure a default stage for the prod gateway.
-
-#### Scenario: Prod stage is created
-- **WHEN** the prod deployment is created
-- **THEN** a stage is configured with caching enabled and backend host pointing to prod ALB
-
-### Requirement: Prod API Gateway WAF Association
-The system SHALL associate the existing `waf-prod-v2` web ACL with the prod gateway stage.
-
-Note: The WAF web ACL `waf-prod-v2` already exists (defined in `ror/vpc/wafv2.tf`) and is referenced via a data source. No new WAF resources are created.
-
-#### Scenario: Prod WAF association points to new gateway stage
-- **WHEN** the prod gateway stage is created
-- **THEN** the `aws_wafv2_web_acl_association` resource references the new prod gateway stage ARN
-- **AND** the association uses the existing `data.aws_wafv2_web_acl.prod-v2` web ACL
-
-### Requirement: Prod API Gateway CloudWatch Logging
-The system SHALL configure CloudWatch access logging for the prod gateway.
-
-#### Scenario: Prod access logging is enabled
-- **WHEN** the prod stage is created
-- **THEN** access logs are sent to a prod-specific CloudWatch log group
+Production stability is paramount. By keeping the existing shared gateway for production:
+- Zero risk of production outageduring migration
+- No need to update production DNS or SSL certificates
+- Production team can plan their own migration separately if desired
+- Changes are isolated to non-production environments
