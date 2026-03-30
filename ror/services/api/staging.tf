@@ -224,12 +224,12 @@ resource "aws_api_gateway_domain_name" "api_gateway_staging" {
 
 # Base path mapping for API Gateway staging custom domain
 resource "aws_api_gateway_base_path_mapping" "api_gateway_staging" {
-  api_id      = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_staging.stage_name
+  api_id      = aws_api_gateway_rest_api.api_gateway_staging.id
+  stage_name  = aws_api_gateway_stage.api_gateway_staging_full.stage_name
   domain_name = aws_api_gateway_domain_name.api_gateway_staging.domain_name
   
   depends_on = [
-    aws_api_gateway_stage.api_gateway_staging
+    aws_api_gateway_stage.api_gateway_staging_full
   ]
 }
 
