@@ -10,3 +10,5 @@ terraform.*
 .DS_Store
 .vscode
 .env
+openspec
+.cursor
