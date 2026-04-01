@@ -9,6 +9,7 @@ data "aws_caller_identity" "staging_gateway" {}
 
 locals {
   cors_allow_headers_staging = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
+  staging_full_api_deployment_hash = sha1(file("${path.module}/api_gateway_staging_full.tf"))
 }
 
 # =============================================================================
@@ -1558,9 +1559,8 @@ resource "aws_cloudwatch_log_resource_policy" "api_gateway_staging_full_logs" {
 resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
 
-  variables = {
-    deployed_at  = timestamp()
-    force_update = "true"
+  triggers = {
+    redeployment = local.staging_full_api_deployment_hash
   }
 
   depends_on = [

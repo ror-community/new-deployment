@@ -24,6 +24,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   cors_allow_headers = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
+  shared_api_deployment_hash = sha1(file("${path.module}/api_gateway_shared.tf"))
 }
 
 # =============================================================================
@@ -1567,9 +1568,8 @@ resource "aws_api_gateway_deployment" "api_gateway" {
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   
-  variables = {
-    deployed_at = timestamp()
-    force_update = "true"
+  triggers = {
+    redeployment = local.shared_api_deployment_hash
   }
   
   depends_on = [
