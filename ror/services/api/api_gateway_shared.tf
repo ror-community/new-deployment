@@ -1,6 +1,6 @@
 # =============================================================================
 # API GATEWAY SHARED CONFIGURATION
-# Used by shared production stage resources
+# Used by all stages (dev, staging, prod)
 # =============================================================================
 
 
@@ -1563,7 +1563,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_options" {
 # API GATEWAY DEPLOYMENT
 # =============================================================================
 
-# API Gateway Deployment (shared API definition)
+# API Gateway Deployment (shared across all stages)
 resource "aws_api_gateway_deployment" "api_gateway" {
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
