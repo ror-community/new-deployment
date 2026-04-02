@@ -8,7 +8,7 @@ data "aws_region" "dev_gateway" {}
 data "aws_caller_identity" "dev_gateway" {}
 
 locals {
-  cors_allow_headers_dev = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
+  cors_allow_headers_dev       = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
   dev_full_api_deployment_hash = sha1(file("${path.module}/api_gateway_dev_full.tf"))
 }
 
@@ -200,6 +200,7 @@ resource "aws_api_gateway_method" "organizations_any_dev" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
+    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -234,6 +235,7 @@ resource "aws_api_gateway_method" "v2_organizations_any_dev" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
+    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -279,6 +281,7 @@ resource "aws_api_gateway_method" "v2_proxy_dev" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
+    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -302,6 +305,7 @@ resource "aws_api_gateway_method" "root_proxy_dev" {
     "method.request.querystring.query.advanced" = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
+    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -595,6 +599,7 @@ resource "aws_api_gateway_integration" "organizations_any_dev" {
     "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
     "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
     "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
+    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -608,7 +613,8 @@ resource "aws_api_gateway_integration" "organizations_any_dev" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
+    "method.request.querystring.single_search",
+    "method.request.querystring.multisearch"
   ]
   cache_namespace = "organizations-dev"
 }
@@ -654,6 +660,7 @@ resource "aws_api_gateway_integration" "v2_organizations_any_dev" {
     "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
     "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
     "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
+    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -667,7 +674,8 @@ resource "aws_api_gateway_integration" "v2_organizations_any_dev" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
+    "method.request.querystring.single_search",
+    "method.request.querystring.multisearch"
   ]
   cache_namespace = "v2-organizations-dev"
 }
@@ -713,7 +721,8 @@ resource "aws_api_gateway_integration" "v2_proxy_dev" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
+    "method.request.querystring.single_search",
+    "method.request.querystring.multisearch"
   ]
   cache_namespace = "v2-proxy-dev"
 }
@@ -746,7 +755,8 @@ resource "aws_api_gateway_integration" "root_proxy_dev" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
+    "method.request.querystring.single_search",
+    "method.request.querystring.multisearch"
   ]
   cache_namespace = "root-proxy-dev"
 }
