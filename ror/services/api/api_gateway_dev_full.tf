@@ -707,6 +707,18 @@ resource "aws_api_gateway_integration" "v2_proxy_dev" {
     "integration.request.path.proxy"                     = "method.request.path.proxy"
     "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.querystring.query"              = "method.request.querystring.query"
+    "integration.request.querystring.page"               = "method.request.querystring.page"
+    "integration.request.querystring.affiliation"        = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter"             = "method.request.querystring.filter"
+    "integration.request.querystring.format"             = "method.request.querystring.format"
+    "integration.request.querystring.all_status"         = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced"     = "method.request.querystring.query.advanced"
+    "integration.request.querystring.query.name"         = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
+    "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
+    "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
+    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -741,6 +753,18 @@ resource "aws_api_gateway_integration" "root_proxy_dev" {
     "integration.request.path.proxy"                     = "method.request.path.proxy"
     "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+    "integration.request.querystring.query"              = "method.request.querystring.query"
+    "integration.request.querystring.page"               = "method.request.querystring.page"
+    "integration.request.querystring.affiliation"        = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter"             = "method.request.querystring.filter"
+    "integration.request.querystring.format"             = "method.request.querystring.format"
+    "integration.request.querystring.all_status"         = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced"     = "method.request.querystring.query.advanced"
+    "integration.request.querystring.query.name"         = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
+    "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
+    "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
+    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
