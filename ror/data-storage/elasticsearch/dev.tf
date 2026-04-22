@@ -27,6 +27,11 @@ resource "aws_elasticsearch_domain" "elasticsearch-v7-dev" {
     subnet_ids = var.private_subnet_ids
   }
 
+  domain_endpoint_options {
+    enforce_https       = true
+    tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
+  }
+
   log_publishing_options {
     cloudwatch_log_group_arn = "${aws_cloudwatch_log_group.es-v7-dev.arn}"
     enabled = true
