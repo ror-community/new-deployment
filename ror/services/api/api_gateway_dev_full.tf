@@ -1333,9 +1333,6 @@ resource "aws_api_gateway_deployment" "api_gateway_dev_full" {
     aws_api_gateway_integration_response.v2_organizations_options_dev
   ]
 
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 # =============================================================================
