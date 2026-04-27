@@ -1312,26 +1312,12 @@ resource "aws_api_gateway_deployment" "api_gateway_dev_full" {
     aws_api_gateway_integration.organizations_orgid_options_dev,
     aws_api_gateway_integration.organizations_options_dev,
     aws_api_gateway_integration.v2_organizations_orgid_options_dev,
-    aws_api_gateway_integration.v2_organizations_options_dev,
-    aws_api_gateway_integration_response.v1_proxy_410_dev,
-    aws_api_gateway_integration_response.v1_heartbeat_get_410_dev,
-    aws_api_gateway_integration_response.v2_heartbeat_get_dev,
-    aws_api_gateway_integration_response.heartbeat_get_dev,
-    aws_api_gateway_integration_response.generateid_get_dev,
-    aws_api_gateway_integration_response.organizations_orgid_get_dev,
-    aws_api_gateway_integration_response.organizations_any_dev,
-    aws_api_gateway_integration_response.v2_organizations_orgid_get_dev,
-    aws_api_gateway_integration_response.v2_organizations_any_dev,
-    aws_api_gateway_integration_response.v1_proxy_options_dev,
-    aws_api_gateway_integration_response.v1_heartbeat_options_dev,
-    aws_api_gateway_integration_response.v2_heartbeat_options_dev,
-    aws_api_gateway_integration_response.heartbeat_options_dev,
-    aws_api_gateway_integration_response.generateid_options_dev,
-    aws_api_gateway_integration_response.organizations_orgid_options_dev,
-    aws_api_gateway_integration_response.organizations_options_dev,
-    aws_api_gateway_integration_response.v2_organizations_orgid_options_dev,
-    aws_api_gateway_integration_response.v2_organizations_options_dev
+    aws_api_gateway_integration.v2_organizations_options_dev
   ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
 }
 
