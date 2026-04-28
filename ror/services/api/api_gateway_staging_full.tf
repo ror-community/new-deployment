@@ -1603,6 +1603,10 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration_response.v2_organizations_options_staging
   ]
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
 }
 
 # =============================================================================
