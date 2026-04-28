@@ -55,6 +55,12 @@ resource "aws_api_gateway_resource" "v1_proxy_staging" {
   path_part   = "{proxy+}"
 }
 
+# v2/{proxy+} resource
+resource "aws_api_gateway_resource" "v2_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  parent_id   = aws_api_gateway_resource.v2_staging.id
+  path_part   = "{proxy+}"
+}
 
 # v1/heartbeat resource
 resource "aws_api_gateway_resource" "v1_heartbeat_staging" {
@@ -84,6 +90,12 @@ resource "aws_api_gateway_resource" "v2_organizations_orgid_staging" {
   path_part   = "{orgid}"
 }
 
+# Root /{proxy+} resource
+resource "aws_api_gateway_resource" "root_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway_staging.root_resource_id
+  path_part   = "{proxy+}"
+}
 
 # Root /heartbeat resource
 resource "aws_api_gateway_resource" "heartbeat_staging" {
@@ -188,7 +200,6 @@ resource "aws_api_gateway_method" "organizations_any_staging" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
-    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -223,7 +234,6 @@ resource "aws_api_gateway_method" "v2_organizations_any_staging" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
-    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -249,6 +259,51 @@ resource "aws_api_gateway_method" "v1_proxy_staging" {
   }
 }
 
+# v2/{proxy+} ANY method
+resource "aws_api_gateway_method" "v2_proxy_staging" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id   = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method   = "ANY"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.path.proxy"                 = true
+    "method.request.querystring.query"          = false
+    "method.request.querystring.page"           = false
+    "method.request.querystring.affiliation"    = false
+    "method.request.querystring.filter"         = false
+    "method.request.querystring.format"         = false
+    "method.request.querystring.all_status"     = false
+    "method.request.querystring.query.advanced" = false
+    "method.request.querystring.query.name"     = false
+    "method.request.querystring.query.names"    = false
+    "method.request.querystring.page_size"      = false
+    "method.request.querystring.single_search"  = false
+  }
+}
+
+# Root /{proxy+} ANY method
+resource "aws_api_gateway_method" "root_proxy_staging" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id   = aws_api_gateway_resource.root_proxy_staging.id
+  http_method   = "ANY"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.path.proxy"                 = true
+    "method.request.querystring.page"           = false
+    "method.request.querystring.query"          = false
+    "method.request.querystring.affiliation"    = false
+    "method.request.querystring.filter"         = false
+    "method.request.querystring.format"         = false
+    "method.request.querystring.query.name"     = false
+    "method.request.querystring.query.names"    = false
+    "method.request.querystring.all_status"     = false
+    "method.request.querystring.query.advanced" = false
+    "method.request.querystring.page_size"      = false
+    "method.request.querystring.single_search"  = false
+  }
+}
 
 # =============================================================================
 # METHOD RESPONSES
@@ -295,6 +350,19 @@ resource "aws_api_gateway_method_response" "v2_heartbeat_get_staging" {
   }
 }
 
+# Method response for root /{proxy+}
+resource "aws_api_gateway_method_response" "root_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.root_proxy_staging.id
+  http_method = aws_api_gateway_method.root_proxy_staging.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
 
 # Method response for root /heartbeat
 resource "aws_api_gateway_method_response" "heartbeat_get_staging" {
@@ -394,6 +462,19 @@ resource "aws_api_gateway_method_response" "v1_proxy_410_staging" {
   }
 }
 
+# Method response for v2/{proxy+}
+resource "aws_api_gateway_method_response" "v2_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method = aws_api_gateway_method.v2_proxy_staging.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
+}
 
 # =============================================================================
 # INTEGRATIONS
@@ -514,7 +595,6 @@ resource "aws_api_gateway_integration" "organizations_any_staging" {
     "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
     "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
     "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
-    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -528,8 +608,7 @@ resource "aws_api_gateway_integration" "organizations_any_staging" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search",
-    "method.request.querystring.multisearch"
+    "method.request.querystring.single_search"
   ]
   cache_namespace = "organizations-staging"
 }
@@ -575,7 +654,6 @@ resource "aws_api_gateway_integration" "v2_organizations_any_staging" {
     "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
     "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
     "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
-    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -589,8 +667,7 @@ resource "aws_api_gateway_integration" "v2_organizations_any_staging" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search",
-    "method.request.querystring.multisearch"
+    "method.request.querystring.single_search"
   ]
   cache_namespace = "v2-organizations-staging"
 }
@@ -608,6 +685,71 @@ resource "aws_api_gateway_integration" "v1_proxy_staging" {
   }
 }
 
+# Integration for v2/{proxy+}
+resource "aws_api_gateway_integration" "v2_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method = aws_api_gateway_method.v2_proxy_staging.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "ANY"
+  uri                     = "https://$${stageVariables.backend_host}/v2/{proxy}"
+
+  request_parameters = {
+    "integration.request.path.proxy"                     = "method.request.path.proxy"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+  }
+
+  cache_key_parameters = [
+    "method.request.path.proxy",
+    "method.request.querystring.query",
+    "method.request.querystring.page",
+    "method.request.querystring.affiliation",
+    "method.request.querystring.filter",
+    "method.request.querystring.format",
+    "method.request.querystring.all_status",
+    "method.request.querystring.query.advanced",
+    "method.request.querystring.query.name",
+    "method.request.querystring.query.names",
+    "method.request.querystring.page_size",
+    "method.request.querystring.single_search"
+  ]
+  cache_namespace = "v2-proxy-staging"
+}
+
+# Integration for /{proxy+}
+resource "aws_api_gateway_integration" "root_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.root_proxy_staging.id
+  http_method = aws_api_gateway_method.root_proxy_staging.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "ANY"
+  uri                     = "https://$${stageVariables.backend_host}/{proxy}"
+
+  request_parameters = {
+    "integration.request.path.proxy"                     = "method.request.path.proxy"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
+    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
+  }
+
+  cache_key_parameters = [
+    "method.request.path.proxy",
+    "method.request.querystring.query",
+    "method.request.querystring.page",
+    "method.request.querystring.affiliation",
+    "method.request.querystring.filter",
+    "method.request.querystring.format",
+    "method.request.querystring.all_status",
+    "method.request.querystring.query.advanced",
+    "method.request.querystring.query.name",
+    "method.request.querystring.query.names",
+    "method.request.querystring.page_size",
+    "method.request.querystring.single_search"
+  ]
+  cache_namespace = "root-proxy-staging"
+}
 
 # =============================================================================
 # INTEGRATION RESPONSES
@@ -792,6 +934,33 @@ resource "aws_api_gateway_integration_response" "v1_proxy_410_staging" {
   ]
 }
 
+# Integration response for v2/{proxy+}
+resource "aws_api_gateway_integration_response" "v2_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method = aws_api_gateway_method.v2_proxy_staging.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers_staging}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+  }
+}
+
+# Integration response for /{proxy+}
+resource "aws_api_gateway_integration_response" "root_proxy_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.root_proxy_staging.id
+  http_method = aws_api_gateway_method.root_proxy_staging.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers_staging}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+  }
+}
 
 # =============================================================================
 # CORS OPTIONS METHODS
@@ -804,6 +973,19 @@ resource "aws_api_gateway_method" "v1_proxy_options_staging" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method" "v2_proxy_options_staging" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id   = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "root_proxy_options_staging" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id   = aws_api_gateway_resource.root_proxy_staging.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
 
 resource "aws_api_gateway_method" "v1_heartbeat_options_staging" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway_staging.id
@@ -879,6 +1061,33 @@ resource "aws_api_gateway_method_response" "v1_proxy_options_staging" {
   }
 }
 
+resource "aws_api_gateway_method_response" "v2_proxy_options_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method = aws_api_gateway_method.v2_proxy_options_staging.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "root_proxy_options_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.root_proxy_staging.id
+  http_method = aws_api_gateway_method.root_proxy_options_staging.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
 
 resource "aws_api_gateway_method_response" "v1_heartbeat_options_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
@@ -1008,6 +1217,29 @@ resource "aws_api_gateway_integration" "v1_proxy_options_staging" {
   }
 }
 
+resource "aws_api_gateway_integration" "v2_proxy_options_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method = aws_api_gateway_method.v2_proxy_options_staging.http_method
+
+  type = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_integration" "root_proxy_options_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.root_proxy_staging.id
+  http_method = aws_api_gateway_method.root_proxy_options_staging.http_method
+
+  type = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
 
 resource "aws_api_gateway_integration" "v1_heartbeat_options_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
@@ -1123,6 +1355,33 @@ resource "aws_api_gateway_integration_response" "v1_proxy_options_staging" {
   }
 }
 
+resource "aws_api_gateway_integration_response" "v2_proxy_options_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.v2_proxy_staging.id
+  http_method = aws_api_gateway_method.v2_proxy_options_staging.http_method
+  status_code = aws_api_gateway_method_response.v2_proxy_options_staging.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers_staging}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "root_proxy_options_staging" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  resource_id = aws_api_gateway_resource.root_proxy_staging.id
+  http_method = aws_api_gateway_method.root_proxy_options_staging.http_method
+  status_code = aws_api_gateway_method_response.root_proxy_options_staging.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers_staging}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+}
 
 resource "aws_api_gateway_integration_response" "v1_heartbeat_options_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
@@ -1306,6 +1565,8 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
 
   depends_on = [
     aws_api_gateway_integration.v1_proxy_staging,
+    aws_api_gateway_integration.v2_proxy_staging,
+    aws_api_gateway_integration.root_proxy_staging,
     aws_api_gateway_integration.heartbeat_get_staging,
     aws_api_gateway_integration.v1_heartbeat_get_staging,
     aws_api_gateway_integration.v2_heartbeat_get_staging,
@@ -1316,6 +1577,8 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration.v2_organizations_orgid_get_staging,
     aws_api_gateway_integration.v2_organizations_any_staging,
     aws_api_gateway_integration.v1_proxy_options_staging,
+    aws_api_gateway_integration.v2_proxy_options_staging,
+    aws_api_gateway_integration.root_proxy_options_staging,
     aws_api_gateway_integration.v1_heartbeat_options_staging,
     aws_api_gateway_integration.v2_heartbeat_options_staging,
     aws_api_gateway_integration.heartbeat_options_staging,
@@ -1323,7 +1586,29 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration.organizations_orgid_options_staging,
     aws_api_gateway_integration.organizations_options_staging,
     aws_api_gateway_integration.v2_organizations_orgid_options_staging,
-    aws_api_gateway_integration.v2_organizations_options_staging
+    aws_api_gateway_integration.v2_organizations_options_staging,
+    aws_api_gateway_integration_response.v1_proxy_410_staging,
+    aws_api_gateway_integration_response.v2_proxy_staging,
+    aws_api_gateway_integration_response.root_proxy_staging,
+    aws_api_gateway_integration_response.v1_heartbeat_get_410_staging,
+    aws_api_gateway_integration_response.v2_heartbeat_get_staging,
+    aws_api_gateway_integration_response.heartbeat_get_staging,
+    aws_api_gateway_integration_response.generateid_get_staging,
+    aws_api_gateway_integration_response.organizations_orgid_get_staging,
+    aws_api_gateway_integration_response.organizations_any_staging,
+    aws_api_gateway_integration_response.v2_organizations_orgid_get_staging,
+    aws_api_gateway_integration_response.v2_organizations_any_staging,
+    aws_api_gateway_integration_response.v1_proxy_options_staging,
+    aws_api_gateway_integration_response.v2_proxy_options_staging,
+    aws_api_gateway_integration_response.root_proxy_options_staging,
+    aws_api_gateway_integration_response.v1_heartbeat_options_staging,
+    aws_api_gateway_integration_response.v2_heartbeat_options_staging,
+    aws_api_gateway_integration_response.heartbeat_options_staging,
+    aws_api_gateway_integration_response.generateid_options_staging,
+    aws_api_gateway_integration_response.organizations_orgid_options_staging,
+    aws_api_gateway_integration_response.organizations_options_staging,
+    aws_api_gateway_integration_response.v2_organizations_orgid_options_staging,
+    aws_api_gateway_integration_response.v2_organizations_options_staging
   ]
 
   lifecycle {
@@ -1380,6 +1665,37 @@ resource "aws_api_gateway_stage" "api_gateway_staging_full" {
 # METHOD SETTINGS FOR CACHING
 # =============================================================================
 
+resource "aws_api_gateway_method_settings" "v2_proxy_cache_staging_full" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  stage_name  = aws_api_gateway_stage.api_gateway_staging_full.stage_name
+  method_path = "v2/{proxy+}/GET"
+
+  settings {
+    caching_enabled                            = true
+    cache_ttl_in_seconds                       = 300
+    cache_data_encrypted                       = false
+    require_authorization_for_cache_control    = true
+    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
+    throttling_rate_limit                      = 10000
+    throttling_burst_limit                     = 5000
+  }
+}
+
+resource "aws_api_gateway_method_settings" "root_proxy_cache_staging_full" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
+  stage_name  = aws_api_gateway_stage.api_gateway_staging_full.stage_name
+  method_path = "{proxy+}/GET"
+
+  settings {
+    caching_enabled                            = true
+    cache_ttl_in_seconds                       = 300
+    cache_data_encrypted                       = false
+    require_authorization_for_cache_control    = true
+    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
+    throttling_rate_limit                      = 10000
+    throttling_burst_limit                     = 5000
+  }
+}
 
 resource "aws_api_gateway_method_settings" "organizations_cache_staging_full" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
