@@ -1565,8 +1565,6 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
 
   depends_on = [
     aws_api_gateway_integration.v1_proxy_staging,
-    aws_api_gateway_integration.v2_proxy_staging,
-    aws_api_gateway_integration.root_proxy_staging,
     aws_api_gateway_integration.heartbeat_get_staging,
     aws_api_gateway_integration.v1_heartbeat_get_staging,
     aws_api_gateway_integration.v2_heartbeat_get_staging,
@@ -1577,8 +1575,6 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration.v2_organizations_orgid_get_staging,
     aws_api_gateway_integration.v2_organizations_any_staging,
     aws_api_gateway_integration.v1_proxy_options_staging,
-    aws_api_gateway_integration.v2_proxy_options_staging,
-    aws_api_gateway_integration.root_proxy_options_staging,
     aws_api_gateway_integration.v1_heartbeat_options_staging,
     aws_api_gateway_integration.v2_heartbeat_options_staging,
     aws_api_gateway_integration.heartbeat_options_staging,
@@ -1588,8 +1584,6 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration.v2_organizations_orgid_options_staging,
     aws_api_gateway_integration.v2_organizations_options_staging,
     aws_api_gateway_integration_response.v1_proxy_410_staging,
-    aws_api_gateway_integration_response.v2_proxy_staging,
-    aws_api_gateway_integration_response.root_proxy_staging,
     aws_api_gateway_integration_response.v1_heartbeat_get_410_staging,
     aws_api_gateway_integration_response.v2_heartbeat_get_staging,
     aws_api_gateway_integration_response.heartbeat_get_staging,
@@ -1599,8 +1593,6 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration_response.v2_organizations_orgid_get_staging,
     aws_api_gateway_integration_response.v2_organizations_any_staging,
     aws_api_gateway_integration_response.v1_proxy_options_staging,
-    aws_api_gateway_integration_response.v2_proxy_options_staging,
-    aws_api_gateway_integration_response.root_proxy_options_staging,
     aws_api_gateway_integration_response.v1_heartbeat_options_staging,
     aws_api_gateway_integration_response.v2_heartbeat_options_staging,
     aws_api_gateway_integration_response.heartbeat_options_staging,
@@ -1611,9 +1603,6 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration_response.v2_organizations_options_staging
   ]
 
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 # =============================================================================
@@ -1664,38 +1653,6 @@ resource "aws_api_gateway_stage" "api_gateway_staging_full" {
 # =============================================================================
 # METHOD SETTINGS FOR CACHING
 # =============================================================================
-
-resource "aws_api_gateway_method_settings" "v2_proxy_cache_staging_full" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
-  stage_name  = aws_api_gateway_stage.api_gateway_staging_full.stage_name
-  method_path = "v2/{proxy+}/GET"
-
-  settings {
-    caching_enabled                            = true
-    cache_ttl_in_seconds                       = 300
-    cache_data_encrypted                       = false
-    require_authorization_for_cache_control    = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    throttling_rate_limit                      = 10000
-    throttling_burst_limit                     = 5000
-  }
-}
-
-resource "aws_api_gateway_method_settings" "root_proxy_cache_staging_full" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
-  stage_name  = aws_api_gateway_stage.api_gateway_staging_full.stage_name
-  method_path = "{proxy+}/GET"
-
-  settings {
-    caching_enabled                            = true
-    cache_ttl_in_seconds                       = 300
-    cache_data_encrypted                       = false
-    require_authorization_for_cache_control    = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    throttling_rate_limit                      = 10000
-    throttling_burst_limit                     = 5000
-  }
-}
 
 resource "aws_api_gateway_method_settings" "organizations_cache_staging_full" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
