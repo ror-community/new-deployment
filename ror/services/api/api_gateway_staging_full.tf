@@ -188,6 +188,7 @@ resource "aws_api_gateway_method" "organizations_any_staging" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
+    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -222,6 +223,7 @@ resource "aws_api_gateway_method" "v2_organizations_any_staging" {
     "method.request.querystring.query.names"    = false
     "method.request.querystring.page_size"      = false
     "method.request.querystring.single_search"  = false
+    "method.request.querystring.multisearch"    = false
   }
 }
 
@@ -512,6 +514,7 @@ resource "aws_api_gateway_integration" "organizations_any_staging" {
     "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
     "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
     "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
+    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -525,7 +528,8 @@ resource "aws_api_gateway_integration" "organizations_any_staging" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
+    "method.request.querystring.single_search",
+    "method.request.querystring.multisearch"
   ]
   cache_namespace = "organizations-staging"
 }
@@ -571,6 +575,7 @@ resource "aws_api_gateway_integration" "v2_organizations_any_staging" {
     "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
     "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
     "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
+    "integration.request.querystring.multisearch"        = "method.request.querystring.multisearch"
   }
 
   cache_key_parameters = [
@@ -584,7 +589,8 @@ resource "aws_api_gateway_integration" "v2_organizations_any_staging" {
     "method.request.querystring.query.name",
     "method.request.querystring.query.names",
     "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
+    "method.request.querystring.single_search",
+    "method.request.querystring.multisearch"
   ]
   cache_namespace = "v2-organizations-staging"
 }
@@ -1317,25 +1323,7 @@ resource "aws_api_gateway_deployment" "api_gateway_staging_full" {
     aws_api_gateway_integration.organizations_orgid_options_staging,
     aws_api_gateway_integration.organizations_options_staging,
     aws_api_gateway_integration.v2_organizations_orgid_options_staging,
-    aws_api_gateway_integration.v2_organizations_options_staging,
-    aws_api_gateway_integration_response.v1_proxy_410_staging,
-    aws_api_gateway_integration_response.v1_heartbeat_get_410_staging,
-    aws_api_gateway_integration_response.v2_heartbeat_get_staging,
-    aws_api_gateway_integration_response.heartbeat_get_staging,
-    aws_api_gateway_integration_response.generateid_get_staging,
-    aws_api_gateway_integration_response.organizations_orgid_get_staging,
-    aws_api_gateway_integration_response.organizations_any_staging,
-    aws_api_gateway_integration_response.v2_organizations_orgid_get_staging,
-    aws_api_gateway_integration_response.v2_organizations_any_staging,
-    aws_api_gateway_integration_response.v1_proxy_options_staging,
-    aws_api_gateway_integration_response.v1_heartbeat_options_staging,
-    aws_api_gateway_integration_response.v2_heartbeat_options_staging,
-    aws_api_gateway_integration_response.heartbeat_options_staging,
-    aws_api_gateway_integration_response.generateid_options_staging,
-    aws_api_gateway_integration_response.organizations_orgid_options_staging,
-    aws_api_gateway_integration_response.organizations_options_staging,
-    aws_api_gateway_integration_response.v2_organizations_orgid_options_staging,
-    aws_api_gateway_integration_response.v2_organizations_options_staging
+    aws_api_gateway_integration.v2_organizations_options_staging
   ]
 
   lifecycle {
