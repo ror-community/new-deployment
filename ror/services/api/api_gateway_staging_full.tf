@@ -77,11 +77,11 @@ resource "aws_api_gateway_resource" "v2_organizations_staging" {
   path_part   = "organizations"
 }
 
-# v2/organizations/{orgid} resource
+# v2/organizations/{orgid+} resource
 resource "aws_api_gateway_resource" "v2_organizations_orgid_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
   parent_id   = aws_api_gateway_resource.v2_organizations_staging.id
-  path_part   = "{orgid}"
+  path_part   = "{orgid+}"
 }
 
 
@@ -106,11 +106,11 @@ resource "aws_api_gateway_resource" "organizations_staging" {
   path_part   = "organizations"
 }
 
-# /organizations/{orgid} resource
+# /organizations/{orgid+} resource
 resource "aws_api_gateway_resource" "organizations_orgid_staging" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway_staging.id
   parent_id   = aws_api_gateway_resource.organizations_staging.id
-  path_part   = "{orgid}"
+  path_part   = "{orgid+}"
 }
 
 # =============================================================================
