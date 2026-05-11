@@ -134,7 +134,7 @@ resource "aws_wafv2_web_acl" "dev-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, mutlisearch, validate\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, validate\"]}"
         content_type  = "APPLICATION_JSON"
     }
 
@@ -436,7 +436,7 @@ resource "aws_wafv2_web_acl" "staging-v2" {
 
     custom_response_body {
         key           = "invalid_query_param_response"
-        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, multisearch, validate\"]}"
+        content       = "{\"errors\":[\"Query parameter is illegal. Valid parameters are: query, page, affiliation, filter, format, all_status, query.advanced, query.name, query.names, single_search, validate\"]}"
         content_type  = "APPLICATION_JSON"
     }
 
