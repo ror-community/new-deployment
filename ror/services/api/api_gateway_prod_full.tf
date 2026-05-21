@@ -1572,6 +1572,7 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     redeployment = local.shared_api_deployment_hash
   }
   
+  # Integrations only (matches staging); avoids deployment cycle with stage updates.
   depends_on = [
     aws_api_gateway_integration.v1_proxy,
     aws_api_gateway_integration.v2_proxy,
@@ -1595,43 +1596,13 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.organizations_orgid_options,
     aws_api_gateway_integration.organizations_options,
     aws_api_gateway_integration.v2_organizations_orgid_options,
-    aws_api_gateway_integration.v2_organizations_options,
-    aws_api_gateway_integration_response.v1_proxy_410,
-    aws_api_gateway_integration_response.v2_proxy,
-    aws_api_gateway_integration_response.root_proxy,
-    aws_api_gateway_integration_response.v1_heartbeat_get_410,
-    aws_api_gateway_integration_response.v2_heartbeat_get,
-    aws_api_gateway_integration_response.heartbeat_get,
-    aws_api_gateway_integration_response.generateid_get,
-    aws_api_gateway_integration_response.organizations_orgid_get,
-    aws_api_gateway_integration_response.organizations_any,
-    aws_api_gateway_integration_response.v2_organizations_orgid_get,
-    aws_api_gateway_integration_response.v2_organizations_any,
-    aws_api_gateway_integration_response.v1_proxy_options,
-    aws_api_gateway_integration_response.v2_proxy_options,
-    aws_api_gateway_integration_response.root_proxy_options,
-    aws_api_gateway_integration_response.v1_heartbeat_options,
-    aws_api_gateway_integration_response.v2_heartbeat_options,
-    aws_api_gateway_integration_response.heartbeat_options,
-    aws_api_gateway_integration_response.generateid_options,
-    aws_api_gateway_integration_response.organizations_orgid_options,
-    aws_api_gateway_integration_response.organizations_options,
-    aws_api_gateway_integration_response.v2_organizations_orgid_options,
-    aws_api_gateway_integration_response.v2_organizations_options,
-    aws_api_gateway_method.root_proxy,
-    aws_api_gateway_method.heartbeat_get,
-    aws_api_gateway_method.generateid_get,
-    aws_api_gateway_method.v1_proxy_options,
-    aws_api_gateway_method.v2_proxy_options,
-    aws_api_gateway_method.root_proxy_options,
-    aws_api_gateway_method.v1_heartbeat_options,
-    aws_api_gateway_method.v2_heartbeat_options,
-    aws_api_gateway_method.heartbeat_options,
-    aws_api_gateway_method.generateid_options
+    aws_api_gateway_integration.v2_organizations_options
   ]
-  
+
   lifecycle {
-    create_before_destroy = true
+    # Phase 1 PR1: in-place deployment replace before proxy route removal (PR2).
+    # Restore create_before_destroy = true after Phase 1 completes.
+    create_before_destroy = false
   }
 }
 
@@ -1688,66 +1659,6 @@ resource "aws_api_gateway_stage" "api_gateway_prod" {
 # =============================================================================
 # METHOD SETTINGS FOR CACHING - PROD STAGE
 # =============================================================================
-
-# Enable caching for v2/organizations endpoint
-resource "aws_api_gateway_method_settings" "v2_proxy_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "v2/{proxy+}/GET"
-
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
-
-# Disable caching for v2/{proxy+} POST requests
-resource "aws_api_gateway_method_settings" "v2_proxy_post_no_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "v2/{proxy+}/POST"
-
-  settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
-
-# Enable caching for organizations endpoint (no version)
-resource "aws_api_gateway_method_settings" "root_proxy_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "{proxy+}/GET"
-
-  depends_on = [
-    aws_api_gateway_method_settings.v2_proxy_cache_prod
-  ]
-
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
 
 # Enable caching for /organizations endpoint
 resource "aws_api_gateway_method_settings" "organizations_cache_prod" {
@@ -1821,31 +1732,11 @@ resource "aws_api_gateway_method_settings" "v2_organizations_orgid_no_cache_prod
   }
 }
 
-# Disable caching for root /{proxy+} POST requests (versionless)
-resource "aws_api_gateway_method_settings" "root_proxy_post_no_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "{proxy+}/POST"
-
-  settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
-
 # Disable caching for root /heartbeat endpoint (versionless)
 resource "aws_api_gateway_method_settings" "heartbeat_no_cache_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
   method_path = "heartbeat/GET"
-
-  depends_on = [
-    aws_api_gateway_method_settings.root_proxy_cache_prod
-  ]
 
   settings {
     caching_enabled        = false
