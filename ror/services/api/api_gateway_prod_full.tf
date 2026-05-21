@@ -6,13 +6,13 @@
 
 # API Gateway REST API with caching enabled
 resource "aws_api_gateway_rest_api" "api_gateway" {
-  name = "ror-api"
+  name        = "ror-api"
   description = "ROR API Gateway with caching - individual endpoints"
-  
+
   endpoint_configuration {
     types = ["REGIONAL"]
   }
-  
+
   tags = {
     environment = "api-gateway"
   }
@@ -23,7 +23,7 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
-  cors_allow_headers = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
+  cors_allow_headers         = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Client-Id"
   shared_api_deployment_hash = sha1(file("${path.module}/api_gateway_prod_full.tf"))
 }
 
@@ -49,13 +49,6 @@ resource "aws_api_gateway_resource" "v2" {
 resource "aws_api_gateway_resource" "v1_proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "{proxy+}"
-}
-
-# v2/{proxy+} resource - unified proxy for all v2 endpoints
-resource "aws_api_gateway_resource" "v2_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  parent_id   = aws_api_gateway_resource.v2.id
   path_part   = "{proxy+}"
 }
 
@@ -85,13 +78,6 @@ resource "aws_api_gateway_resource" "v2_organizations_orgid" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_resource.v2_organizations.id
   path_part   = "{orgid}"
-}
-
-# Root /{proxy+} resource for versionless requests
-resource "aws_api_gateway_resource" "root_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
-  path_part   = "{proxy+}"
 }
 
 # Root /heartbeat resource for versionless requests  
@@ -186,17 +172,17 @@ resource "aws_api_gateway_method" "organizations_any" {
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.querystring.query" = false
-    "method.request.querystring.page" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.all_status" = false
+    "method.request.querystring.query"          = false
+    "method.request.querystring.page"           = false
+    "method.request.querystring.affiliation"    = false
+    "method.request.querystring.filter"         = false
+    "method.request.querystring.format"         = false
+    "method.request.querystring.all_status"     = false
     "method.request.querystring.query.advanced" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-    "method.request.querystring.page_size" = false
-    "method.request.querystring.single_search" = false
+    "method.request.querystring.query.name"     = false
+    "method.request.querystring.query.names"    = false
+    "method.request.querystring.page_size"      = false
+    "method.request.querystring.single_search"  = false
   }
 }
 
@@ -220,17 +206,17 @@ resource "aws_api_gateway_method" "v2_organizations_any" {
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.querystring.query" = false
-    "method.request.querystring.page" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.all_status" = false
+    "method.request.querystring.query"          = false
+    "method.request.querystring.page"           = false
+    "method.request.querystring.affiliation"    = false
+    "method.request.querystring.filter"         = false
+    "method.request.querystring.format"         = false
+    "method.request.querystring.all_status"     = false
     "method.request.querystring.query.advanced" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-    "method.request.querystring.page_size" = false
-    "method.request.querystring.single_search" = false
+    "method.request.querystring.query.name"     = false
+    "method.request.querystring.query.names"    = false
+    "method.request.querystring.page_size"      = false
+    "method.request.querystring.single_search"  = false
   }
 }
 
@@ -242,63 +228,17 @@ resource "aws_api_gateway_method" "v1_proxy" {
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.path.proxy" = true
-    "method.request.querystring.query" = false
-    "method.request.querystring.page" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.all_status" = false
+    "method.request.path.proxy"                 = true
+    "method.request.querystring.query"          = false
+    "method.request.querystring.page"           = false
+    "method.request.querystring.affiliation"    = false
+    "method.request.querystring.filter"         = false
+    "method.request.querystring.format"         = false
+    "method.request.querystring.all_status"     = false
     "method.request.querystring.query.advanced" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-    "method.request.querystring.page_size" = false
-  }
-}
-
-# v2/{proxy+} ANY method
-resource "aws_api_gateway_method" "v2_proxy" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v2_proxy.id
-  http_method   = "ANY"
-  authorization = "NONE"
-
-  request_parameters = {
-    "method.request.path.proxy" = true
-    "method.request.querystring.query" = false
-    "method.request.querystring.page" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.all_status" = false
-    "method.request.querystring.query.advanced" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-    "method.request.querystring.page_size" = false
-    "method.request.querystring.single_search" = false
-  }
-}
-
-# Root /{proxy+} ANY method for versionless requests
-resource "aws_api_gateway_method" "root_proxy" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.root_proxy.id
-  http_method   = "ANY"
-  authorization = "NONE"
-
-  request_parameters = {
-    "method.request.path.proxy" = true
-    "method.request.querystring.page" = false
-    "method.request.querystring.query" = false
-    "method.request.querystring.affiliation" = false
-    "method.request.querystring.filter" = false
-    "method.request.querystring.format" = false
-    "method.request.querystring.query.name" = false
-    "method.request.querystring.query.names" = false
-    "method.request.querystring.all_status" = false
-    "method.request.querystring.query.advanced" = false
-    "method.request.querystring.page_size" = false
-    "method.request.querystring.single_search" = false
+    "method.request.querystring.query.name"     = false
+    "method.request.querystring.query.names"    = false
+    "method.request.querystring.page_size"      = false
   }
 }
 
@@ -314,7 +254,7 @@ resource "aws_api_gateway_method_response" "root_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Content-Type" = true
+    "method.response.header.Content-Type"                = true
     "method.response.header.Access-Control-Allow-Origin" = true
   }
 }
@@ -327,7 +267,7 @@ resource "aws_api_gateway_method_response" "v1_heartbeat_get_410" {
   status_code = "410"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -341,21 +281,7 @@ resource "aws_api_gateway_method_response" "v2_heartbeat_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for root /{proxy+} (versionless)
-resource "aws_api_gateway_method_response" "root_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.root_proxy.id
-  http_method = aws_api_gateway_method.root_proxy.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -369,7 +295,7 @@ resource "aws_api_gateway_method_response" "heartbeat_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -383,7 +309,7 @@ resource "aws_api_gateway_method_response" "generateid_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -397,7 +323,7 @@ resource "aws_api_gateway_method_response" "organizations_orgid_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -411,7 +337,7 @@ resource "aws_api_gateway_method_response" "organizations_any" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -425,7 +351,7 @@ resource "aws_api_gateway_method_response" "v2_organizations_orgid_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -439,7 +365,7 @@ resource "aws_api_gateway_method_response" "v2_organizations_any" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -453,21 +379,7 @@ resource "aws_api_gateway_method_response" "v1_proxy_410" {
   status_code = "410"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-# Method response for v2/{proxy+}
-resource "aws_api_gateway_method_response" "v2_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_proxy.id
-  http_method = aws_api_gateway_method.v2_proxy.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
@@ -484,7 +396,7 @@ resource "aws_api_gateway_integration" "root_get" {
   http_method = aws_api_gateway_method.root_get.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -497,7 +409,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_get" {
   http_method = aws_api_gateway_method.v1_heartbeat_get.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 410}"
   }
@@ -514,7 +426,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_get" {
   uri                     = "https://$${stageVariables.backend_host}/v2/heartbeat"
 
   request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
   }
 
@@ -532,7 +444,7 @@ resource "aws_api_gateway_integration" "heartbeat_get" {
   uri                     = "https://$${stageVariables.backend_host}/heartbeat"
 
   request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
   }
 
@@ -550,7 +462,7 @@ resource "aws_api_gateway_integration" "generateid_get" {
   uri                     = "https://$${stageVariables.backend_host}/generateid"
 
   request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
   }
 }
@@ -566,8 +478,8 @@ resource "aws_api_gateway_integration" "organizations_orgid_get" {
   uri                     = "https://$${stageVariables.backend_host}/organizations/{orgid}"
 
   request_parameters = {
-    "integration.request.path.orgid" = "method.request.path.orgid"
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.path.orgid"                     = "method.request.path.orgid"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
 
   }
@@ -586,19 +498,19 @@ resource "aws_api_gateway_integration" "organizations_any" {
   uri                     = "https://$${stageVariables.backend_host}/organizations"
 
   request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
-    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
-    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
-    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.page_size" = "method.request.querystring.page_size"
-    "integration.request.querystring.single_search" = "method.request.querystring.single_search"
+    "integration.request.querystring.query"              = "method.request.querystring.query"
+    "integration.request.querystring.page"               = "method.request.querystring.page"
+    "integration.request.querystring.affiliation"        = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter"             = "method.request.querystring.filter"
+    "integration.request.querystring.format"             = "method.request.querystring.format"
+    "integration.request.querystring.all_status"         = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced"     = "method.request.querystring.query.advanced"
+    "integration.request.querystring.query.name"         = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
+    "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
+    "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
   }
 
   # Caching configuration - cache by query parameters
@@ -629,8 +541,8 @@ resource "aws_api_gateway_integration" "v2_organizations_orgid_get" {
   uri                     = "https://$${stageVariables.backend_host}/v2/organizations/{orgid}"
 
   request_parameters = {
-    "integration.request.path.orgid" = "method.request.path.orgid"
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.path.orgid"                     = "method.request.path.orgid"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
   }
 
@@ -648,19 +560,19 @@ resource "aws_api_gateway_integration" "v2_organizations_any" {
   uri                     = "https://$${stageVariables.backend_host}/v2/organizations"
 
   request_parameters = {
-    "integration.request.header.Host" = "stageVariables.api_host"
+    "integration.request.header.Host"                    = "stageVariables.api_host"
     "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
-    "integration.request.querystring.query" = "method.request.querystring.query"
-    "integration.request.querystring.page" = "method.request.querystring.page"
-    "integration.request.querystring.affiliation" = "method.request.querystring.affiliation"
-    "integration.request.querystring.filter" = "method.request.querystring.filter"
-    "integration.request.querystring.format" = "method.request.querystring.format"
-    "integration.request.querystring.all_status" = "method.request.querystring.all_status"
-    "integration.request.querystring.query.advanced" = "method.request.querystring.query.advanced"
-    "integration.request.querystring.query.name" = "method.request.querystring.query.name"
-    "integration.request.querystring.query.names" = "method.request.querystring.query.names"
-    "integration.request.querystring.page_size" = "method.request.querystring.page_size"
-    "integration.request.querystring.single_search" = "method.request.querystring.single_search"
+    "integration.request.querystring.query"              = "method.request.querystring.query"
+    "integration.request.querystring.page"               = "method.request.querystring.page"
+    "integration.request.querystring.affiliation"        = "method.request.querystring.affiliation"
+    "integration.request.querystring.filter"             = "method.request.querystring.filter"
+    "integration.request.querystring.format"             = "method.request.querystring.format"
+    "integration.request.querystring.all_status"         = "method.request.querystring.all_status"
+    "integration.request.querystring.query.advanced"     = "method.request.querystring.query.advanced"
+    "integration.request.querystring.query.name"         = "method.request.querystring.query.name"
+    "integration.request.querystring.query.names"        = "method.request.querystring.query.names"
+    "integration.request.querystring.page_size"          = "method.request.querystring.page_size"
+    "integration.request.querystring.single_search"      = "method.request.querystring.single_search"
   }
 
   # Caching configuration - cache by query parameters
@@ -687,78 +599,10 @@ resource "aws_api_gateway_integration" "v1_proxy" {
   http_method = aws_api_gateway_method.v1_proxy.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 410}"
   }
-}
-
-# Integration for v2/{proxy+}
-resource "aws_api_gateway_integration" "v2_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_proxy.id
-  http_method = aws_api_gateway_method.v2_proxy.http_method
-
-  type                    = "HTTP_PROXY"
-  integration_http_method = "ANY"
-  uri                     = "https://$${stageVariables.backend_host}/v2/{proxy}"
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
-  }
-
-  # Caching configuration - cache on the proxy path
-  cache_key_parameters = [
-    "method.request.path.proxy",
-    "method.request.querystring.query",
-    "method.request.querystring.page", 
-    "method.request.querystring.affiliation",
-    "method.request.querystring.filter",
-    "method.request.querystring.format",
-    "method.request.querystring.all_status",
-    "method.request.querystring.query.advanced",
-    "method.request.querystring.query.name",
-    "method.request.querystring.query.names",
-    "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
-    ]
-  cache_namespace     = "v2-proxy"
-}
-
-# Integration for /{proxy+}
-resource "aws_api_gateway_integration" "root_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.root_proxy.id
-  http_method = aws_api_gateway_method.root_proxy.http_method
-
-  type                    = "HTTP_PROXY"
-  integration_http_method = "ANY"
-  uri                     = "https://$${stageVariables.backend_host}/{proxy}"
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-    "integration.request.header.Host" = "stageVariables.api_host"
-    "integration.request.header.X-ROR-API-Gateway-Token" = "'${var.api_gateway_token}'"
-  }
-
-  # Caching configuration - cache on the proxy path
-  cache_key_parameters = [
-    "method.request.path.proxy",
-    "method.request.querystring.query",
-    "method.request.querystring.page", 
-    "method.request.querystring.affiliation",
-    "method.request.querystring.filter",
-    "method.request.querystring.format",
-    "method.request.querystring.all_status",
-    "method.request.querystring.query.advanced",
-    "method.request.querystring.query.name",
-    "method.request.querystring.query.names",
-    "method.request.querystring.page_size",
-    "method.request.querystring.single_search"
-  ]
-  cache_namespace     = "root-proxy"
 }
 
 # =============================================================================
@@ -774,7 +618,7 @@ resource "aws_api_gateway_integration_response" "root_get" {
   status_code = aws_api_gateway_method_response.root_get.status_code
 
   response_parameters = {
-    "method.response.header.Content-Type" = "'application/json'"
+    "method.response.header.Content-Type"                = "'application/json'"
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
 
@@ -791,7 +635,7 @@ resource "aws_api_gateway_integration_response" "v1_heartbeat_get_410" {
   status_code = "410"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -812,7 +656,7 @@ resource "aws_api_gateway_integration_response" "v2_heartbeat_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -825,7 +669,7 @@ resource "aws_api_gateway_integration_response" "heartbeat_get" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -842,7 +686,7 @@ resource "aws_api_gateway_integration_response" "generateid_get" {
   ]
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -859,7 +703,7 @@ resource "aws_api_gateway_integration_response" "organizations_orgid_get" {
   ]
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
@@ -876,7 +720,7 @@ resource "aws_api_gateway_integration_response" "organizations_any" {
   ]
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -893,7 +737,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_orgid_get" {
   ]
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
   }
@@ -910,7 +754,7 @@ resource "aws_api_gateway_integration_response" "v2_organizations_any" {
   ]
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -923,7 +767,7 @@ resource "aws_api_gateway_integration_response" "v1_proxy_410" {
   status_code = "410"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
   }
@@ -937,32 +781,6 @@ resource "aws_api_gateway_integration_response" "v1_proxy_410" {
   ]
 }
 
-resource "aws_api_gateway_integration_response" "v2_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_proxy.id
-  http_method = aws_api_gateway_method.v2_proxy.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
-  }
-}
-
-resource "aws_api_gateway_integration_response" "root_proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.root_proxy.id
-  http_method = aws_api_gateway_method.root_proxy.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
-  }
-}
-
 # =============================================================================
 # CORS OPTIONS METHODS
 # =============================================================================
@@ -970,22 +788,6 @@ resource "aws_api_gateway_integration_response" "root_proxy" {
 resource "aws_api_gateway_method" "v1_proxy_options" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.v1_proxy.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-
-# OPTIONS method for v2/{proxy+} - CORS preflight
-resource "aws_api_gateway_method" "v2_proxy_options" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.v2_proxy.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-
-# OPTIONS method for root /{proxy+} - CORS preflight
-resource "aws_api_gateway_method" "root_proxy_options" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.root_proxy.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
@@ -1063,36 +865,6 @@ resource "aws_api_gateway_method_response" "v1_proxy_options" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy_options.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Max-Age"       = true
-  }
-}
-
-# Method response for v2/{proxy+} OPTIONS
-resource "aws_api_gateway_method_response" "v2_proxy_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_proxy.id
-  http_method = aws_api_gateway_method.v2_proxy_options.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Max-Age"       = true
-  }
-}
-
-# Method response for root /{proxy+} OPTIONS
-resource "aws_api_gateway_method_response" "root_proxy_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.root_proxy.id
-  http_method = aws_api_gateway_method.root_proxy_options.http_method
   status_code = "200"
 
   response_parameters = {
@@ -1234,33 +1006,7 @@ resource "aws_api_gateway_integration" "v1_proxy_options" {
   http_method = aws_api_gateway_method.v1_proxy_options.http_method
 
   type = "MOCK"
-  
-  request_templates = {
-    "application/json" = "{\"statusCode\": 200}"
-  }
-}
 
-# Mock integration for v2/{proxy+} OPTIONS
-resource "aws_api_gateway_integration" "v2_proxy_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_proxy.id
-  http_method = aws_api_gateway_method.v2_proxy_options.http_method
-
-  type = "MOCK"
-  
-  request_templates = {
-    "application/json" = "{\"statusCode\": 200}"
-  }
-}
-
-# Mock integration for root /{proxy+} OPTIONS
-resource "aws_api_gateway_integration" "root_proxy_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.root_proxy.id
-  http_method = aws_api_gateway_method.root_proxy_options.http_method
-
-  type = "MOCK"
-  
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1273,7 +1019,7 @@ resource "aws_api_gateway_integration" "v1_heartbeat_options" {
   http_method = aws_api_gateway_method.v1_heartbeat_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1286,7 +1032,7 @@ resource "aws_api_gateway_integration" "v2_heartbeat_options" {
   http_method = aws_api_gateway_method.v2_heartbeat_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1299,7 +1045,7 @@ resource "aws_api_gateway_integration" "heartbeat_options" {
   http_method = aws_api_gateway_method.heartbeat_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1312,7 +1058,7 @@ resource "aws_api_gateway_integration" "generateid_options" {
   http_method = aws_api_gateway_method.generateid_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1325,7 +1071,7 @@ resource "aws_api_gateway_integration" "organizations_orgid_options" {
   http_method = aws_api_gateway_method.organizations_orgid_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1338,7 +1084,7 @@ resource "aws_api_gateway_integration" "organizations_options" {
   http_method = aws_api_gateway_method.organizations_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1351,7 +1097,7 @@ resource "aws_api_gateway_integration" "v2_organizations_orgid_options" {
   http_method = aws_api_gateway_method.v2_organizations_orgid_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1364,7 +1110,7 @@ resource "aws_api_gateway_integration" "v2_organizations_options" {
   http_method = aws_api_gateway_method.v2_organizations_options.http_method
 
   type = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -1380,36 +1126,6 @@ resource "aws_api_gateway_integration_response" "v1_proxy_options" {
   resource_id = aws_api_gateway_resource.v1_proxy.id
   http_method = aws_api_gateway_method.v1_proxy_options.http_method
   status_code = aws_api_gateway_method_response.v1_proxy_options.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
-    "method.response.header.Access-Control-Max-Age"       = "'86400'"
-  }
-}
-
-# Integration response for v2/{proxy+} OPTIONS
-resource "aws_api_gateway_integration_response" "v2_proxy_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.v2_proxy.id
-  http_method = aws_api_gateway_method.v2_proxy_options.http_method
-  status_code = aws_api_gateway_method_response.v2_proxy_options.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allow_headers}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,HEAD,OPTIONS'"
-    "method.response.header.Access-Control-Max-Age"       = "'86400'"
-  }
-}
-
-# Integration response for root /{proxy+} OPTIONS
-resource "aws_api_gateway_integration_response" "root_proxy_options" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  resource_id = aws_api_gateway_resource.root_proxy.id
-  http_method = aws_api_gateway_method.root_proxy_options.http_method
-  status_code = aws_api_gateway_method_response.root_proxy_options.status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
@@ -1567,15 +1283,13 @@ resource "aws_api_gateway_integration_response" "v2_organizations_options" {
 resource "aws_api_gateway_deployment" "api_gateway" {
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  
+
   triggers = {
     redeployment = local.shared_api_deployment_hash
   }
-  
+
   depends_on = [
     aws_api_gateway_integration.v1_proxy,
-    aws_api_gateway_integration.v2_proxy,
-    aws_api_gateway_integration.root_proxy,
     aws_api_gateway_integration.heartbeat_get,
     aws_api_gateway_integration.v1_heartbeat_get,
     aws_api_gateway_integration.v2_heartbeat_get,
@@ -1586,8 +1300,6 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_organizations_orgid_get,
     aws_api_gateway_integration.v2_organizations_any,
     aws_api_gateway_integration.v1_proxy_options,
-    aws_api_gateway_integration.v2_proxy_options,
-    aws_api_gateway_integration.root_proxy_options,
     aws_api_gateway_integration.v1_heartbeat_options,
     aws_api_gateway_integration.v2_heartbeat_options,
     aws_api_gateway_integration.heartbeat_options,
@@ -1597,8 +1309,6 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.v2_organizations_orgid_options,
     aws_api_gateway_integration.v2_organizations_options,
     aws_api_gateway_integration_response.v1_proxy_410,
-    aws_api_gateway_integration_response.v2_proxy,
-    aws_api_gateway_integration_response.root_proxy,
     aws_api_gateway_integration_response.v1_heartbeat_get_410,
     aws_api_gateway_integration_response.v2_heartbeat_get,
     aws_api_gateway_integration_response.heartbeat_get,
@@ -1608,8 +1318,6 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.v2_organizations_orgid_get,
     aws_api_gateway_integration_response.v2_organizations_any,
     aws_api_gateway_integration_response.v1_proxy_options,
-    aws_api_gateway_integration_response.v2_proxy_options,
-    aws_api_gateway_integration_response.root_proxy_options,
     aws_api_gateway_integration_response.v1_heartbeat_options,
     aws_api_gateway_integration_response.v2_heartbeat_options,
     aws_api_gateway_integration_response.heartbeat_options,
@@ -1618,18 +1326,15 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration_response.organizations_options,
     aws_api_gateway_integration_response.v2_organizations_orgid_options,
     aws_api_gateway_integration_response.v2_organizations_options,
-    aws_api_gateway_method.root_proxy,
     aws_api_gateway_method.heartbeat_get,
     aws_api_gateway_method.generateid_get,
     aws_api_gateway_method.v1_proxy_options,
-    aws_api_gateway_method.v2_proxy_options,
-    aws_api_gateway_method.root_proxy_options,
     aws_api_gateway_method.v1_heartbeat_options,
     aws_api_gateway_method.v2_heartbeat_options,
     aws_api_gateway_method.heartbeat_options,
     aws_api_gateway_method.generateid_options
   ]
-  
+
   lifecycle {
     create_before_destroy = true
   }
@@ -1644,110 +1349,50 @@ resource "aws_api_gateway_stage" "api_gateway_prod" {
   deployment_id = aws_api_gateway_deployment.api_gateway.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   stage_name    = "prod"
-  
+
   # Enable caching for this stage
   cache_cluster_enabled = true
-  cache_cluster_size    = "0.5"  # 0.5GB cache size
-  
+  cache_cluster_size    = "0.5" # 0.5GB cache size
+
   # Stage variables for backend routing
   variables = {
     backend_host = "alb.ror.org"
-    api_host = "api.ror.org"
+    api_host     = "api.ror.org"
   }
-  
+
   # Access logging configuration
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs_prod.arn
     format = jsonencode({
-      requestId         = "$context.requestId"
-      requestTime       = "$context.requestTime"
-      httpMethod        = "$context.httpMethod"
-      path              = "$context.path"
-      resourcePath      = "$context.resourcePath"
+      requestId            = "$context.requestId"
+      requestTime          = "$context.requestTime"
+      httpMethod           = "$context.httpMethod"
+      path                 = "$context.path"
+      resourcePath         = "$context.resourcePath"
       overrideResourcePath = "$context.requestOverride.path.resourcePath"
-      status            = "$context.status"
-      responseLatency   = "$context.responseLatency"
-      integrationLatency = "$context.integrationLatency"
-      stage             = "$context.stage"
-      sourceIp          = "$context.identity.sourceIp"
-      userAgent         = "$context.identity.userAgent"
-      error             = "$context.error.message"
-      responseLength    = "$context.responseLength"
-      wafStatus         = "$context.waf.status"
-      wafResponseCode   = "$context.wafResponseCode"
+      status               = "$context.status"
+      responseLatency      = "$context.responseLatency"
+      integrationLatency   = "$context.integrationLatency"
+      stage                = "$context.stage"
+      sourceIp             = "$context.identity.sourceIp"
+      userAgent            = "$context.identity.userAgent"
+      error                = "$context.error.message"
+      responseLength       = "$context.responseLength"
+      wafStatus            = "$context.waf.status"
+      wafResponseCode      = "$context.wafResponseCode"
 
     })
   }
-  
+
   tags = {
     environment = "ror-prod"
-    purpose = "api-gateway-caching"
+    purpose     = "api-gateway-caching"
   }
 }
 
 # =============================================================================
 # METHOD SETTINGS FOR CACHING - PROD STAGE
 # =============================================================================
-
-# Enable caching for v2/organizations endpoint
-resource "aws_api_gateway_method_settings" "v2_proxy_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "v2/{proxy+}/GET"
-
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
-
-# Disable caching for v2/{proxy+} POST requests
-resource "aws_api_gateway_method_settings" "v2_proxy_post_no_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "v2/{proxy+}/POST"
-
-  settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
-
-# Enable caching for organizations endpoint (no version)
-resource "aws_api_gateway_method_settings" "root_proxy_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "{proxy+}/GET"
-
-  depends_on = [
-    aws_api_gateway_method_settings.v2_proxy_cache_prod
-  ]
-
-  settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
-    # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
-    unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
 
 # Enable caching for /organizations endpoint
 resource "aws_api_gateway_method_settings" "organizations_cache_prod" {
@@ -1756,14 +1401,14 @@ resource "aws_api_gateway_method_settings" "organizations_cache_prod" {
   method_path = "organizations/GET"
 
   settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
+    caching_enabled      = true
+    cache_ttl_in_seconds = 300 # 5 minutes cache TTL
+    cache_data_encrypted = false
+
     # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
+    require_authorization_for_cache_control    = true
     unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
+
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -1776,10 +1421,10 @@ resource "aws_api_gateway_method_settings" "organizations_orgid_no_cache_prod" {
   method_path = "organizations/{orgid}/GET"
 
   settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
+    caching_enabled      = false
+    cache_ttl_in_seconds = 0
+    cache_data_encrypted = false
+
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -1792,14 +1437,14 @@ resource "aws_api_gateway_method_settings" "v2_organizations_cache_prod" {
   method_path = "v2/organizations/GET"
 
   settings {
-    caching_enabled        = true
-    cache_ttl_in_seconds   = 300  # 5 minutes cache TTL
-    cache_data_encrypted   = false
-    
+    caching_enabled      = true
+    cache_ttl_in_seconds = 300 # 5 minutes cache TTL
+    cache_data_encrypted = false
+
     # Prevent cache bypass from client headers
-    require_authorization_for_cache_control = true
+    require_authorization_for_cache_control    = true
     unauthorized_cache_control_header_strategy = "SUCCEED_WITHOUT_RESPONSE_HEADER"
-    
+
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -1812,26 +1457,10 @@ resource "aws_api_gateway_method_settings" "v2_organizations_orgid_no_cache_prod
   method_path = "v2/organizations/{orgid}/GET"
 
   settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
-    throttling_rate_limit  = 10000
-    throttling_burst_limit = 5000
-  }
-}
+    caching_enabled      = false
+    cache_ttl_in_seconds = 0
+    cache_data_encrypted = false
 
-# Disable caching for root /{proxy+} POST requests (versionless)
-resource "aws_api_gateway_method_settings" "root_proxy_post_no_cache_prod" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
-  stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "{proxy+}/POST"
-
-  settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -1843,15 +1472,11 @@ resource "aws_api_gateway_method_settings" "heartbeat_no_cache_prod" {
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
   method_path = "heartbeat/GET"
 
-  depends_on = [
-    aws_api_gateway_method_settings.root_proxy_cache_prod
-  ]
-
   settings {
-    caching_enabled        = false
-    cache_ttl_in_seconds   = 0
-    cache_data_encrypted   = false
-    
+    caching_enabled      = false
+    cache_ttl_in_seconds = 0
+    cache_data_encrypted = false
+
     throttling_rate_limit  = 10000
     throttling_burst_limit = 5000
   }
@@ -1918,7 +1543,7 @@ resource "aws_api_gateway_method_settings" "generateid_no_cache_prod" {
 resource "aws_api_gateway_method_settings" "metrics_and_logging_prod" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_gateway_prod.stage_name
-  method_path = "*/*"  # Apply to all methods
+  method_path = "*/*" # Apply to all methods
 
   depends_on = [
     aws_api_gateway_method_settings.generateid_no_cache_prod,
@@ -1926,11 +1551,11 @@ resource "aws_api_gateway_method_settings" "metrics_and_logging_prod" {
   ]
 
   settings {
-    metrics_enabled             = true
-    logging_level               = "ERROR"
-    data_trace_enabled         = false
-    throttling_rate_limit       = 10000
-    throttling_burst_limit      = 5000
+    metrics_enabled        = true
+    logging_level          = "ERROR"
+    data_trace_enabled     = false
+    throttling_rate_limit  = 10000
+    throttling_burst_limit = 5000
   }
 }
 
