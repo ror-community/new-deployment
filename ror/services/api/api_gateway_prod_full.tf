@@ -1288,6 +1288,7 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     redeployment = local.shared_api_deployment_hash
   }
 
+  # Integrations only (matches staging); avoid method/integration_response in depends_on to prevent stage+deployment destroy cycles
   depends_on = [
     aws_api_gateway_integration.v1_proxy,
     aws_api_gateway_integration.heartbeat_get,
@@ -1308,31 +1309,6 @@ resource "aws_api_gateway_deployment" "api_gateway" {
     aws_api_gateway_integration.organizations_options,
     aws_api_gateway_integration.v2_organizations_orgid_options,
     aws_api_gateway_integration.v2_organizations_options,
-    aws_api_gateway_integration_response.v1_proxy_410,
-    aws_api_gateway_integration_response.v1_heartbeat_get_410,
-    aws_api_gateway_integration_response.v2_heartbeat_get,
-    aws_api_gateway_integration_response.heartbeat_get,
-    aws_api_gateway_integration_response.generateid_get,
-    aws_api_gateway_integration_response.organizations_orgid_get,
-    aws_api_gateway_integration_response.organizations_any,
-    aws_api_gateway_integration_response.v2_organizations_orgid_get,
-    aws_api_gateway_integration_response.v2_organizations_any,
-    aws_api_gateway_integration_response.v1_proxy_options,
-    aws_api_gateway_integration_response.v1_heartbeat_options,
-    aws_api_gateway_integration_response.v2_heartbeat_options,
-    aws_api_gateway_integration_response.heartbeat_options,
-    aws_api_gateway_integration_response.generateid_options,
-    aws_api_gateway_integration_response.organizations_orgid_options,
-    aws_api_gateway_integration_response.organizations_options,
-    aws_api_gateway_integration_response.v2_organizations_orgid_options,
-    aws_api_gateway_integration_response.v2_organizations_options,
-    aws_api_gateway_method.heartbeat_get,
-    aws_api_gateway_method.generateid_get,
-    aws_api_gateway_method.v1_proxy_options,
-    aws_api_gateway_method.v1_heartbeat_options,
-    aws_api_gateway_method.v2_heartbeat_options,
-    aws_api_gateway_method.heartbeat_options,
-    aws_api_gateway_method.generateid_options
   ]
 
   lifecycle {
