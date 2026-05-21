@@ -1600,9 +1600,10 @@ resource "aws_api_gateway_deployment" "api_gateway" {
   ]
 
   lifecycle {
-    # Phase 1 PR1: in-place deployment replace before proxy route removal (PR2).
-    # Restore create_before_destroy = true after Phase 1 completes.
-    create_before_destroy = false
+    # PR1 keeps create_before_destroy true so stage moves before old deployment is
+    # deleted (false causes "Active stages pointing to this deployment" on 0.12).
+    # Set false in PR2 (proxy removal); re-enable true after Phase 1 completes.
+    create_before_destroy = true
   }
 }
 
