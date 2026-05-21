@@ -1312,9 +1312,10 @@ resource "aws_api_gateway_deployment" "api_gateway" {
   ]
 
   lifecycle {
-    # Phase 1 PR2: avoid deployment/stage/proxy destroy cycle on 0.12.
-    # Re-enable create_before_destroy = true in PR3 after prod is stable.
-    create_before_destroy = false
+    # Keep true on 0.12: false deletes the old deployment before the prod stage moves
+    # ("Active stages pointing to this deployment"). PR1 prep + two-PR split avoids
+    # the earlier destroy cycle without needing false here.
+    create_before_destroy = true
   }
 }
 
