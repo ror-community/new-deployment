@@ -103,7 +103,24 @@ resource "aws_lb_listener_rule" "allow_indexdatadump_dev" {
   }
 }
 
-# Rule 4: Block all other API traffic (return 403)
+# Rule 4: Allow traffic with "bulkupdate" in the path
+resource "aws_lb_listener_rule" "allow_bulkupdate_dev" {
+  listener_arn = aws_lb_listener.alb-dev.arn
+  priority = 40
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-dev.id
+  }
+
+  condition {
+    path_pattern {
+      values = ["*bulkupdate*"]
+    }
+  }
+}
+
+# Rule 5: Block all other API traffic (return 403)
 resource "aws_lb_listener_rule" "block_api_traffic_dev" {
   listener_arn = aws_lb_listener.alb-dev.arn
   priority = 90
