@@ -100,7 +100,24 @@ resource "aws_lb_listener_rule" "allow_indexdatadump_staging" {
   }
 }
 
-# Rule 4: Block API paths without proper authentication (return 403)
+# Rule 4: Allow traffic with "bulkupdate" in the path
+resource "aws_lb_listener_rule" "allow_bulkupdate_staging" {
+  listener_arn = aws_lb_listener.alb-staging.arn
+  priority = 40
+
+  action {
+    type             = "forward"
+    target_group_arn = data.aws_lb_target_group.api-staging.id
+  }
+
+  condition {
+    path_pattern {
+      values = ["*bulkupdate*"]
+    }
+  }
+}
+
+# Rule 5: Block API paths without proper authentication (return 403)
 resource "aws_lb_listener_rule" "block_api_traffic_staging" {
   listener_arn = aws_lb_listener.alb-staging.arn
   priority = 90
