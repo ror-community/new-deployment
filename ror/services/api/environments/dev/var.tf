@@ -12,7 +12,7 @@ variable "ttl" {
 variable "vpc_id" {}
 
 variable "private_subnet_ids" {
-  type = "list"
+  type = list(string)
 }
 
 variable "private_security_group_id" {}
