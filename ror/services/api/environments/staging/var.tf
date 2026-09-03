@@ -28,7 +28,7 @@ variable "elastic7_port_staging" {
 }
 
 variable "ror-api-staging_tags" {
-  type = "map"
+  type = map(string)
 }
 
 variable "public_key" {}
