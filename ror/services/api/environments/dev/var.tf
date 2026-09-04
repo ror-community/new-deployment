@@ -28,7 +28,7 @@ variable "elastic7_port_dev" {
 }
 
 variable "ror-api-dev_tags" {
-  type = "map"
+  type = map(string)
 }
 
 variable "public_key" {}
