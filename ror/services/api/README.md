@@ -2,7 +2,8 @@
 
 This directory is the **old** combined root. It is retired.
 
-Terraform Cloud workspace: `ror/ror-services-api`. It is CLI-driven, locked, and in the Archive project. Leftover state is 29 data sources only. **Do not apply.** The `.tf` files here still declare every migrated resource; an apply would try to create them again.
+Terraform Cloud workspace: `ror/ror-services-api`. It is CLI-driven, locked, and in the Archive project. There are no `.tf` files here anymore. Leftover remote state is 29 data sources only. **Do not apply** and do not add Terraform config back to this directory. Live roots are only under `environments/`.
+
 
 Live ownership is under `environments/`:
 
