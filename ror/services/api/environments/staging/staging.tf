@@ -144,12 +144,26 @@ resource "aws_s3_bucket" "data-staging" {
   tags = {
       Name = "data-staging"
   }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket" "public-staging" {
   bucket = "public.staging.ror.org"
   tags = {
       Name = "public-staging"
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
   }
 }
 

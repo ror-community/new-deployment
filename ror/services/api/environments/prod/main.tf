@@ -150,12 +150,26 @@ resource "aws_service_discovery_service" "api" {
   tags = {
       Name = "data-prod"
   }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket" "public-prod" {
   bucket = "public.ror.org"
   tags = {
       Name = "public-prod"
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
   }
 }
 
