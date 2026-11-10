@@ -1,8 +1,7 @@
 terraform {
-  required_version = "~> 0.15.5"
+  required_version = "~> 1.16"
 
-  backend "remote" {
-    hostname     = "app.terraform.io"
+  cloud {
     organization = "ror"
     workspaces {
       name = "ror-services-api-dev"
