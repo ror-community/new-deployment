@@ -8,6 +8,11 @@ resource "aws_ecs_service" "api-dev" {
   # give container time to start up
   health_check_grace_period_seconds = 600
 
+  deployment_circuit_breaker {
+    enable = true
+    rollback = true
+  }
+
   network_configuration {
     security_groups = [var.private_security_group_id]
     subnets         = var.private_subnet_ids
