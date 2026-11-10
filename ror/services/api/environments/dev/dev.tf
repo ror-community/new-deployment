@@ -227,18 +227,24 @@ resource "aws_service_discovery_service" "api-dev" {
 
 resource "aws_s3_bucket" "data-dev" {
   bucket = "data.dev.ror.org"
-  acl    = "private"
   tags = {
       Name = "data-dev"
       environment = "ror-dev"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "data-dev" {
+  bucket = aws_s3_bucket.data-dev.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+import {
+  to = aws_s3_bucket_server_side_encryption_configuration.data-dev
+  id = "data.dev.ror.org"
 }
 
 resource "aws_s3_bucket" "public-dev" {
@@ -246,13 +252,20 @@ resource "aws_s3_bucket" "public-dev" {
   tags = {
       Name = "public-dev"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "public-dev" {
+  bucket = aws_s3_bucket.public-dev.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+import {
+  to = aws_s3_bucket_server_side_encryption_configuration.public-dev
+  id = "public.dev.ror.org"
 }
 
 resource "aws_s3_bucket_public_access_block" "dev-block-public-access" {
