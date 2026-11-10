@@ -82,8 +82,9 @@ resource "aws_lb_listener_rule" "redirect-api-dev" {
   }
 
   condition {
-    field  = "host-header"
-    values = ["api.dev.ror.org"]
+    host_header {
+      values = ["api.dev.ror.org"]
+    }
   }
 }
 
