@@ -9,8 +9,8 @@ resource "aws_ecs_service" "api-dev" {
   health_check_grace_period_seconds = 600
 
   deployment_circuit_breaker {
-    enable = true
-    rollback = true
+    enable   = true
+    rollback = false
   }
 
   network_configuration {
