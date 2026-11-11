@@ -9,7 +9,7 @@ resource "aws_ecs_service" "api-staging" {
   health_check_grace_period_seconds = 600
 
   deployment_circuit_breaker {
-    enable   = true
+    enable   = false
     rollback = false
   }
 
