@@ -168,17 +168,23 @@ resource "aws_service_discovery_service" "api-staging" {
 
 resource "aws_s3_bucket" "data-staging" {
   bucket = "data.staging.ror.org"
-  acl    = "private"
   tags = {
       Name = "data-staging"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "data-staging" {
+  bucket = aws_s3_bucket.data-staging.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+import {
+  to = aws_s3_bucket_server_side_encryption_configuration.data-staging
+  id = "data.staging.ror.org"
 }
 
 resource "aws_s3_bucket" "public-staging" {
@@ -186,13 +192,20 @@ resource "aws_s3_bucket" "public-staging" {
   tags = {
       Name = "public-staging"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "public-staging" {
+  bucket = aws_s3_bucket.public-staging.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+import {
+  to = aws_s3_bucket_server_side_encryption_configuration.public-staging
+  id = "public.staging.ror.org"
 }
 
 resource "aws_s3_bucket_public_access_block" "staging-block-public-access" {
