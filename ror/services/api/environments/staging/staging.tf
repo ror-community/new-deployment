@@ -94,7 +94,29 @@ resource "aws_ecs_task_definition" "api-staging" {
   cpu = "1024"
   memory = "4096"
 
-  container_definitions =  data.template_file.api-staging_task.rendered
+  container_definitions = templatefile("${path.module}/api-staging.json", {
+    elastic7_host_staging         = var.elastic7_host_staging
+    elastic7_port_staging         = var.elastic7_port_staging
+    access_key                    = var.access_key
+    secret_key                    = var.secret_key
+    region                        = var.region
+    public_key                    = var.public_key
+    sentry_dsn                    = var.sentry_dsn
+    django_secret_key             = var.django_secret_key
+    token                         = var.token_staging
+    route_user                    = var.route_user
+    data_store                    = var.data_store_staging
+    public_store                  = var.public_store_staging
+    github_token                  = var.github_token
+    version                       = var.ror-api-staging_tags["sha"]
+    launch_darkly_key             = var.launch_darkly_key_staging
+    db_host                       = var.db_host_staging
+    db_password                   = var.db_password_staging
+    db_port                       = var.db_port_staging
+    db_name                       = var.db_name
+    db_user                       = var.db_username_staging
+    single_search_default_staging = var.single_search_default_staging
+  })
 }
 
 resource "aws_route53_record" "api-staging" {
