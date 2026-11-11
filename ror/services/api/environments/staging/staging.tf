@@ -8,6 +8,11 @@ resource "aws_ecs_service" "api-staging" {
   # give container time to start up
   health_check_grace_period_seconds = 600
 
+  deployment_circuit_breaker {
+    enable   = false
+    rollback = false
+  }
+
   network_configuration {
     security_groups = [var.private_security_group_id]
     subnets         = var.private_subnet_ids
@@ -77,8 +82,9 @@ resource "aws_lb_listener_rule" "redirect-api-staging" {
   }
 
   condition {
-    field  = "host-header"
-    values = ["api.staging.ror.org"]
+    host_header {
+      values = ["api.staging.ror.org"]
+    }
   }
 }
 
