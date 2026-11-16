@@ -82,7 +82,29 @@ resource "aws_ecs_task_definition" "api-community" {
   cpu = "1024"
   memory = "4096"
 
-  container_definitions =  data.template_file.api_task.rendered
+  container_definitions = templatefile("${path.module}/api.json", {
+    elastic7_host         = var.elastic7_host
+    elastic7_port         = var.elastic7_port
+    access_key            = var.access_key
+    secret_key            = var.secret_key
+    region                = var.region
+    public_key            = var.public_key
+    sentry_dsn            = var.sentry_dsn
+    django_secret_key     = var.django_secret_key
+    token                 = var.token
+    route_user            = var.route_user
+    data_store            = var.data_store
+    public_store          = var.public_store
+    github_token          = var.github_token
+    version               = var.ror-api_tags["version"]
+    launch_darkly_key     = var.launch_darkly_key
+    db_host               = var.db_host
+    db_password           = var.db_password
+    db_port               = var.db_port
+    db_name               = var.db_name
+    db_user               = var.db_username
+    single_search_default = var.single_search_default
+  })
 }
 
 resource "aws_route53_record" "api" {
