@@ -171,19 +171,25 @@ resource "aws_service_discovery_service" "api" {
   }
 }
 
- resource "aws_s3_bucket" "data-prod" {
+resource "aws_s3_bucket" "data-prod" {
   bucket = "data.ror.org"
-  acl    = "private"
   tags = {
       Name = "data-prod"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "data-prod" {
+  bucket = aws_s3_bucket.data-prod.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+import {
+  to = aws_s3_bucket_server_side_encryption_configuration.data-prod
+  id = "data.ror.org"
 }
 
 resource "aws_s3_bucket" "public-prod" {
@@ -191,13 +197,20 @@ resource "aws_s3_bucket" "public-prod" {
   tags = {
       Name = "public-prod"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "public-prod" {
+  bucket = aws_s3_bucket.public-prod.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+import {
+  to = aws_s3_bucket_server_side_encryption_configuration.public-prod
+  id = "public.ror.org"
 }
 
 resource "aws_s3_bucket_public_access_block" "prod-block-public-access" {
